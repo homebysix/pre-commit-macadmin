@@ -13,6 +13,11 @@ def build_argument_parser():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    parser.add_argument(
+        "--override-prefix",
+        default="local",
+        help='Expected prefix for recipe override identifiers. (e.g. "com.yourcompany")',
+    )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
 
@@ -40,6 +45,16 @@ def main(argv=None):
         except ExpatError as err:
             print(err)
             retval = 1
+
+        if args.override_prefix and "Process" not in recipe:
+            override_prefix = args.override_prefix.rstrip(".")
+            if not recipe.get("Identifier", "").startswith(override_prefix):
+                print(
+                    '{}: identifier does not start with "{}."'.format(
+                        filename, override_prefix
+                    )
+                )
+                retval = 1
 
     return retval
 
