@@ -26,7 +26,7 @@ def build_argument_parser():
 
 def parse_text(filename):
     """Parse recipe list in text format."""
-    with open(filename, "rb") as openfile:
+    with open(filename, "r") as openfile:
         recipes = [
             line
             for line in openfile.read().splitlines()
@@ -48,10 +48,10 @@ def parse_plist(filename):
 def parse_yml(filename):
     """Parse recipe list in yml format."""
     if YAML_INSTALLED:
-        with open(filename, "rb") as openfile:
+        with open(filename, "r") as openfile:
             recipes = yaml.load(openfile)
     else:
-        with open(filename, "rb") as openfile:
+        with open(filename, "r") as openfile:
             recipes = [
                 line.lstrip("- ")
                 for line in openfile.read().splitlines()
@@ -62,7 +62,7 @@ def parse_yml(filename):
 
 def parse_json(filename):
     """Parse recipe list in json format."""
-    with open(filename, "rb") as openfile:
+    with open(filename, "r") as openfile:
         recipes = json.load(openfile)
     return recipes
 
