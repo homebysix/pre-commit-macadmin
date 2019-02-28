@@ -22,14 +22,6 @@
   files: '\.recipe$'
   types: [text]
 
-- id: check-munki-manifests
-  name: Check Munki Manifests
-  description: This hook checks Munki manifests to ensure they are valid.
-  entry: check-munki-manifests
-  language: python
-  files: '^manifests/'
-  types: [text]
-
 - id: check-munki-pkgsinfo
   name: Check Munki Pkginfo Files
   description: This hook checks Munki pkginfo files to ensure they are valid.
