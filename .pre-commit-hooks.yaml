@@ -1,3 +1,11 @@
+- id: check-autopkg-recipe-list
+  name: Check AutoPkg Recipe List
+  description: This hook checks AutoPkg recipe lists (in txt, plist, or yaml format) for common issues.
+  entry: check-autopkg-recipe-list
+  language: python
+  files: '^recipe.?list\.(plist|yaml|yml|json|txt)$'
+  types: [text]
+
 - id: check-autopkg-recipes
   name: Check AutoPkg Recipes
   description: This hook checks AutoPkg recipes to ensure they contain required top-level keys. (https://github.com/autopkg/autopkg/wiki/Recipe-Format)

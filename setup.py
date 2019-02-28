@@ -12,6 +12,7 @@ setup(
     packages=["pre_commit_hooks"],
     entry_points={
         "console_scripts": [
+            "check-autopkg-recipe-list = pre_commit_hooks.check_autopkg_recipe_list:main",
             "check-autopkg-recipes = pre_commit_hooks.check_autopkg_recipes:main",
             "check-munki-manifests = pre_commit_hooks.check_munki_manifests:main",
             "check-munki-pkgsinfo = pre_commit_hooks.check_munki_pkgsinfo:main",
