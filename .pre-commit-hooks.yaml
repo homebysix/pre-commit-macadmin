@@ -46,6 +46,14 @@
   files: 'build-info\.(plist|yml|yaml|json)$'
   types: [text]
 
+- id: check-outset-scripts
+  name: Check Outset Scripts
+  description: This hook checks Outset scripts to ensure they're executable.
+  entry: check-outset-scripts
+  language: python
+  files: r'/usr/local/outset/(boot-once|boot-every|login-once|login-every|login-privileged-once|login-privileged-every|on-demand)/'
+  types: [text]
+
 - id: check-plists
   name: Check Plists
   description: This hook checks XML property list (plist) files for basic syntax errors.
