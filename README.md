@@ -22,7 +22,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 ## Hooks available
 
 - __check-autopkg-recipe-list__
-    This hook checks AutoPkg recipe lists (in txt, plist, or yaml format) for common issues.
+    This hook checks AutoPkg recipe lists (in txt, plist, yaml, or json format) for common issues.
 
 - __check-autopkg-recipes__
     This hook checks AutoPkg recipes to ensure they contain required top-level keys. (https://github.com/autopkg/autopkg/wiki/Recipe-Format)

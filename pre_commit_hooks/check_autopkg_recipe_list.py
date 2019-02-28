@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""This hook checks AutoPkg recipe lists (in txt, plist, or yaml format) for common issues."""
+"""This hook checks AutoPkg recipe lists (in txt, plist, yaml, or json format) for common issues."""
 
 import argparse
 import plistlib
