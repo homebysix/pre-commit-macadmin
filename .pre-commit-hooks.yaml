@@ -51,7 +51,7 @@
   description: This hook checks Outset scripts to ensure they're executable.
   entry: check-outset-scripts
   language: python
-  files: r'/usr/local/outset/(boot-once|boot-every|login-once|login-every|login-privileged-once|login-privileged-every|on-demand)/'
+  files: 'usr/local/outset/(boot-once|boot-every|login-once|login-every|login-privileged-once|login-privileged-every|on-demand)/'
   types: [text]
 
 - id: check-plists
