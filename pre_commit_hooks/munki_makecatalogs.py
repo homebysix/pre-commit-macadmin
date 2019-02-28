@@ -30,7 +30,10 @@ def main(argv=None):
     args = argparser.parse_args(argv)
 
     retval = 0
-    if not os.path.isfile(python):
+    if not os.path.isdir("pkgsinfo"):
+        print("Could not find pkgsinfo folder.")
+        retval = 1
+    elif not os.path.isfile(python):
         print("{} does not exist.".format(python))
         retval = 1
     elif not os.path.isfile(makecatalogs):
