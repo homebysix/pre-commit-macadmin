@@ -1,0 +1,15 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.1.0
+  hooks:
+  - id: check-ast
+  - id: check-byte-order-marker
+  - id: check-case-conflict
+  - id: check-executables-have-shebangs
+  - id: check-merge-conflict
+  - id: check-yaml
+  - id: mixed-line-ending
+  # - id: no-commit-to-branch
+  - id: requirements-txt-fixer
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
