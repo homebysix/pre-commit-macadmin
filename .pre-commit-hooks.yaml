@@ -14,6 +14,30 @@
   files: '\.recipe$'
   types: [text]
 
+- id: check-jamf-extension-attributes
+  name: Check Jamf EAs
+  description: This hook checks Jamf extension attributes for common issues.
+  entry: check-jamf-extension-attributes
+  language: python
+  files: '(jamf|jss)/extension_attributes/'
+  types: [text]
+
+- id: check-jamf-scripts
+  name: Check Jamf Scripts
+  description: This hook checks Jamf scripts for common issues.
+  entry: check-jamf-scripts
+  language: python
+  files: '(jamf|jss)/scripts/'
+  types: [text]
+
+- id: check-jamf-profiles
+  name: Check Jamf Scripts
+  description: This hook checks Jamf profiles for common issues.
+  entry: check-jamf-profiles
+  language: python
+  files: '(jamf|jss)/profiles/'
+  types: [text]
+
 - id: forbid-autopkg-overrides
   name: Forbid AutoPkg Overrides
   description: This hook prevents AutoPkg overrides from being added to the repo.
