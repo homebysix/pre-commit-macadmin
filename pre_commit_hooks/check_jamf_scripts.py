@@ -29,12 +29,16 @@ def main(argv=None):
 
         # Ensure script starts with a shebang of some sort.
         if not script_content.startswith("#!/"):
-            print("{}: missing shebang")
+            print("{}: missing shebang".format(filename))
             retval = 1
 
         # Ensure we're not using env for root-context scripts.
-        if not script_content.startswith("#!/usr/bin/env"):
-            print("{}: using env for root-context scripts is not recommended")
+        if script_content.startswith("#!/usr/bin/env"):
+            print(
+                "{}: using env for root-context scripts is not recommended".format(
+                    filename
+                )
+            )
             retval = 1
 
     return retval

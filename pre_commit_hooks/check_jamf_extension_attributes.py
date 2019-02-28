@@ -28,7 +28,7 @@ def main(argv=None):
             ea_content = openfile.read()
 
         if "<result>" not in ea_content or "</result>" not in ea_content:
-            print("{}: missing <result> and/or </result> tags")
+            print("{}: missing <result> and/or </result> tags".format(filename))
             retval = 1
 
     return retval
