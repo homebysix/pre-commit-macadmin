@@ -67,5 +67,5 @@
   description: This hook runs the "makecatalogs" command to ensure all referenced packages are present.
   entry: munki-makecatalogs
   language: python
-  files: '^pkgsinfo/'
-  types: [text]
+  pass_filenames: false
+  always_run: true
