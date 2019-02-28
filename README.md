@@ -21,6 +21,8 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ## Hooks available
 
+### AutoPkg
+
 - __check-autopkg-recipe-list__
     This hook checks AutoPkg recipe lists (in txt, plist, yaml, or json format) for common issues.
 
@@ -31,6 +33,8 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 - __forbid-autopkg-overrides__
     This hook prevents AutoPkg overrides from being added to the repo.
+
+### Munki
 
 - __check-munki-pkgsinfo__
     This hook checks Munki pkginfo files to ensure they are valid.
@@ -45,14 +49,18 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 - __check-munkipkg-buildinfo__
     This hook checks MunkiPkg build-info files to ensure they are valid.
 
+- __munki-makecatalogs__
+    This hook runs the "makecatalogs" command to ensure all referenced packages are present and catalogs are up to date.
+
+### Outset
+
 - __check-outset-scripts__
     This hook checks Outset scripts to ensure they're executable.
 
+### General
+
 - __check-plists__
     This hook checks XML property list (plist) files for basic syntax errors.
-
-- __munki-makecatalogs__
-    This hook runs the "makecatalogs" command to ensure all referenced packages are present and catalogs are up to date.
 
 ## Recommendations
 
