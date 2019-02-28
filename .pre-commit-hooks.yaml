@@ -1,0 +1,7 @@
+- id: check-plists
+  name: Check Plists
+  description: This hook checks XML property list (plist) files for basic syntax errors.
+  entry: check-plists
+  language: python
+  files: '.plist$|.recipe$|.mobileconfig$|.pkginfo$'
+  types: [text]
