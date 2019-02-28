@@ -9,7 +9,6 @@ repos:
   - id: check-merge-conflict
   - id: check-yaml
   - id: mixed-line-ending
-  # - id: no-commit-to-branch
-  - id: requirements-txt-fixer
+  - id: no-commit-to-branch
   - id: trailing-whitespace
     args: [--markdown-linebreak-ext=md]
