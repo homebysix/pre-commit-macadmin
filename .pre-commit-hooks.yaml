@@ -11,7 +11,7 @@
   description: This hook checks AutoPkg recipes to ensure they contain required top-level keys. (https://github.com/autopkg/autopkg/wiki/Recipe-Format)
   entry: check-autopkg-recipes
   language: python
-  files: '.recipe$'
+  files: '\.recipe$'
   types: [text]
 
 - id: forbid-autopkg-overrides
@@ -19,7 +19,7 @@
   description: This hook prevents AutoPkg overrides from being added to the repo.
   entry: forbid-autopkg-overrides
   language: python
-  files: '.recipe$'
+  files: '\.recipe$'
   types: [text]
 
 - id: check-munki-manifests
@@ -27,7 +27,7 @@
   description: This hook checks Munki manifests to ensure they are valid.
   entry: check-munki-manifests
   language: python
-  files: '/manifests/'
+  files: '^manifests/'
   types: [text]
 
 - id: check-munki-pkgsinfo
@@ -35,7 +35,7 @@
   description: This hook checks Munki pkginfo files to ensure they are valid.
   entry: check-munki-pkgsinfo
   language: python
-  files: '/pkgsinfo/'
+  files: '^pkgsinfo/'
   types: [text]
 
 - id: check-munkiadmin-scripts
@@ -43,7 +43,7 @@
   description: This hook ensures MunkiAdmin scripts are executable.
   entry: check-munkiadmin-scripts
   language: python
-  files: '/MunkiAdmin/scripts/'
+  files: '^MunkiAdmin/scripts/'
   types: [text]
 
 - id: check-munkipkg-buildinfo
@@ -59,7 +59,7 @@
   description: This hook checks XML property list (plist) files for basic syntax errors.
   entry: check-plists
   language: python
-  files: '\.(plist|recipe|mobileconfig|pkginfo)$'
+  files: '\.(plist|recipe|mobileconfig|pkginfo)$|^pkgsinfo/|^manifests/|^catalogs/'
   types: [text]
 
 - id: munki-makecatalogs
@@ -67,5 +67,5 @@
   description: This hook runs the "makecatalogs" command to ensure all referenced packages are present.
   entry: munki-makecatalogs
   language: python
-  files: '/pkgsinfo/'
+  files: '^pkgsinfo/'
   types: [text]
