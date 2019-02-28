@@ -43,7 +43,7 @@
   description: This hook checks MunkiPkg build-info files to ensure they are valid.
   entry: check-munkipkg-buildinfo
   language: python
-  files: 'build-info.(plist|yml|yaml|json)$'
+  files: 'build-info\.(plist|yml|yaml|json)$'
   types: [text]
 
 - id: check-plists
@@ -51,7 +51,7 @@
   description: This hook checks XML property list (plist) files for basic syntax errors.
   entry: check-plists
   language: python
-  files: '.plist$|.recipe$|.mobileconfig$|.pkginfo$'
+  files: '\.(plist|recipe|mobileconfig|pkginfo)$'
   types: [text]
 
 - id: munki-makecatalogs
