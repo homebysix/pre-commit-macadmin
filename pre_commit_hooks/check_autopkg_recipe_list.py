@@ -5,13 +5,9 @@ import argparse
 import plistlib
 from xml.parsers.expat import ExpatError
 import json
+import ruamel.yaml
 
-try:
-    import yaml
-
-    YAML_INSTALLED = True
-except ImportError:
-    pass
+yaml = ruamel.yaml.YAML(typ="safe")
 
 
 def build_argument_parser():
@@ -48,16 +44,8 @@ def main(argv=None):
                 retval = 1
         elif filename.endswith((".yaml", ".yml")):
             try:
-                if YAML_INSTALLED:
-                    with open(filename, "r") as openfile:
-                        recipe_list = yaml.load(openfile)
-                else:
-                    with open(filename, "r") as openfile:
-                        recipe_list = [
-                            line.lstrip("- ")
-                            for line in openfile.read().splitlines()
-                            if line and not line.startswith("#")
-                        ]
+                with open(filename, "r") as openfile:
+                    recipe_list = yaml.load(openfile)
             except Exception as err:
                 print("{}: yaml parsing error: {}".format(filename, err))
                 retval = 1
