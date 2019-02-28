@@ -34,6 +34,17 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 - __forbid-autopkg-overrides__
     This hook prevents AutoPkg overrides from being added to the repo.
 
+### Jamf
+
+- __check-jamf-extension-attributes__
+    This hook checks Jamf extension attributes for common issues. (Looks for EAs in a path containing jamf/extension_attributes or jss/extension_attributes.)
+
+- __check-jamf-scripts__
+    This hook checks Jamf scripts for common issues. (Looks for EAs in a path containing jamf/scripts or jss/scripts.)
+
+- __check-jamf-profiles__
+    This hook checks Jamf profiles for common issues. (Looks for EAs in a path containing jamf/profiles or jss/profiles.)
+
 ### Munki
 
 - __check-munki-pkgsinfo__
