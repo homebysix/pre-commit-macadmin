@@ -19,7 +19,9 @@
   description: This hook checks Jamf extension attributes for common issues.
   entry: check-jamf-extension-attributes
   language: python
-  files: '(jamf|jss)/extension_attributes/'
+  # Switch from files regex to "OR" types when that feature is available:
+  # https://github.com/pre-commit/pre-commit/issues/607
+  files: '(jamf|jss)/extension.?attributes/.*\.(sh|bash|py|rb|js|pl)$'
   types: [text]
 
 - id: check-jamf-scripts
@@ -27,15 +29,19 @@
   description: This hook checks Jamf scripts for common issues.
   entry: check-jamf-scripts
   language: python
-  files: '(jamf|jss)/scripts/'
+  # Switch from files regex to "OR" types when that feature is available:
+  # https://github.com/pre-commit/pre-commit/issues/607
+  files: '(jamf|jss)/scripts/.*\.(sh|bash|py|rb|js|pl)$'
   types: [text]
 
 - id: check-jamf-profiles
-  name: Check Jamf Scripts
+  name: Check Jamf Profiles
   description: This hook checks Jamf profiles for common issues.
   entry: check-jamf-profiles
   language: python
-  files: '(jamf|jss)/profiles/'
+  # Switch from files regex to "OR" types when that feature is available:
+  # https://github.com/pre-commit/pre-commit/issues/607
+  files: '(jamf|jss)/profiles/.*\.(mobileconfig|plist)$'
   types: [text]
 
 - id: forbid-autopkg-overrides
