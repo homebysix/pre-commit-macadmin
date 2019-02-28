@@ -26,15 +26,18 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 - __check-autopkg-recipes__
     This hook checks AutoPkg recipes to ensure they contain required top-level keys. (https://github.com/autopkg/autopkg/wiki/Recipe-Format)
-    - Specify your preferred AutoPkg recipe override prefix, if you wish to enforce it: `[--override-prefix]` (default: `local.`)
+    - Specify your preferred AutoPkg recipe override prefix, if you wish to enforce it:
+        `[--override-prefix]` (default: `local.`)
 
 - __forbid-autopkg-overrides__
     This hook prevents AutoPkg overrides from being added to the repo.
 
 - __check-munki-pkgsinfo__
     This hook checks Munki pkginfo files to ensure they are valid.
-    - Specify your preferred list of pkginfo categories, if you wish to enforce it: `['--categories=Productivity,Design,Utilities']`
-    - Specify required pkginfo keys: `['--required-keys=category,description,developer,name,version']` (default: category, description, developer, name)
+    - Specify your preferred list of pkginfo categories, if you wish to enforce it:
+        `['--categories=Productivity,Design,Utilities']`
+    - Specify required pkginfo keys:
+        `['--required-keys=category,description,developer,name,version']` (default: category, description, developer, name)
 
 - __check-munkiadmin-scripts__
     This hook ensures MunkiAdmin scripts are executable.
