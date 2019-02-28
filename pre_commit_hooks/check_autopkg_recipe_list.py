@@ -39,8 +39,8 @@ def parse_plist(filename):
     """Parse recipe list in plist format."""
     try:
         recipes = plistlib.readPlist(filename)
-    except ExpatError as err:
-        print(err)
+    except (ExpatError, ValueError) as err:
+        print("{}: plist parsing error: {}".format(filename, err))
         retval = 1
     return []
 

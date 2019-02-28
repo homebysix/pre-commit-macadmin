@@ -27,8 +27,8 @@ def main(argv=None):
     for filename in args.filenames:
         try:
             _ = plistlib.readPlist(filename)
-        except ExpatError as err:
-            print(err)
+        except (ExpatError, ValueError) as err:
+            print("{}: plist parsing error: {}".format(filename, err))
             retval = 1
 
     return retval
