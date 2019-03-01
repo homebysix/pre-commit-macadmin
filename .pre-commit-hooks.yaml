@@ -89,7 +89,7 @@
   description: This hook checks XML property list (plist) files for basic syntax errors.
   entry: check-plists
   language: python
-  files: '\.(plist|recipe|mobileconfig|pkginfo)$|^pkgsinfo/|^manifests/|^catalogs/'
+  files: '\.(plist|recipe|mobileconfig|pkginfo)$'
   types: [text]
 
 - id: munki-makecatalogs

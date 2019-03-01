@@ -40,10 +40,10 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
     This hook checks Jamf extension attributes for common issues. (Looks for EAs in a path containing jamf/extension_attributes or jss/extension_attributes.)
 
 - __check-jamf-scripts__
-    This hook checks Jamf scripts for common issues. (Looks for EAs in a path containing jamf/scripts or jss/scripts.)
+    This hook checks Jamf scripts for common issues. (Looks for scripts in a path containing jamf/scripts or jss/scripts.)
 
 - __check-jamf-profiles__
-    This hook checks Jamf profiles for common issues. (Looks for EAs in a path containing jamf/profiles or jss/profiles.)
+    This hook checks Jamf profiles for common issues. (Looks for profiles in a path containing jamf/profiles or jss/profiles.)
 
 ### Munki
 
