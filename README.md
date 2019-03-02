@@ -13,7 +13,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: master
+    rev: v1.0.0
     hooks:
     -   id: check-plists
     # -   id: ...
