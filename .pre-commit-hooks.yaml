@@ -8,7 +8,7 @@
 
 - id: check-autopkg-recipes
   name: Check AutoPkg Recipes
-  description: This hook checks AutoPkg recipes to ensure they contain required top-level keys. (https://github.com/autopkg/autopkg/wiki/Recipe-Format)
+  description: This hook checks AutoPkg recipes to ensure they contain required top-level keys.
   entry: check-autopkg-recipes
   language: python
   files: '\.recipe$'

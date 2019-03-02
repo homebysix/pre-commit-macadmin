@@ -27,7 +27,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
     This hook checks AutoPkg recipe lists (in txt, plist, yaml, or json format) for common issues.
 
 - __check-autopkg-recipes__
-    This hook checks AutoPkg recipes to ensure they contain required top-level keys. (https://github.com/autopkg/autopkg/wiki/Recipe-Format)
+    This hook checks AutoPkg recipes to ensure they contain required top-level keys.
     - Specify your preferred AutoPkg recipe override prefix, if you wish to enforce it:  
         `[--override-prefix]` (default: `local.`)
 
