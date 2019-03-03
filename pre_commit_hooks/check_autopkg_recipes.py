@@ -15,8 +15,13 @@ def build_argument_parser():
     )
     parser.add_argument(
         "--override-prefix",
-        default="local",
-        help='Expected prefix for recipe override identifiers. (e.g. "com.yourcompany")',
+        default="local.",
+        help='Expected prefix for recipe override identifiers. (defaults to "local")',
+    )
+    parser.add_argument(
+        "--recipe-prefix",
+        default="com.github.",
+        help='Expected prefix for recipe identifiers. (defaults to "com.github")',
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
@@ -47,10 +52,19 @@ def main(argv=None):
             retval = 1
 
         if args.override_prefix and "Process" not in recipe:
-            override_prefix = args.override_prefix.rstrip(".")
+            override_prefix = args.override_prefix
             if not recipe.get("Identifier", "").startswith(override_prefix):
                 print(
-                    '{}: identifier does not start with "{}."'.format(
+                    '{}: override identifier does not start with "{}."'.format(
+                        filename, override_prefix
+                    )
+                )
+                retval = 1
+        if args.recipe_prefix and "Process" in recipe:
+            recipe_prefix = args.recipe_prefix
+            if not recipe.get("Identifier", "").startswith(recipe_prefix):
+                print(
+                    '{}: recipe identifier does not start with "{}."'.format(
                         filename, override_prefix
                     )
                 )
