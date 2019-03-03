@@ -65,7 +65,7 @@ def main(argv=None):
             if not recipe.get("Identifier", "").startswith(recipe_prefix):
                 print(
                     '{}: recipe identifier does not start with "{}."'.format(
-                        filename, override_prefix
+                        filename, recipe_prefix
                     )
                 )
                 retval = 1
