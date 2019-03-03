@@ -44,14 +44,6 @@
   files: '(jamf|jss)/profiles/.*\.(mobileconfig|plist)$'
   types: [text]
 
-- id: forbid-autopkg-overrides
-  name: Forbid AutoPkg Overrides
-  description: This hook prevents AutoPkg overrides from being added to the repo.
-  entry: forbid-autopkg-overrides
-  language: python
-  files: '\.recipe$'
-  types: [text]
-
 - id: check-munki-pkgsinfo
   name: Check Munki Pkginfo Files
   description: This hook checks Munki pkginfo files to ensure they are valid.
@@ -90,6 +82,22 @@
   entry: check-plists
   language: python
   files: '\.(plist|recipe|mobileconfig|pkginfo)$'
+  types: [text]
+
+- id: forbid-autopkg-overrides
+  name: Forbid AutoPkg Overrides
+  description: This hook prevents AutoPkg overrides from being added to the repo.
+  entry: forbid-autopkg-overrides
+  language: python
+  files: '\.recipe$'
+  types: [text]
+
+- id: forbid-autopkg-trust-info
+  name: Forbid AutoPkg Trust Info
+  description: This hook prevents AutoPkg recipes with trust info from being added to the repo.
+  entry: forbid-autopkg-trust-info
+  language: python
+  files: '\.recipe$'
   types: [text]
 
 - id: munki-makecatalogs
