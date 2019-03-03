@@ -34,6 +34,9 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 - __forbid-autopkg-overrides__
     This hook prevents AutoPkg overrides from being added to the repo.
 
+- __forbid-autopkg-trust-info__
+    This hook prevents AutoPkg recipes with trust info from being added to the repo.
+
 ### Jamf
 
 - __check-jamf-extension-attributes__

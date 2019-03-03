@@ -24,6 +24,7 @@ setup(
             "check-outset-scripts = pre_commit_hooks.check_outset_scripts:main",
             "check-plists = pre_commit_hooks.check_plists:main",
             "forbid-autopkg-overrides = pre_commit_hooks.forbid_autopkg_overrides:main",
+            "forbid-autopkg-trust-info = pre_commit_hooks.forbid_autopkg_trust_info:main",
             "munki-makecatalogs = pre_commit_hooks.munki_makecatalogs:main",
         ]
     },
