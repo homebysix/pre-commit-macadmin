@@ -32,7 +32,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
     This hook checks AutoPkg recipes to ensure they contain required top-level keys.
 
     - Specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce it:  
-        `[--override-prefix=com.yourcompany.autopkg.]` (default: `local.`)
+        `[--override-prefix=com.yourcompany.autopkg.]` (default: `local.`)  
         `[--recipe-prefix=com.github.yourusername.]` (default: `com.github.`)
 
 - __forbid-autopkg-overrides__
