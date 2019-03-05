@@ -64,9 +64,9 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
     This hook checks Munki pkginfo files to ensure they are valid.
 
     - Specify your preferred list of pkginfo categories, if you wish to enforce it:  
-        `['--categories=Productivity,Design,Utilities']`
+        `[--categories, Productivity, Design, Utilities, 'Web Browsers']`
     - Specify required pkginfo keys:  
-        `['--required-keys=category,description,developer,name,version']` (default: category, description, developer, name)
+        `[--required-keys, category, description, developer, name, version]` (default: description, name)
 
 - __check-munkiadmin-scripts__
 

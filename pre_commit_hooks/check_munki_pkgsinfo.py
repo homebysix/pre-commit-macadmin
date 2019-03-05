@@ -18,7 +18,7 @@ def build_argument_parser():
     parser.add_argument(
         "--required-keys",
         nargs="+",
-        default=["category", "description", "developer", "name"],
+        default=["description", "name"],
         help="List of required pkginfo keys.",
     )
     return parser
