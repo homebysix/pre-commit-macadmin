@@ -27,9 +27,10 @@ def main(argv=None):
     for filename in args.filenames:
         try:
             plist = plistlib.readPlist(filename)
-            if not isinstance(plist, dict):
-                print("{}: top level of plist should be type dict".format(filename))
-                retval = 1
+            # Possible future addition, but disabled for now.
+            # if not isinstance(plist, dict):
+            #     print("{}: top level of plist should be type dict".format(filename))
+            #     retval = 1
         except (ExpatError, ValueError) as err:
             print("{}: plist parsing error: {}".format(filename, err))
             retval = 1
