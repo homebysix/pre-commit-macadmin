@@ -6,6 +6,8 @@ import os
 import plistlib
 from xml.parsers.expat import ExpatError
 
+from pre_commit_hooks.util import validate_pkginfo_key_types
+
 
 def build_argument_parser():
     """Build and return the argument parser."""
@@ -18,7 +20,7 @@ def build_argument_parser():
     parser.add_argument(
         "--required-keys",
         nargs="+",
-        default=["category", "description", "developer", "name"],
+        default=["description", "name"],
         help="List of required pkginfo keys.",
     )
     return parser
@@ -53,6 +55,9 @@ def main(argv=None):
                     print('{}: missing required key "{}"'.format(filename, req_key))
                     retval = 1
                     break  # No need to continue checking this file
+
+        # Ensure pkginfo keys have expected types.
+        retval = validate_pkginfo_key_types(pkginfo, filename)
 
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
