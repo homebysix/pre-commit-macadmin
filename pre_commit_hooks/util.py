@@ -70,7 +70,7 @@ def validate_pkginfo_key_types(pkginfo, filename):
     }
 
     retval = 0
-    for pkginfo_key, expected_type in PKGINFO_TYPES.items():
+    for pkginfo_key, expected_type in pkginfo_types.items():
         if pkginfo_key in pkginfo:
             if not isinstance(pkginfo[pkginfo_key], expected_type):
                 print(
