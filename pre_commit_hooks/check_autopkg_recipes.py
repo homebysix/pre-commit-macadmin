@@ -6,6 +6,8 @@ import argparse
 import plistlib
 from xml.parsers.expat import ExpatError
 
+from pre_commit_hooks.util import validate_pkginfo_key_types
+
 
 def build_argument_parser():
     """Build and return the argument parser."""
@@ -69,6 +71,10 @@ def main(argv=None):
                     )
                 )
                 retval = 1
+
+        input = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
+        if input and "pkginfo" in input:
+            retval = validate_pkginfo_key_types(input["pkginfo"], filename)
 
     return retval
 
