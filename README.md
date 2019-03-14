@@ -13,7 +13,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.0
+    rev: v1.0.4
     hooks:
     -   id: check-plists
     # -   id: ...
@@ -63,6 +63,8 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook checks Munki pkginfo files to ensure they are valid.
 
+    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it:  
+        `[--catalogs, testing, stable]`
     - Specify your preferred list of pkginfo categories, if you wish to enforce it:  
         `[--categories, Productivity, Design, Utilities, 'Web Browsers']`
     - Specify required pkginfo keys:  
