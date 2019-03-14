@@ -17,6 +17,7 @@ def build_argument_parser():
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     parser.add_argument("--categories", nargs="+", help="List of approved categories.")
+    parser.add_argument("--catalogs", nargs="+", help="List of approved catalogs.")
     parser.add_argument(
         "--required-keys",
         nargs="+",
@@ -67,6 +68,17 @@ def main(argv=None):
                 )
             )
             retval = 1
+
+        # Check for rogue catalogs.
+        if args.catalogs:
+            for catalog in pkginfo.get("catalogs"):
+                if catalog not in args.catalogs:
+                    print(
+                        '{}: catalog "{}" is not in approved list'.format(
+                            filename, catalog
+                        )
+                    )
+                    retval = 1
 
         # Check for pkg filenames showing signs of duplicate imports.
         if pkginfo.get("installer_item_location", "").endswith(tuple(dupe_suffixes)):

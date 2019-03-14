@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 def validate_pkginfo_key_types(pkginfo, filename):
-    """Main process."""
+    """Validation of pkginfo key types. Used for AutoPkg- and Munki-related hooks."""
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
     # Source: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
