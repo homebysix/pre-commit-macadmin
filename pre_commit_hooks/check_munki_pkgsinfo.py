@@ -15,15 +15,15 @@ def build_argument_parser():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     parser.add_argument("--categories", nargs="+", help="List of approved categories.")
     parser.add_argument("--catalogs", nargs="+", help="List of approved catalogs.")
     parser.add_argument(
         "--required-keys",
         nargs="+",
         default=["description", "name"],
-        help="List of required pkginfo keys.",
+        help="List of required top-level keys.",
     )
+    parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
 
 
