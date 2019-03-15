@@ -97,6 +97,30 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook checks XML property list (plist) files for basic syntax errors.
 
+## Note about combining arguments
+
+When combining arguments that take lists (for example: `--required-keys`, `--catalogs`, and `--categories`), only the _last_ list needs to have a trailing `--`. For example, if you use the check-munki-pkgsinfo hook with only the `--catalogs` argument, your yaml config would look like this:
+
+```
+-   repo: https://github.com/homebysix/pre-commit-macadmin
+    rev: v1.0.5
+    hooks:
+    -   id: check-munki-pkgsinfo
+        args: ['--catalogs', 'testing', 'stable', '--']
+```
+
+But if you also use the `--categories` argument, you would move the trailing `--` to the end, after all the lists, like this:
+
+```
+-   repo: https://github.com/homebysix/pre-commit-macadmin
+    rev: v1.0.5
+    hooks:
+    -   id: check-munki-pkgsinfo
+        args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
+```
+
+The `--` only serves as a signal to the hook that the list of arguments is complete, and is only needed for "list" type arguments.
+
 ## Recommendations
 
 If you find my hooks useful, you may also want to use one or more of the Python, Markdown, and Git-related hooks listed here:
