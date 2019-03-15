@@ -121,6 +121,21 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 The `--` only serves as a signal to the hook that the list of arguments is complete, and is only needed for "list" type arguments.
 
+If it looks better to your eye, feel free to use a multi-line list for long arguments:
+
+```
+-   repo: https://github.com/homebysix/pre-commit-macadmin
+    rev: v1.0.5
+    hooks:
+    -   id: check-munki-pkgsinfo
+        args: [
+            '--required-keys', 'description', 'name', 'developer', 'category', 'version',
+            '--catalogs', 'testing', 'stable',
+            '--categories', 'Communication', 'Design', 'Engineering', 'macOS', 'Printers',
+                'Productivity', 'Security',  'Utilities', 'Web Browsers',
+            '--']
+```
+
 ## Recommendations
 
 If you find my hooks useful, you may also want to use one or more of the Python, Markdown, and Git-related hooks listed here:
