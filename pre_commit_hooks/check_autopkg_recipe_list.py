@@ -45,7 +45,7 @@ def main(argv=None):
         elif filename.endswith((".yaml", ".yml")):
             try:
                 with open(filename, "r") as openfile:
-                    recipe_list = yaml.load(openfile)
+                    recipe_list = yaml.load(openfile, Loader=yaml.FullLoader)
             except Exception as err:
                 print("{}: yaml parsing error: {}".format(filename, err))
                 retval = 1
