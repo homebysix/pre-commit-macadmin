@@ -19,9 +19,11 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
     # -   id: ...
 ```
 
+After adding a hook to your pre-commit config, it's not a bad idea to run `pre-commit autoupdate` to ensure you have the latest version of the hooks.
+
 ## Hooks available
 
-### AutoPkg
+### [AutoPkg](https://github.com/autopkg/autopkg)
 
 - __check-autopkg-recipe-list__
 
@@ -45,7 +47,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook prevents AutoPkg recipes with trust info from being added to the repo.
 
-### Jamf
+### [Jamf](https://www.jamf.com/)
 
 - __check-jamf-extension-attributes__
 
@@ -59,7 +61,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook checks Jamf profiles for common issues. (Looks for profiles in a path containing jamf/profiles or jss/profiles.)
 
-### Munki
+### [Munki](https://github.com/munki/munki)
 
 - __check-munki-pkgsinfo__
 
@@ -77,15 +79,11 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook ensures MunkiAdmin scripts are executable.
 
-- __check-munkipkg-buildinfo__
-
-    This hook checks MunkiPkg build-info files to ensure they are valid.
-
 - __munki-makecatalogs__
 
     This hook runs the "makecatalogs" command to ensure all referenced packages are present and catalogs are up to date.
 
-### Outset
+### [Outset](https://github.com/chilcote/outset)
 
 - __check-outset-scripts__
 
@@ -96,6 +94,10 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 - __check-plists__
 
     This hook checks XML property list (plist) files for basic syntax errors.
+
+- __check-munkipkg-buildinfo__
+
+    This hook checks [MunkiPkg](https://github.com/munki/munki-pkg) build-info files to ensure they are valid.
 
 ## Note about combining arguments
 
