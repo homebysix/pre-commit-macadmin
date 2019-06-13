@@ -127,6 +127,19 @@ def main(argv=None):
                 )
                 retval = 1
 
+        # Ensure the items_to_copy list does not include trailing slashes.
+        # Credit to @bruienne for this idea.
+        # https://gist.github.com/bruienne/9baa958ec6dbe8f09d94#file-munki_fuzzinator-py-L211-L219
+        if "items_to_copy" in pkginfo:
+            for item_to_copy in pkginfo.get("items_to_copy"):
+                if item_to_copy.get("destination_path").endswith("/"):
+                    print(
+                        '{}: has an items_to_copy with a trailing slash: "{}"'.format(
+                            filename, item_to_copy["destination_path"]
+                        )
+                    )
+                    retval = 1
+
     return retval
 
 
