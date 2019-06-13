@@ -31,7 +31,7 @@ def main(argv=None):
     """Main process."""
 
     # Typical extensions for installer packages.
-    pkg_exts = ("pkg", "dmg", "zip")
+    pkg_exts = ("pkg", "dmg")
     dupe_suffixes = ["__{}.{}".format(i, ext) for ext in pkg_exts for i in range(1, 9)]
 
     # RestartAction values that obviate the need to check blocking applications.
