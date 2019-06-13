@@ -1,5 +1,6 @@
 #!/usr/bin/python
-"""This hook prevents AutoPkg recipes with trust info from being added to the repo."""
+"""This hook prevents AutoPkg recipes with trust info from being added to the
+repo."""
 
 import argparse
 import plistlib

@@ -13,15 +13,17 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.5
+    rev: v1.1.0
     hooks:
     -   id: check-plists
     # -   id: ...
 ```
 
+After adding a hook to your pre-commit config, it's not a bad idea to run `pre-commit autoupdate` to ensure you have the latest version of the hooks.
+
 ## Hooks available
 
-### AutoPkg
+### [AutoPkg](https://github.com/autopkg/autopkg)
 
 - __check-autopkg-recipe-list__
 
@@ -31,10 +33,10 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook checks AutoPkg recipes to ensure they contain required top-level keys.
 
-    - Specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:  
-        `args: ['--override-prefix=com.yourcompany.autopkg.']`  
-        (default: `local.`)  
-        `args: ['--recipe-prefix=com.github.yourusername.']`  
+    - Specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:
+        `args: ['--override-prefix=com.yourcompany.autopkg.']`
+        (default: `local.`)
+        `args: ['--recipe-prefix=com.github.yourusername.']`
         (default: `com.github.`)
 
 - __forbid-autopkg-overrides__
@@ -45,7 +47,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook prevents AutoPkg recipes with trust info from being added to the repo.
 
-### Jamf
+### [Jamf](https://www.jamf.com/)
 
 - __check-jamf-extension-attributes__
 
@@ -59,33 +61,29 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook checks Jamf profiles for common issues. (Looks for profiles in a path containing jamf/profiles or jss/profiles.)
 
-### Munki
+### [Munki](https://github.com/munki/munki)
 
 - __check-munki-pkgsinfo__
 
     This hook checks Munki pkginfo files to ensure they are valid.
 
-    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:  
+    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:
         `args: ['--catalogs', 'testing', 'stable', '--']`
-    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:  
+    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:
         `args: ['--categories', 'Productivity', 'Design', 'Utilities', 'Web Browsers', '--']`
-    - Specify required pkginfo keys, followed by `--`:  
-        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`  
+    - Specify required pkginfo keys, followed by `--`:
+        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`
         (default: description, name)
 
 - __check-munkiadmin-scripts__
 
     This hook ensures MunkiAdmin scripts are executable.
 
-- __check-munkipkg-buildinfo__
-
-    This hook checks MunkiPkg build-info files to ensure they are valid.
-
 - __munki-makecatalogs__
 
     This hook runs the "makecatalogs" command to ensure all referenced packages are present and catalogs are up to date.
 
-### Outset
+### [Outset](https://github.com/chilcote/outset)
 
 - __check-outset-scripts__
 
@@ -97,13 +95,17 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
     This hook checks XML property list (plist) files for basic syntax errors.
 
+- __check-munkipkg-buildinfo__
+
+    This hook checks [MunkiPkg](https://github.com/munki/munki-pkg) build-info files to ensure they are valid.
+
 ## Note about combining arguments
 
 When combining arguments that take lists (for example: `--required-keys`, `--catalogs`, and `--categories`), only the _last_ list needs to have a trailing `--`. For example, if you use the check-munki-pkgsinfo hook with only the `--catalogs` argument, your yaml config would look like this:
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.5
+    rev: v1.1.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--']
@@ -113,13 +115,28 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.5
+    rev: v1.1.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
 ```
 
 The `--` only serves as a signal to the hook that the list of arguments is complete, and is only needed for "list" type arguments.
+
+If it looks better to your eye, feel free to use a multi-line list for long arguments:
+
+```
+-   repo: https://github.com/homebysix/pre-commit-macadmin
+    rev: v1.1.0
+    hooks:
+    -   id: check-munki-pkgsinfo
+        args: [
+            '--required-keys', 'description', 'name', 'developer', 'category', 'version',
+            '--catalogs', 'testing', 'stable',
+            '--categories', 'Communication', 'Design', 'Engineering', 'macOS', 'Printers',
+                'Productivity', 'Security',  'Utilities', 'Web Browsers',
+            '--']
+```
 
 ## Recommendations
 

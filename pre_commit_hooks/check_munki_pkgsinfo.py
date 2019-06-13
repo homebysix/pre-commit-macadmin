@@ -31,7 +31,7 @@ def main(argv=None):
     """Main process."""
 
     # Typical extensions for installer packages.
-    pkg_exts = ("pkg", "dmg", "zip")
+    pkg_exts = ("pkg", "dmg")
     dupe_suffixes = ["__{}.{}".format(i, ext) for ext in pkg_exts for i in range(1, 9)]
 
     # RestartAction values that obviate the need to check blocking applications.
@@ -58,12 +58,13 @@ def main(argv=None):
                     break  # No need to continue checking this file
 
         # Ensure pkginfo keys have expected types.
-        retval = validate_pkginfo_key_types(pkginfo, filename)
+        if not validate_pkginfo_key_types(pkginfo, filename):
+            retval = 1
 
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
             print(
-                '{}: category "{}" is not in approved list'.format(
+                '{}: category "{}" is not in list of approved categories'.format(
                     filename, pkginfo.get("category")
                 )
             )
@@ -126,6 +127,19 @@ def main(argv=None):
                     )
                 )
                 retval = 1
+
+        # Ensure the items_to_copy list does not include trailing slashes.
+        # Credit to @bruienne for this idea.
+        # https://gist.github.com/bruienne/9baa958ec6dbe8f09d94#file-munki_fuzzinator-py-L211-L219
+        if "items_to_copy" in pkginfo:
+            for item_to_copy in pkginfo.get("items_to_copy"):
+                if item_to_copy.get("destination_path").endswith("/"):
+                    print(
+                        '{}: has an items_to_copy with a trailing slash: "{}"'.format(
+                            filename, item_to_copy["destination_path"]
+                        )
+                    )
+                    retval = 1
 
     return retval
 

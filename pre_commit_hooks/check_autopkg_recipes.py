@@ -1,6 +1,9 @@
 #!/usr/bin/python
-"""This hook checks AutoPkg recipes to ensure they contain required top-level keys.
-(https://github.com/autopkg/autopkg/wiki/Recipe-Format)"""
+"""This hook checks AutoPkg recipes to ensure they contain required top-level
+keys.
+
+(https://github.com/autopkg/autopkg/wiki/Recipe-Format)
+"""
 
 import argparse
 import plistlib
@@ -74,7 +77,8 @@ def main(argv=None):
 
         input = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
         if input and "pkginfo" in input:
-            retval = validate_pkginfo_key_types(input["pkginfo"], filename)
+            if not validate_pkginfo_key_types(input["pkginfo"], filename):
+                retval = 1
 
     return retval
 

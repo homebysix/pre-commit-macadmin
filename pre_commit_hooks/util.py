@@ -4,7 +4,10 @@ from datetime import datetime
 
 
 def validate_pkginfo_key_types(pkginfo, filename):
-    """Validation of pkginfo key types. Used for AutoPkg- and Munki-related hooks."""
+    """Validation of pkginfo key types.
+
+    Used for AutoPkg- and Munki-related hooks.
+    """
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
     # Source: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
@@ -69,7 +72,7 @@ def validate_pkginfo_key_types(pkginfo, filename):
         "version": str,
     }
 
-    retval = 0
+    retbool = False
     for pkginfo_key, expected_type in pkginfo_types.items():
         if pkginfo_key in pkginfo:
             if not isinstance(pkginfo[pkginfo_key], expected_type):
@@ -78,6 +81,6 @@ def validate_pkginfo_key_types(pkginfo, filename):
                         filename, pkginfo_key, expected_type, type(pkginfo[pkginfo_key])
                     )
                 )
-                retval = 1
+                retbool = True
 
-    return retval
+    return retbool
