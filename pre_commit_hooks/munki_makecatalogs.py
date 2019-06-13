@@ -1,5 +1,6 @@
 #!/usr/bin/python
-"""This hook runs the "makecatalogs" command to ensure all referenced packages are present and catalogs are up to date."""
+"""This hook runs the "makecatalogs" command to ensure all referenced packages
+are present and catalogs are up to date."""
 
 import argparse
 import os

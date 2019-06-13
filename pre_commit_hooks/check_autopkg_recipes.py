@@ -1,6 +1,9 @@
 #!/usr/bin/python
-"""This hook checks AutoPkg recipes to ensure they contain required top-level keys.
-(https://github.com/autopkg/autopkg/wiki/Recipe-Format)"""
+"""This hook checks AutoPkg recipes to ensure they contain required top-level
+keys.
+
+(https://github.com/autopkg/autopkg/wiki/Recipe-Format)
+"""
 
 import argparse
 import plistlib
