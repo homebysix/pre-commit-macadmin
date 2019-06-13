@@ -58,12 +58,13 @@ def main(argv=None):
                     break  # No need to continue checking this file
 
         # Ensure pkginfo keys have expected types.
-        retval = validate_pkginfo_key_types(pkginfo, filename)
+        if not validate_pkginfo_key_types(pkginfo, filename):
+            retval = 1
 
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
             print(
-                '{}: category "{}" is not in approved list'.format(
+                '{}: category "{}" is not in list of approved categories'.format(
                     filename, pkginfo.get("category")
                 )
             )

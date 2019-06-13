@@ -74,7 +74,8 @@ def main(argv=None):
 
         input = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
         if input and "pkginfo" in input:
-            retval = validate_pkginfo_key_types(input["pkginfo"], filename)
+            if not validate_pkginfo_key_types(input["pkginfo"], filename):
+                retval = 1
 
     return retval
 
