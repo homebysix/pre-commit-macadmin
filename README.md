@@ -13,7 +13,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.5
+    rev: v1.1.0
     hooks:
     -   id: check-plists
     # -   id: ...
@@ -33,10 +33,10 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook checks AutoPkg recipes to ensure they contain required top-level keys.
 
-    - Specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:  
-        `args: ['--override-prefix=com.yourcompany.autopkg.']`  
-        (default: `local.`)  
-        `args: ['--recipe-prefix=com.github.yourusername.']`  
+    - Specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:
+        `args: ['--override-prefix=com.yourcompany.autopkg.']`
+        (default: `local.`)
+        `args: ['--recipe-prefix=com.github.yourusername.']`
         (default: `com.github.`)
 
 - __forbid-autopkg-overrides__
@@ -67,12 +67,12 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook checks Munki pkginfo files to ensure they are valid.
 
-    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:  
+    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:
         `args: ['--catalogs', 'testing', 'stable', '--']`
-    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:  
+    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:
         `args: ['--categories', 'Productivity', 'Design', 'Utilities', 'Web Browsers', '--']`
-    - Specify required pkginfo keys, followed by `--`:  
-        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`  
+    - Specify required pkginfo keys, followed by `--`:
+        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`
         (default: description, name)
 
 - __check-munkiadmin-scripts__
@@ -105,7 +105,7 @@ When combining arguments that take lists (for example: `--required-keys`, `--cat
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.5
+    rev: v1.1.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--']
@@ -115,7 +115,7 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.5
+    rev: v1.1.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
@@ -127,7 +127,7 @@ If it looks better to your eye, feel free to use a multi-line list for long argu
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.0.5
+    rev: v1.1.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: [
