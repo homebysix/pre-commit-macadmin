@@ -55,6 +55,7 @@ def main(argv=None):
         except (ExpatError, ValueError) as err:
             print("{}: plist parsing error: {}".format(filename, err))
             retval = 1
+            break  # No need to continue checking this file
 
         if args.override_prefix and "Process" not in recipe:
             override_prefix = args.override_prefix
