@@ -132,9 +132,9 @@ def main(argv=None):
                 )
                 retval = 1
 
-        input = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
-        if input and "pkginfo" in input:
-            if not validate_pkginfo_key_types(input["pkginfo"], filename):
+        input_key = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
+        if input_key and "pkginfo" in input_key:
+            if not validate_pkginfo_key_types(input_key["pkginfo"], filename):
                 retval = 1
 
         # Warn about comments that would be lost during `plutil -convert xml1`
