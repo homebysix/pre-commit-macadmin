@@ -167,8 +167,8 @@ def main(argv=None):
             recipe_text = openfile.read()
             if "<!--" in recipe_text and "-->" in recipe_text:
                 print(
-                    "{}: WARNING: <!-- --> style comments will be lost during plutil "
-                    "conversion.".format(filename)
+                    "{}: WARNING: Recommend converting from <!-- --> style comments to a "
+                    "Comment key where needed.".format(filename)
                 )
 
     return retval
