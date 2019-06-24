@@ -13,7 +13,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.1.3
+    rev: v1.1.4
     hooks:
     -   id: check-plists
     # -   id: ...
@@ -105,7 +105,7 @@ When combining arguments that take lists (for example: `--required-keys`, `--cat
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.1.3
+    rev: v1.1.4
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--']
@@ -115,7 +115,7 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.1.3
+    rev: v1.1.4
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
@@ -127,7 +127,7 @@ If it looks better to your eye, feel free to use a multi-line list for long argu
 
 ```
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.1.3
+    rev: v1.1.4
     hooks:
     -   id: check-munki-pkgsinfo
         args: [
