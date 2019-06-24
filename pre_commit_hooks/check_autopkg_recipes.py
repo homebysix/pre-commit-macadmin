@@ -22,12 +22,19 @@ def build_argument_parser():
     parser.add_argument(
         "--override-prefix",
         default="local.",
-        help='Expected prefix for recipe override identifiers. (defaults to "local")',
+        help='Expected prefix for recipe override identifiers (defaults to "local").',
     )
     parser.add_argument(
         "--recipe-prefix",
         default="com.github.",
-        help='Expected prefix for recipe identifiers. (defaults to "com.github")',
+        help='Expected prefix for recipe identifiers (defaults to "com.github").',
+    )
+    parser.add_argument(
+        "--ignore-min-vers-before",
+        default="1.0.0",
+        help="Ignore MinimumVersion/processor mismatches below this version of AutoPkg "
+        '(defaults to "1.0.0").\nSet to 0.1.0 to warn about all '
+        "MinimumVersion/processor mismatches.",
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
@@ -83,7 +90,7 @@ def main(argv=None):
                 retval = 1
 
         # Ensure MinimumVersion is set appropriately for the processors used.
-        processor_min_versions = {
+        proc_min_versions = {
             "AppPkgCreator": "1.0.0",
             "BrewCaskInfoProvider": "0.2.5",
             "CodeSignatureVerifier": "0.3.1",
@@ -118,17 +125,51 @@ def main(argv=None):
             "Versioner": "0.1.0",
         }
         if "Process" in recipe and "MinimumVersion" in recipe:
-            for proc in processor_min_versions:
+            for proc in [
+                x
+                for x in proc_min_versions
+                if LooseVersion(proc_min_versions[x])
+                >= LooseVersion(args.ignore_min_vers_before)
+            ]:
                 if proc in [x["Processor"] for x in recipe["Process"]]:
                     if LooseVersion(recipe["MinimumVersion"]) < LooseVersion(
-                        processor_min_versions[proc]
+                        proc_min_versions[proc]
                     ):
                         print(
-                            "{}: {} processor requires minimum AutoPkg version {}".format(
-                                filename, proc, processor_min_versions[proc]
-                            )
+                            "{}: {} processor requires minimum AutoPkg "
+                            "version {}".format(filename, proc, proc_min_versions[proc])
                         )
                         retval = 1
+
+        # Ensure %NAME% is not used in app paths that should be hard coded.
+        no_name_var_in_proc_args = (
+            "CodeSignatureVerifier",
+            "Versioner",
+            "PkgPayloadUnpacker",
+            "FlatPkgUnpacker",
+            "FileFinder",
+            "Copier",
+            "AppDmgVersioner",
+            "InstallFromDMG",
+        )
+        for process in recipe.get("Process"):
+            if process["Processor"] in no_name_var_in_proc_args:
+                for _, argvalue in process["Arguments"].items():
+                    if isinstance(argvalue, str) and "%NAME%.app" in argvalue:
+                        print(
+                            "{}: Use actual app name instead of %NAME%.app in {} "
+                            "processor argument.".format(filename, process["Processor"])
+                        )
+                        retval = 1
+
+        # Warn about comments that would be lost during `plutil -convert xml1`
+        with open(filename, "r") as openfile:
+            recipe_text = openfile.read()
+            if "<!--" in recipe_text and "-->" in recipe_text:
+                print(
+                    "{}: WARNING: Recommend converting from <!-- --> style comments to a "
+                    "Comment key where needed.".format(filename)
+                )
 
     return retval
 
