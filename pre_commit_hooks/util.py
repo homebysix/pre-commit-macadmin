@@ -3,6 +3,16 @@
 from datetime import datetime
 
 
+def validate_required_keys(plist, filename, required_keys):
+    """Verifies that required_keys are present in dictionary plist."""
+    passed = True
+    for req_key in required_keys:
+        if not plist.get(req_key):
+            print("{}: missing required key {}".format(filename, req_key))
+            passed = False
+    return passed
+
+
 def validate_pkginfo_key_types(pkginfo, filename):
     """Validation of pkginfo key types.
 

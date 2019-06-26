@@ -7,10 +7,10 @@ keys.
 
 import argparse
 import plistlib
-from xml.parsers.expat import ExpatError
 from distutils.version import LooseVersion
+from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import validate_pkginfo_key_types
+from pre_commit_hooks.util import validate_pkginfo_key_types, validate_required_keys
 
 # Processors for which a minimum version of AutoPkg is required.
 PROC_MIN_VERSIONS = {
@@ -91,9 +91,6 @@ def build_argument_parser():
 def main(argv=None):
     """Main process."""
 
-    # Top level keys that all AutoPkg recipes should contain.
-    required_keys = ("Identifier", "Input")
-
     # Parse command line arguments.
     argparser = build_argument_parser()
     args = argparser.parse_args(argv)
@@ -102,14 +99,15 @@ def main(argv=None):
     for filename in args.filenames:
         try:
             recipe = plistlib.readPlist(filename)
-            for req_key in required_keys:
-                if req_key not in recipe:
-                    print("{}: missing required key {}".format(filename, req_key))
-                    retval = 1
-                    break  # No need to continue checking this file
 
         except (ExpatError, ValueError) as err:
             print("{}: plist parsing error: {}".format(filename, err))
+            retval = 1
+            break  # No need to continue checking this file
+
+        # Top level keys that all AutoPkg recipes should contain.
+        required_keys = ("Identifier", "Input")
+        if not validate_required_keys(recipe, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file
 
