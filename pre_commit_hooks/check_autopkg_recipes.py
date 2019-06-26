@@ -148,6 +148,20 @@ def main(argv=None):
 
         # Processor checks.
         if "Process" in recipe:
+
+            # Ensure all items in Process array have a "Processor" specified.
+            missing_processor_keys = [
+                x for x in recipe["Process"] if "Processor" not in x
+            ]
+            if missing_processor_keys:
+                for missing_proc in missing_processor_keys:
+                    print(
+                        '{}: Item in processor array is missing "Processor" key: {}'.format(
+                            filename, missing_proc
+                        )
+                    )
+                retval = 1
+
             # Ensure MinimumVersion is set appropriately for the processors used.
             if "MinimumVersion" in recipe:
                 for proc in [
