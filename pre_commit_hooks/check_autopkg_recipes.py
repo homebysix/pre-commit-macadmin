@@ -135,6 +135,8 @@ def main(argv=None):
             if not validate_pkginfo_key_types(input_key["pkginfo"], filename):
                 retval = 1
 
+            # TODO: Additional pkginfo checks here.
+
         # Warn about comments that would be lost during `plutil -convert xml1`
         with open(filename, "r") as openfile:
             recipe_text = openfile.read()
