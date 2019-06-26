@@ -113,7 +113,7 @@ def main(argv=None):
 
         if args.override_prefix and "Process" not in recipe:
             override_prefix = args.override_prefix
-            if not recipe.get("Identifier", "").startswith(override_prefix):
+            if not recipe["Identifier"].startswith(override_prefix):
                 print(
                     '{}: override identifier does not start with "{}"'.format(
                         filename, override_prefix
@@ -122,7 +122,7 @@ def main(argv=None):
                 retval = 1
         if args.recipe_prefix and "Process" in recipe:
             recipe_prefix = args.recipe_prefix
-            if not recipe.get("Identifier", "").startswith(recipe_prefix):
+            if not recipe["Identifier"].startswith(recipe_prefix):
                 print(
                     '{}: recipe identifier does not start with "{}"'.format(
                         filename, recipe_prefix
