@@ -12,54 +12,6 @@ from xml.parsers.expat import ExpatError
 
 from pre_commit_hooks.util import validate_pkginfo_key_types, validate_required_keys
 
-# Processors for which a minimum version of AutoPkg is required.
-PROC_MIN_VERSIONS = {
-    "AppPkgCreator": "1.0.0",
-    "BrewCaskInfoProvider": "0.2.5",
-    "CodeSignatureVerifier": "0.3.1",
-    "CURLDownloader": "0.5.1",
-    "CURLTextSearcher": "0.5.1",
-    "DeprecationWarning": "1.1.0",
-    "EndOfCheckPhase": "0.1.0",
-    "FileFinder": "0.2.3",
-    "FileMover": "0.2.9",
-    "FlatPkgPacker": "0.2.4",
-    "FlatPkgUnpacker": "0.1.0",
-    "GitHubReleasesInfoProvider": "0.5.0",
-    "Installer": "0.4.0",
-    "InstallFromDMG": "0.4.0",
-    "MunkiCatalogBuilder": "0.1.0",
-    "MunkiImporter": "0.1.0",
-    "MunkiInstallsItemsCreator": "0.1.0",
-    "MunkiPkginfoMerger": "0.1.0",
-    "MunkiSetDefaultCatalog": "0.4.2",
-    "PackageRequired": "0.5.1",
-    "PathDeleter": "0.1.0",
-    "PkgCopier": "0.1.0",
-    "PkgExtractor": "0.1.0",
-    "PkgPayloadUnpacker": "0.1.0",
-    "PlistEditor": "0.1.0",
-    "PlistReader": "0.2.5",
-    "SparkleUpdateInfoProvider": "0.1.0",
-    "StopProcessingIf": "0.1.0",
-    "Symlinker": "0.1.0",
-    "Unarchiver": "0.1.0",
-    "URLTextSearcher": "0.2.9",
-    "Versioner": "0.1.0",
-}
-
-# Processors for which %NAME%.app should not be present in the arguments.
-NO_NAME_VAR_IN_PROC_ARGS = (
-    "CodeSignatureVerifier",
-    "Versioner",
-    "PkgPayloadUnpacker",
-    "FlatPkgUnpacker",
-    "FileFinder",
-    "Copier",
-    "AppDmgVersioner",
-    "InstallFromDMG",
-)
-
 
 def build_argument_parser():
     """Build and return the argument parser."""
@@ -86,6 +38,23 @@ def build_argument_parser():
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
+
+
+def validate_processor_keys(process, filename):
+    """Ensure all items in Process array have a "Processor" specified."""
+
+    passed = True
+    missing_processor_keys = [x for x in process if "Processor" not in x]
+    if missing_processor_keys:
+        for missing_proc in missing_processor_keys:
+            print(
+                '{}: Item in processor array is missing "Processor" key: {}'.format(
+                    filename, missing_proc
+                )
+            )
+        passed = False
+
+    return passed
 
 
 def validate_endofcheckphase(process, filename):
@@ -118,6 +87,91 @@ def validate_endofcheckphase(process, filename):
             "not before.".format(filename)
         )
         passed = False
+
+    return passed
+
+
+def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename):
+    """Ensure MinimumVersion is set appropriately for the processors used."""
+
+    # Processors for which a minimum version of AutoPkg is required.
+    proc_min_versions = {
+        "AppPkgCreator": "1.0.0",
+        "BrewCaskInfoProvider": "0.2.5",
+        "CodeSignatureVerifier": "0.3.1",
+        "CURLDownloader": "0.5.1",
+        "CURLTextSearcher": "0.5.1",
+        "DeprecationWarning": "1.1.0",
+        "EndOfCheckPhase": "0.1.0",
+        "FileFinder": "0.2.3",
+        "FileMover": "0.2.9",
+        "FlatPkgPacker": "0.2.4",
+        "FlatPkgUnpacker": "0.1.0",
+        "GitHubReleasesInfoProvider": "0.5.0",
+        "Installer": "0.4.0",
+        "InstallFromDMG": "0.4.0",
+        "MunkiCatalogBuilder": "0.1.0",
+        "MunkiImporter": "0.1.0",
+        "MunkiInstallsItemsCreator": "0.1.0",
+        "MunkiPkginfoMerger": "0.1.0",
+        "MunkiSetDefaultCatalog": "0.4.2",
+        "PackageRequired": "0.5.1",
+        "PathDeleter": "0.1.0",
+        "PkgCopier": "0.1.0",
+        "PkgExtractor": "0.1.0",
+        "PkgPayloadUnpacker": "0.1.0",
+        "PlistEditor": "0.1.0",
+        "PlistReader": "0.2.5",
+        "SparkleUpdateInfoProvider": "0.1.0",
+        "StopProcessingIf": "0.1.0",
+        "Symlinker": "0.1.0",
+        "Unarchiver": "0.1.0",
+        "URLTextSearcher": "0.2.9",
+        "Versioner": "0.1.0",
+    }
+
+    passed = True
+    for proc in [
+        x
+        for x in proc_min_versions
+        if LooseVersion(proc_min_versions[x]) >= LooseVersion(ignore_min_vers_before)
+    ]:
+        if proc in [x["Processor"] for x in process]:
+            if LooseVersion(min_vers) < LooseVersion(proc_min_versions[proc]):
+                print(
+                    "{}: {} processor requires minimum AutoPkg "
+                    "version {}".format(filename, proc, proc_min_versions[proc])
+                )
+                passed = False
+
+    return passed
+
+
+def validate_no_var_in_app_path(process, filename):
+    """Ensure %NAME% is not used in app paths that should be hard coded."""
+
+    # Processors for which %NAME%.app should not be present in the arguments.
+    no_name_var_in_proc_args = (
+        "CodeSignatureVerifier",
+        "Versioner",
+        "PkgPayloadUnpacker",
+        "FlatPkgUnpacker",
+        "FileFinder",
+        "Copier",
+        "AppDmgVersioner",
+        "InstallFromDMG",
+    )
+
+    passed = True
+    for process in process:
+        if process["Processor"] in no_name_var_in_proc_args:
+            for _, argvalue in process["Arguments"].items():
+                if isinstance(argvalue, str) and "%NAME%.app" in argvalue:
+                    print(
+                        "{}: Use actual app name instead of %NAME%.app in {} "
+                        "processor argument.".format(filename, process["Processor"])
+                    )
+                    passed = False
 
     return passed
 
@@ -182,55 +236,23 @@ def main(argv=None):
 
         # Processor checks.
         if "Process" in recipe:
+            process = recipe["Process"]
 
-            # Ensure all items in Process array have a "Processor" specified.
-            missing_processor_keys = [
-                x for x in recipe["Process"] if "Processor" not in x
-            ]
-            if missing_processor_keys:
-                for missing_proc in missing_processor_keys:
-                    print(
-                        '{}: Item in processor array is missing "Processor" key: {}'.format(
-                            filename, missing_proc
-                        )
-                    )
+            if not validate_processor_keys(process, filename):
                 retval = 1
 
-            if not validate_endofcheckphase(recipe["Process"], filename):
+            if not validate_endofcheckphase(process, filename):
                 retval = 1
 
-            # Ensure MinimumVersion is set appropriately for the processors used.
+            if not validate_no_var_in_app_path(process, filename):
+                retval = 1
+
             if "MinimumVersion" in recipe:
-                for proc in [
-                    x
-                    for x in PROC_MIN_VERSIONS
-                    if LooseVersion(PROC_MIN_VERSIONS[x])
-                    >= LooseVersion(args.ignore_min_vers_before)
-                ]:
-                    if proc in [x["Processor"] for x in recipe["Process"]]:
-                        if LooseVersion(recipe["MinimumVersion"]) < LooseVersion(
-                            PROC_MIN_VERSIONS[proc]
-                        ):
-                            print(
-                                "{}: {} processor requires minimum AutoPkg "
-                                "version {}".format(
-                                    filename, proc, PROC_MIN_VERSIONS[proc]
-                                )
-                            )
-                            retval = 1
-
-            # Ensure %NAME% is not used in app paths that should be hard coded.
-            for process in recipe["Process"]:
-                if process["Processor"] in NO_NAME_VAR_IN_PROC_ARGS:
-                    for _, argvalue in process["Arguments"].items():
-                        if isinstance(argvalue, str) and "%NAME%.app" in argvalue:
-                            print(
-                                "{}: Use actual app name instead of %NAME%.app in {} "
-                                "processor argument.".format(
-                                    filename, process["Processor"]
-                                )
-                            )
-                            retval = 1
+                min_vers = recipe["MinimumVersion"]
+                if not validate_minimumversion(
+                    process, min_vers, args.ignore_min_vers_before, filename
+                ):
+                    retval = 1
 
     return retval
 
