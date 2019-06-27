@@ -20,6 +20,41 @@ def build_argument_parser():
     return parser
 
 
+def validate_buildinfo_key_types(buildinfo, filename):
+    """Ensure build-info files contain the proper types."""
+
+    # Pkginfo keys and their known types. Omitted keys are left unvalidated.
+    # Source: https://github.com/munki/munki-pkg
+    # Last updated 2019-06-27.
+    buildinfo_types = {
+        "distribution_style": bool,
+        "identifier": str,
+        "install_location": str,
+        "name": str,
+        "ownership": str,
+        "postinstall_action": str,
+        "signing_info": dict,
+        "suppress_bundle_relocation": bool,
+        "version": str,
+    }
+
+    passed = True
+    for buildinfo_key, expected_type in buildinfo_types.items():
+        if buildinfo_key in buildinfo:
+            if not isinstance(buildinfo[buildinfo_key], expected_type):
+                print(
+                    "{}: buildinfo key {} should be type {}, not type {}".format(
+                        filename,
+                        buildinfo_key,
+                        expected_type,
+                        type(buildinfo[buildinfo_key]),
+                    )
+                )
+                passed = False
+
+    return passed
+
+
 def main(argv=None):
     """Main process."""
 
@@ -28,6 +63,7 @@ def main(argv=None):
     args = argparser.parse_args(argv)
 
     retval = 0
+    buildinfo = {}
     for filename in args.filenames:
         if filename.endswith(".plist"):
             try:
@@ -35,13 +71,15 @@ def main(argv=None):
             except (ExpatError, ValueError) as err:
                 print("{}: plist parsing error: {}".format(filename, err))
                 retval = 1
+                break  # no need to continue testing this file
         elif filename.endswith((".yaml", ".yml")):
             try:
                 with open(filename, "r") as openfile:
-                    buildinfo = yaml.load(openfile, Loader=yaml.FullLoader)
+                    buildinfo = yaml.load(openfile)
             except Exception as err:
                 print("{}: yaml parsing error: {}".format(filename, err))
                 retval = 1
+                break  # no need to continue testing this file
         elif filename.endswith(".json"):
             try:
                 with open(filename, "r") as openfile:
@@ -49,9 +87,15 @@ def main(argv=None):
             except Exception as err:
                 print("{}: json parsing error: {}".format(filename, err))
                 retval = 1
+                break  # no need to continue testing this file
 
         if not buildinfo or not isinstance(buildinfo, dict):
-            print("{}: invalid build-info file")
+            print("{}: cannot parse build-info file".format(filename))
+            retval = 1
+            break
+
+        # Ensure buildinfo keys have expected types.
+        if not validate_buildinfo_key_types(buildinfo, filename):
             retval = 1
 
     return retval
