@@ -48,7 +48,7 @@ def validate_processor_keys(process, filename):
     if missing_processor_keys:
         for missing_proc in missing_processor_keys:
             print(
-                '{}: Item in processor array is missing "Processor" key: {}'.format(
+                '{}: Item in processor array is missing "Processor" key:\n{}'.format(
                     filename, missing_proc
                 )
             )
