@@ -199,6 +199,7 @@ def main(argv=None):
             retval = 1
             break  # No need to continue checking this file
 
+        # Warn if the recipe/override identifier does not start with the expected prefix.
         if args.override_prefix and "Process" not in recipe:
             override_prefix = args.override_prefix
             if not recipe["Identifier"].startswith(override_prefix):
