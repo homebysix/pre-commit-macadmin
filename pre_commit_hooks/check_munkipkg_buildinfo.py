@@ -98,6 +98,13 @@ def main(argv=None):
         if not validate_buildinfo_key_types(buildinfo, filename):
             retval = 1
 
+        # Warn if install_location is not the startup disk.
+        if buildinfo.get("install_location") != "/":
+            print(
+                "{}: WARNING: install_location is not set to the "
+                "startup disk.".format(filename)
+            )
+
     return retval
 
 
