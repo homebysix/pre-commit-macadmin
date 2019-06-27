@@ -88,6 +88,40 @@ def build_argument_parser():
     return parser
 
 
+def validate_endofcheckphase(process, filename):
+    """Ensure EndOfCheckPhase comes after a downloader."""
+
+    passed = True
+    downloader_idx = next(
+        (
+            idx
+            for (idx, d) in enumerate(process)
+            if d.get("Processor") in ("URLDownloader", "CURLDownloader")
+        ),
+        None,
+    )
+    endofcheck_idx = next(
+        (
+            idx
+            for (idx, d) in enumerate(process)
+            if d.get("Processor") == "EndOfCheckPhase"
+        ),
+        None,
+    )
+    if (
+        downloader_idx is not None
+        and endofcheck_idx is not None
+        and endofcheck_idx < downloader_idx
+    ):
+        print(
+            "{}: EndOfCheckPhase typically goes after a download processor, "
+            "not before.".format(filename)
+        )
+        passed = False
+
+    return passed
+
+
 def main(argv=None):
     """Main process."""
 
@@ -160,6 +194,9 @@ def main(argv=None):
                             filename, missing_proc
                         )
                     )
+                retval = 1
+
+            if not validate_endofcheckphase(recipe["Process"], filename):
                 retval = 1
 
             # Ensure MinimumVersion is set appropriately for the processors used.
