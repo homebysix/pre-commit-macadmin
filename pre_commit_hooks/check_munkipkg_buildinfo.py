@@ -6,6 +6,7 @@ import plistlib
 from xml.parsers.expat import ExpatError
 import json
 import ruamel.yaml
+from pre_commit_hooks.util import validate_required_keys
 
 yaml = ruamel.yaml.YAML(typ="safe")
 
@@ -15,6 +16,11 @@ def build_argument_parser():
 
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument(
+        "--identifier-prefix",
+        default="",
+        help="Expected prefix for package bundle identifiers.",
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
@@ -33,6 +39,8 @@ def validate_buildinfo_key_types(buildinfo, filename):
         "name": str,
         "ownership": str,
         "postinstall_action": str,
+        "preserve_xattr": bool,
+        "product id": str,
         "signing_info": dict,
         "suppress_bundle_relocation": bool,
         "version": str,
@@ -93,6 +101,23 @@ def main(argv=None):
             print("{}: cannot parse build-info file".format(filename))
             retval = 1
             break
+
+        # Top level keys that all build-info files should contain.
+        # NOTE: Even though other keys are listed as non-"optional" in the documentation,
+        # name and version appear to be the only ones that are actually required.
+        required_keys = ("name", "version")
+        if not validate_required_keys(buildinfo, filename, required_keys):
+            retval = 1
+            break  # No need to continue checking this file
+
+        if args.identifier_prefix:
+            # Warn if the identifier does not start with the expected prefix.
+            if not buildinfo.get("identifier", "").startswith(args.identifier_prefix):
+                print(
+                    "{}: identifier does not start "
+                    "with {}.".format(filename, args.identifier_prefix)
+                )
+                retval = 1
 
         # Ensure buildinfo keys have expected types.
         if not validate_buildinfo_key_types(buildinfo, filename):
