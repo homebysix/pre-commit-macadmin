@@ -48,7 +48,7 @@ def validate_processor_keys(process, filename):
     if missing_processor_keys:
         for missing_proc in missing_processor_keys:
             print(
-                '{}: Item in processor array is missing "Processor" key: {}'.format(
+                '{}: Item in processor array is missing "Processor" key:\n{}'.format(
                     filename, missing_proc
                 )
             )
@@ -136,7 +136,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         for x in proc_min_versions
         if LooseVersion(proc_min_versions[x]) >= LooseVersion(ignore_min_vers_before)
     ]:
-        if proc in [x["Processor"] for x in process]:
+        if proc in [x.get("Processor") for x in process]:
             if LooseVersion(min_vers) < LooseVersion(proc_min_versions[proc]):
                 print(
                     "{}: {} processor requires minimum AutoPkg "
@@ -163,13 +163,13 @@ def validate_no_var_in_app_path(process, filename):
     )
 
     passed = True
-    for process in process:
-        if process["Processor"] in no_name_var_in_proc_args:
-            for _, argvalue in process["Arguments"].items():
+    for proc in process:
+        if proc.get("Processor") in no_name_var_in_proc_args and "Arguments" in proc:
+            for _, argvalue in proc["Arguments"].items():
                 if isinstance(argvalue, str) and "%NAME%.app" in argvalue:
                     print(
                         "{}: Use actual app name instead of %NAME%.app in {} "
-                        "processor argument.".format(filename, process["Processor"])
+                        "processor argument.".format(filename, proc.get("Processor"))
                     )
                     passed = False
 
@@ -199,6 +199,7 @@ def main(argv=None):
             retval = 1
             break  # No need to continue checking this file
 
+        # Warn if the recipe/override identifier does not start with the expected prefix.
         if args.override_prefix and "Process" not in recipe:
             override_prefix = args.override_prefix
             if not recipe["Identifier"].startswith(override_prefix):
