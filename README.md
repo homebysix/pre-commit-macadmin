@@ -11,7 +11,7 @@ https://pre-commit.com/#install
 
 For any hook in this repo you wish to use, add the following to your pre-commit config:
 
-```
+```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
     rev: v1.2.1
     hooks:
@@ -23,6 +23,20 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
 ## Hooks available
 
+### General
+
+- __check-plists__
+
+    This hook checks XML property list (plist) files for basic syntax errors.
+
+- __check-munkipkg-buildinfo__
+
+    This hook checks [MunkiPkg](https://github.com/munki/munki-pkg) build-info files to ensure they are valid.
+
+- __check-outset-scripts__
+
+    This hook checks [Outset](https://github.com/chilcote/outset) scripts to ensure they're executable.
+
 ### [AutoPkg](https://github.com/autopkg/autopkg)
 
 - __check-autopkg-recipe-list__
@@ -33,11 +47,16 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook checks AutoPkg recipes to ensure they contain required top-level keys.
 
-    - Specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:
-        `args: ['--override-prefix=com.yourcompany.autopkg.']`
-        (default: `local.`)
-        `args: ['--recipe-prefix=com.github.yourusername.']`
+    - Optionally specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:
+        `args: ['--override-prefix=com.yourcompany.autopkg.']`  
+        (default: `local.`)  
+        `args: ['--recipe-prefix=com.github.yourusername.']`  
         (default: `com.github.`)
+
+    - Optionally specify the version of AutoPkg for which you want to ignore MinimumVersion mismatches with processors.
+        `args: ['--ignore-min-vers-before=0.5.0']`  
+        (default: `1.0.0`)  
+        Specifying `0.1.0` will not ignore any MinimumVersion mismatches.
 
 - __forbid-autopkg-overrides__
 
@@ -67,12 +86,14 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook checks Munki pkginfo files to ensure they are valid.
 
-    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:
+    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:  
         `args: ['--catalogs', 'testing', 'stable', '--']`
-    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:
+
+    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:  
         `args: ['--categories', 'Productivity', 'Design', 'Utilities', 'Web Browsers', '--']`
-    - Specify required pkginfo keys, followed by `--`:
-        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`
+
+    - Specify required pkginfo keys, followed by `--`:  
+        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`  
         (default: description, name)
 
 - __check-munkiadmin-scripts__
@@ -83,27 +104,11 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook runs the "makecatalogs" command to ensure all referenced packages are present and catalogs are up to date.
 
-### [Outset](https://github.com/chilcote/outset)
-
-- __check-outset-scripts__
-
-    This hook checks Outset scripts to ensure they're executable.
-
-### General
-
-- __check-plists__
-
-    This hook checks XML property list (plist) files for basic syntax errors.
-
-- __check-munkipkg-buildinfo__
-
-    This hook checks [MunkiPkg](https://github.com/munki/munki-pkg) build-info files to ensure they are valid.
-
 ## Note about combining arguments
 
 When combining arguments that take lists (for example: `--required-keys`, `--catalogs`, and `--categories`), only the _last_ list needs to have a trailing `--`. For example, if you use the check-munki-pkgsinfo hook with only the `--catalogs` argument, your yaml config would look like this:
 
-```
+```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
     rev: v1.2.1
     hooks:
@@ -113,7 +118,7 @@ When combining arguments that take lists (for example: `--required-keys`, `--cat
 
 But if you also use the `--categories` argument, you would move the trailing `--` to the end, after all the lists, like this:
 
-```
+```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
     rev: v1.2.1
     hooks:
@@ -125,7 +130,7 @@ The `--` only serves as a signal to the hook that the list of arguments is compl
 
 If it looks better to your eye, feel free to use a multi-line list for long arguments:
 
-```
+```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
     rev: v1.2.1
     hooks:
