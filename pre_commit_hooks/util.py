@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from datetime import datetime
+import sys
 
 
 def validate_required_keys(plist, filename, required_keys):
@@ -84,6 +85,9 @@ def validate_pkginfo_key_types(pkginfo, filename):
 
     passed = True
     for pkginfo_key, expected_type in pkginfo_types.items():
+        # Treat str and unicode as equivalent if running in Python 2.
+        if int(sys.version.split(".")[0]) < 3 and expected_type == str:
+            expected_type = (str, unicode)
         if pkginfo_key in pkginfo:
             if not isinstance(pkginfo[pkginfo_key], expected_type):
                 print(
