@@ -62,7 +62,7 @@ def main(argv=None):
                 retval = 1
 
         if not recipe_list or not isinstance(recipe_list, list):
-            print("{}: invalid recipe list")
+            print("{}: invalid recipe list".format(filename))
             retval = 1
         else:
             if any((".munki" in recipe for recipe in recipe_list)):
