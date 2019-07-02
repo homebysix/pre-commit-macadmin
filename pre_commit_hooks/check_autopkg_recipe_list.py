@@ -33,6 +33,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
+        recipe_list = None
         if filename.endswith(".txt"):
             with open(filename, "r") as openfile:
                 recipe_list = [
