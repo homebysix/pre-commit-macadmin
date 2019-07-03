@@ -246,6 +246,11 @@ def validate_required_proc_for_types(process, filename):
         req_procs = required_proc_for_type[recipe_type]
         type_hint = ".{}.".format(recipe_type)
         if type_hint in filename:
+            if recipe_type == "pkg" and processors == []:
+                # OK for pkg recipes to have an empty process list, as long as
+                # their parent is a download recipe that produces a pkg.
+                # TODO: Validate parent is a download recipe.
+                break
             if not any([x in processors for x in req_procs]):
                 if len(req_procs) == 1:
                     print(
