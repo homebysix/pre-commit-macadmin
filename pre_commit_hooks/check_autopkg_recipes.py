@@ -348,6 +348,12 @@ def main(argv=None):
         if args.recipe_prefix and "Process" in recipe:
             if not validate_recipe_prefix(recipe, filename, args.recipe_prefix):
                 retval = 1
+        if recipe["Identifier"] == recipe.get("ParentRecipe"):
+            print(
+                "{}: Identifier and ParentRecipe should not "
+                "be the same.".format(filename)
+            )
+            retval = 1
 
         input_key = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
         if input_key and "pkginfo" in input_key:
