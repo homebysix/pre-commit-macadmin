@@ -1,9 +1,6 @@
 #!/usr/bin/python
-"""This hook checks AutoPkg recipes to ensure they contain required top-level
-keys.
-
-(https://github.com/autopkg/autopkg/wiki/Recipe-Format)
-"""
+"""This hook checks AutoPkg recipes to ensure they meet various
+requirements."""
 
 import argparse
 import plistlib
@@ -49,7 +46,8 @@ def build_argument_parser():
 
 
 def validate_override_prefix(recipe, filename, prefix):
-    """Warn if the override identifier does not start with the expected prefix."""
+    """Warn if the override identifier does not start with the expected
+    prefix."""
 
     passed = True
     if not recipe["Identifier"].startswith(prefix):
@@ -63,7 +61,8 @@ def validate_override_prefix(recipe, filename, prefix):
 
 
 def validate_recipe_prefix(recipe, filename, prefix):
-    """Warn if the recipe identifier does not start with the expected prefix."""
+    """Warn if the recipe identifier does not start with the expected
+    prefix."""
 
     passed = True
     if not recipe["Identifier"].startswith(prefix):
@@ -74,9 +73,8 @@ def validate_recipe_prefix(recipe, filename, prefix):
 
 
 def validate_comments(filename, strict):
-    """Warn about comments in <!-- --> format that would break during
-    plutil -convert xml1.
-    """
+    """Warn about comments in <!-- --> format that would break during plutil
+    -convert xml1."""
 
     passed = True
     with open(filename, "r") as openfile:
