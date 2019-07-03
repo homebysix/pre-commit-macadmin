@@ -13,7 +13,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.2.3
+    rev: v1.3.0
     hooks:
     -   id: check-plists
     # -   id: ...
@@ -45,7 +45,7 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
 - __check-autopkg-recipes__
 
-    This hook checks AutoPkg recipes to ensure they contain required top-level keys.
+    This hook checks AutoPkg recipes to ensure they meet various requirements.
 
     - Optionally specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:
         `args: ['--override-prefix=com.yourcompany.autopkg.']`  
@@ -57,6 +57,10 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
         `args: ['--ignore-min-vers-before=0.5.0']`  
         (default: `1.0.0`)  
         Specifying `0.1.0` will not ignore any MinimumVersion mismatches.
+
+    - If you're a purist, you can also enable strict mode. This enforces recipe type conventions, all processor/MinimumVersion mismatches, and forbids `<!-- -->` style comments.  
+        `args: ['--strict']`  
+        (default: False)
 
 - __forbid-autopkg-overrides__
 
@@ -110,7 +114,7 @@ When combining arguments that take lists (for example: `--required-keys`, `--cat
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.2.3
+    rev: v1.3.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--']
@@ -120,7 +124,7 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.2.3
+    rev: v1.3.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
@@ -132,7 +136,7 @@ If it looks better to your eye, feel free to use a multi-line list for long argu
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.2.3
+    rev: v1.3.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: [
