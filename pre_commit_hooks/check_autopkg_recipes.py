@@ -288,8 +288,6 @@ def main(argv=None):
 
         # Top level keys that all AutoPkg recipes should contain.
         required_keys = ["Identifier"]
-        if args.strict:
-            required_keys.append("Input")
         if not validate_required_keys(recipe, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file
