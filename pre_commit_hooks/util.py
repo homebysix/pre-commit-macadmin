@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from datetime import datetime
-import sys
 
 
 def validate_required_keys(plist, filename, required_keys):
@@ -20,6 +19,13 @@ def validate_pkginfo_key_types(pkginfo, filename):
     Used for AutoPkg- and Munki-related hooks.
     """
 
+    # Remap basestring in Python 3
+    # Credit: https://github.com/munki/munki/blob/Munki3dev/code/client/munkilib/wrappers.py#L121-L129
+    try:
+        _ = basestring
+    except NameError:
+        basestring = str  # pylint: disable=W0622
+
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
     # Source: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
     # Last updated 2019-03-13.
@@ -29,65 +35,62 @@ def validate_pkginfo_key_types(pkginfo, filename):
         "autoremove": bool,
         "blocking_applications": list,
         "catalogs": list,
-        "category": str,
+        "category": basestring,
         "copy_local": bool,
-        "description": str,
-        "developer": str,
-        "display_name": str,
+        "description": basestring,
+        "developer": basestring,
+        "display_name": basestring,
         "force_install_after_date": datetime,
         "forced_install": bool,
         "forced_uninstall": bool,
-        "icon_name": str,
-        "installable_condition": str,
+        "icon_name": basestring,
+        "installable_condition": basestring,
         "installed_size": int,
-        "installer_item_hash": str,
-        "installer_item_location": str,
+        "installer_item_hash": basestring,
+        "installer_item_location": basestring,
         "installer_item_size": int,
-        "installer_type": str,
+        "installer_type": basestring,
         "installs": list,
         "items_to_copy": list,
         "installer_choices_xml": list,
         "installer_environment": dict,
-        "localized_strs": dict,
-        "minimum_munki_version": str,
-        "minimum_os_version": str,
-        "maximum_os_version": str,
-        "name": str,
-        "notes": str,
-        "PackageCompleteURL": str,
-        "PackageURL": str,
-        "package_path": str,
-        "installcheck_script": str,
-        "uninstallcheck_script": str,
+        "localized_basestrings": dict,
+        "minimum_munki_version": basestring,
+        "minimum_os_version": basestring,
+        "maximum_os_version": basestring,
+        "name": basestring,
+        "notes": basestring,
+        "PackageCompleteURL": basestring,
+        "PackageURL": basestring,
+        "package_path": basestring,
+        "installcheck_script": basestring,
+        "uninstallcheck_script": basestring,
         "OnDemand": bool,
-        "postinstall_script": str,
-        "postuninstall_script": str,
+        "postinstall_script": basestring,
+        "postuninstall_script": basestring,
         "precache": bool,
         "preinstall_alert": dict,
         "preuninstall_alert": dict,
         "preupgrade_alert": dict,
-        "preinstall_script": str,
-        "preuninstall_script": str,
+        "preinstall_script": basestring,
+        "preuninstall_script": basestring,
         "receipts": list,
         "requires": list,
-        "RestartAction": str,
+        "RestartAction": basestring,
         "supported_architectures": list,
         "suppress_bundle_relocation": bool,
         "unattended_install": bool,
         "unattended_uninstall": bool,
-        "uninstall_method": str,
-        "uninstall_script": str,
-        "uninstaller_item_location": str,
+        "uninstall_method": basestring,
+        "uninstall_script": basestring,
+        "uninstaller_item_location": basestring,
         "uninstallable": bool,
         "update_for": list,
-        "version": str,
+        "version": basestring,
     }
 
     passed = True
     for pkginfo_key, expected_type in pkginfo_types.items():
-        # Treat str and unicode as equivalent if running in Python 2.
-        if int(sys.version.split(".")[0]) < 3 and expected_type == str:
-            expected_type = (str, unicode)
         if pkginfo_key in pkginfo:
             if not isinstance(pkginfo[pkginfo_key], expected_type):
                 print(

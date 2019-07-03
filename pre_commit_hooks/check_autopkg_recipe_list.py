@@ -33,6 +33,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
+        recipe_list = None
         if filename.endswith(".txt"):
             with open(filename, "r") as openfile:
                 recipe_list = [
@@ -49,7 +50,7 @@ def main(argv=None):
         elif filename.endswith((".yaml", ".yml")):
             try:
                 with open(filename, "r") as openfile:
-                    recipe_list = yaml.load(openfile, Loader=yaml.FullLoader)
+                    recipe_list = yaml.load(openfile)
             except Exception as err:
                 print("{}: yaml parsing error: {}".format(filename, err))
                 retval = 1
@@ -62,7 +63,7 @@ def main(argv=None):
                 retval = 1
 
         if not recipe_list or not isinstance(recipe_list, list):
-            print("{}: invalid recipe list")
+            print("{}: invalid recipe list".format(filename))
             retval = 1
         else:
             if any((".munki" in recipe for recipe in recipe_list)):

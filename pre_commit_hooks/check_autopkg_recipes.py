@@ -34,7 +34,15 @@ def build_argument_parser():
         default="1.0.0",
         help="Ignore MinimumVersion/processor mismatches below this version of AutoPkg "
         '(defaults to "1.0.0").\nSet to 0.1.0 to warn about all '
-        "MinimumVersion/processor mismatches.",
+        "MinimumVersion/processor mismatches.\nDefaults to 0.1.0 if --strict is used.",
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        default=False,
+        help="Apply strictest set of rules when evaluating AutoPkg recipes, including "
+        "adherence to recipe type conventions, flagging all MinimumVersion/processor "
+        "mismatches, and forbidding <!-- --> comments. Very opinionated.",
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
@@ -64,16 +72,16 @@ def validate_endofcheckphase(process, filename):
     downloader_idx = next(
         (
             idx
-            for (idx, d) in enumerate(process)
-            if d.get("Processor") in ("URLDownloader", "CURLDownloader")
+            for (idx, x) in enumerate(process)
+            if x.get("Processor") in ("URLDownloader", "CURLDownloader")
         ),
         None,
     )
     endofcheck_idx = next(
         (
             idx
-            for (idx, d) in enumerate(process)
-            if d.get("Processor") == "EndOfCheckPhase"
+            for (idx, x) in enumerate(process)
+            if x.get("Processor") == "EndOfCheckPhase"
         ),
         None,
     )
@@ -176,12 +184,92 @@ def validate_no_var_in_app_path(process, filename):
     return passed
 
 
+def validate_proc_type_conventions(process, filename):
+    """Ensure that processors used align with recipe type conventions."""
+
+    # For each processor type, this is the list of processors that
+    # we only expect to see in that type.
+    proc_type_conventions = {
+        "download": [
+            "SparkleUpdateInfoProvider",
+            "GitHubReleasesInfoProvider",
+            "URLDownloader",
+            "CURLDownloader",
+            "EndOfCheckPhase",
+        ],
+        "munki": [
+            "MunkiInstallsItemsCreator",
+            "MunkiPkginfoMerger",
+            "MunkiCatalogBuilder",
+            "MunkiSetDefaultCatalog",
+            "MunkiImporter",
+        ],
+        "pkg": ["AppPkgCreator", "PkgCreator"],
+        "install": ["InstallFromDMG", "Installer"],
+        "jss": ["JSSImporter"],
+        "filewave": ["FileWaveImporter"],
+    }
+
+    passed = True
+    processors = [x["Processor"] for x in process]
+    for recipe_type in proc_type_conventions:
+        type_hint = ".{}.".format(recipe_type)
+        if type_hint not in filename:
+            for processor in processors:
+                if processor in proc_type_conventions[recipe_type]:
+                    print(
+                        "{}: Processor {} is not conventional for the {} "
+                        "recipe type.".format(filename, processor, recipe_type)
+                    )
+                    passed = False
+
+    return passed
+
+
+def validate_required_proc_for_types(process, filename):
+    """Ensure that certain recipe types always have specific processors."""
+
+    # For each recipe type, this is the list of processors that
+    # MUST exist in that type. Uses "OR" logic, not "AND."
+    required_proc_for_type = {
+        "download": ["EndOfCheckPhase"],
+        "munki": ["MunkiImporter"],
+        "pkg": ["AppPkgCreator", "PkgCreator"],
+        "install": ["InstallFromDMG", "Installer"],
+        "jss": ["JSSImporter"],
+        "filewave": ["FileWaveImporter"],
+    }
+
+    passed = True
+    processors = [x["Processor"] for x in process]
+    for recipe_type in required_proc_for_type:
+        req_procs = required_proc_for_type[recipe_type]
+        type_hint = ".{}.".format(recipe_type)
+        if type_hint in filename:
+            if not any([x in processors for x in req_procs]):
+                if len(req_procs) == 1:
+                    print(
+                        "{}: Recipe type {} should contain processor "
+                        "{}.".format(filename, recipe_type, req_procs[0])
+                    )
+                else:
+                    print(
+                        "{}: Recipe type {} should contain one of these "
+                        "processors: {}.".format(filename, recipe_type, req_procs)
+                    )
+                passed = False
+
+    return passed
+
+
 def main(argv=None):
     """Main process."""
 
     # Parse command line arguments.
     argparser = build_argument_parser()
     args = argparser.parse_args(argv)
+    if args.strict:
+        args.ignore_min_vers_before = "0.1.0"
 
     retval = 0
     for filename in args.filenames:
@@ -194,7 +282,9 @@ def main(argv=None):
             break  # No need to continue checking this file
 
         # Top level keys that all AutoPkg recipes should contain.
-        required_keys = ("Identifier",)
+        required_keys = ["Identifier"]
+        if args.strict:
+            required_keys.append("Input")
         if not validate_required_keys(recipe, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file
@@ -230,10 +320,17 @@ def main(argv=None):
         with open(filename, "r") as openfile:
             recipe_text = openfile.read()
             if "<!--" in recipe_text and "-->" in recipe_text:
-                print(
-                    "{}: WARNING: Recommend converting from <!-- --> style comments "
-                    "to a Comment key where needed.".format(filename)
-                )
+                if args.strict:
+                    print(
+                        "{}: Convert from <!-- --> style comments "
+                        "to a Comment key.".format(filename)
+                    )
+                    retval = 1
+                else:
+                    print(
+                        "{}: WARNING: Recommend converting from <!-- --> style comments "
+                        "to a Comment key.".format(filename)
+                    )
 
         # Processor checks.
         if "Process" in recipe:
@@ -248,11 +345,17 @@ def main(argv=None):
             if not validate_no_var_in_app_path(process, filename):
                 retval = 1
 
-            if "MinimumVersion" in recipe:
-                min_vers = recipe["MinimumVersion"]
-                if not validate_minimumversion(
-                    process, min_vers, args.ignore_min_vers_before, filename
-                ):
+            min_vers = recipe.get("MinimumVersion")
+            if min_vers and not validate_minimumversion(
+                process, min_vers, args.ignore_min_vers_before, filename
+            ):
+                retval = 1
+
+            if args.strict:
+                if not validate_proc_type_conventions(process, filename):
+                    retval = 1
+
+                if not validate_required_proc_for_types(process, filename):
                     retval = 1
 
     return retval
