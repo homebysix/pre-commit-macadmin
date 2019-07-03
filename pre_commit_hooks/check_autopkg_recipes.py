@@ -218,8 +218,8 @@ def validate_proc_type_conventions(process, filename):
             for processor in processors:
                 if processor in proc_type_conventions[recipe_type]:
                     print(
-                        "{}: Processor {} is not conventional for the {} "
-                        "recipe type.".format(filename, processor, recipe_type)
+                        "{}: Processor {} is not conventional for this "
+                        "recipe type.".format(filename, processor)
                     )
                     passed = False
 
@@ -234,7 +234,7 @@ def validate_required_proc_for_types(process, filename):
     required_proc_for_type = {
         "download": ["EndOfCheckPhase"],
         "munki": ["MunkiImporter"],
-        "pkg": ["AppPkgCreator", "PkgCreator"],
+        "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
         "jss": ["JSSImporter"],
         "filewave": ["FileWaveImporter"],
@@ -288,8 +288,6 @@ def main(argv=None):
 
         # Top level keys that all AutoPkg recipes should contain.
         required_keys = ["Identifier"]
-        if args.strict:
-            required_keys.append("Input")
         if not validate_required_keys(recipe, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file
