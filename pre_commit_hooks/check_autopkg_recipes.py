@@ -234,7 +234,7 @@ def validate_required_proc_for_types(process, filename):
     required_proc_for_type = {
         "download": ["EndOfCheckPhase"],
         "munki": ["MunkiImporter"],
-        "pkg": ["AppPkgCreator", "PkgCreator"],
+        "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
         "jss": ["JSSImporter"],
         "filewave": ["FileWaveImporter"],
