@@ -48,6 +48,55 @@ def build_argument_parser():
     return parser
 
 
+def validate_override_prefix(recipe, filename, prefix):
+    """Warn if the override identifier does not start with the expected prefix."""
+
+    passed = True
+    if not recipe["Identifier"].startswith(prefix):
+        print(
+            "{}: override identifier does not start with "
+            '"{}"'.format(filename, prefix)
+        )
+        passed = False
+
+    return passed
+
+
+def validate_recipe_prefix(recipe, filename, prefix):
+    """Warn if the recipe identifier does not start with the expected prefix."""
+
+    passed = True
+    if not recipe["Identifier"].startswith(prefix):
+        print('{}: recipe identifier does not start with "{}"'.format(filename, prefix))
+        passed = False
+
+    return passed
+
+
+def validate_comments(filename, strict):
+    """Warn about comments in <!-- --> format that would break during
+    plutil -convert xml1.
+    """
+
+    passed = True
+    with open(filename, "r") as openfile:
+        recipe_text = openfile.read()
+        if "<!--" in recipe_text and "-->" in recipe_text:
+            if strict:
+                print(
+                    "{}: Convert from <!-- --> style comments "
+                    "to a Comment key.".format(filename)
+                )
+                passed = False
+            else:
+                print(
+                    "{}: WARNING: Recommend converting from <!-- --> style comments "
+                    "to a Comment key.".format(filename)
+                )
+
+    return passed
+
+
 def validate_processor_keys(process, filename):
     """Ensure all items in Process array have a "Processor" specified."""
 
@@ -237,7 +286,7 @@ def validate_required_proc_for_types(process, filename):
         "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
         "jss": ["JSSImporter"],
-        "filewave": ["FileWaveImporter"],
+        "filewave": ["com.github.autopkg.filewave.FWTool/FileWaveImporter"],
     }
 
     passed = True
@@ -292,25 +341,19 @@ def main(argv=None):
             retval = 1
             break  # No need to continue checking this file
 
-        # Warn if the recipe/override identifier does not start with the expected prefix.
+        # Validate identifiers.
         if args.override_prefix and "Process" not in recipe:
-            override_prefix = args.override_prefix
-            if not recipe["Identifier"].startswith(override_prefix):
-                print(
-                    '{}: override identifier does not start with "{}"'.format(
-                        filename, override_prefix
-                    )
-                )
+            if not validate_override_prefix(recipe, filename, args.override_prefix):
                 retval = 1
         if args.recipe_prefix and "Process" in recipe:
-            recipe_prefix = args.recipe_prefix
-            if not recipe["Identifier"].startswith(recipe_prefix):
-                print(
-                    '{}: recipe identifier does not start with "{}"'.format(
-                        filename, recipe_prefix
-                    )
-                )
+            if not validate_recipe_prefix(recipe, filename, args.recipe_prefix):
                 retval = 1
+        if recipe["Identifier"] == recipe.get("ParentRecipe"):
+            print(
+                "{}: Identifier and ParentRecipe should not "
+                "be the same.".format(filename)
+            )
+            retval = 1
 
         input_key = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
         if input_key and "pkginfo" in input_key:
@@ -320,20 +363,8 @@ def main(argv=None):
             # TODO: Additional pkginfo checks here.
 
         # Warn about comments that would be lost during `plutil -convert xml1`
-        with open(filename, "r") as openfile:
-            recipe_text = openfile.read()
-            if "<!--" in recipe_text and "-->" in recipe_text:
-                if args.strict:
-                    print(
-                        "{}: Convert from <!-- --> style comments "
-                        "to a Comment key.".format(filename)
-                    )
-                    retval = 1
-                else:
-                    print(
-                        "{}: WARNING: Recommend converting from <!-- --> style comments "
-                        "to a Comment key.".format(filename)
-                    )
+        if not validate_comments(filename, args.strict):
+            retval = 1
 
         # Processor checks.
         if "Process" in recipe:
