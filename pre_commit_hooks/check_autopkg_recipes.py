@@ -64,16 +64,16 @@ def validate_endofcheckphase(process, filename):
     downloader_idx = next(
         (
             idx
-            for (idx, d) in enumerate(process)
-            if d.get("Processor") in ("URLDownloader", "CURLDownloader")
+            for (idx, x) in enumerate(process)
+            if x.get("Processor") in ("URLDownloader", "CURLDownloader")
         ),
         None,
     )
     endofcheck_idx = next(
         (
             idx
-            for (idx, d) in enumerate(process)
-            if d.get("Processor") == "EndOfCheckPhase"
+            for (idx, x) in enumerate(process)
+            if x.get("Processor") == "EndOfCheckPhase"
         ),
         None,
     )
