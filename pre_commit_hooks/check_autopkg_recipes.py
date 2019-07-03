@@ -218,8 +218,8 @@ def validate_proc_type_conventions(process, filename):
             for processor in processors:
                 if processor in proc_type_conventions[recipe_type]:
                     print(
-                        "{}: Processor {} is not conventional for the {} "
-                        "recipe type.".format(filename, processor, recipe_type)
+                        "{}: Processor {} is not conventional for this "
+                        "recipe type.".format(filename, processor)
                     )
                     passed = False
 
