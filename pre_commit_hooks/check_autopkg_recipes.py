@@ -260,7 +260,7 @@ def validate_proc_type_conventions(process, filename):
     }
 
     passed = True
-    processors = [x["Processor"] for x in process]
+    processors = [x.get("Processor") for x in process]
     for recipe_type in proc_type_conventions:
         type_hint = ".{}.".format(recipe_type)
         if type_hint not in filename:
