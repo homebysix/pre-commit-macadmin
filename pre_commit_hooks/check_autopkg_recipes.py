@@ -286,7 +286,7 @@ def validate_required_proc_for_types(process, filename):
         "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
         "jss": ["JSSImporter"],
-        "filewave": ["FileWaveImporter"],
+        "filewave": ["com.github.autopkg.filewave.FWTool/FileWaveImporter"],
     }
 
     passed = True
