@@ -20,7 +20,8 @@ def validate_pkginfo_key_types(pkginfo, filename):
     """
 
     # Remap basestring in Python 3
-    # Credit: https://github.com/munki/munki/blob/Munki3dev/code/client/munkilib/wrappers.py#L121-L129
+    # Credit: https://github.com/munki/munki/blob/ff6248daafa527def0fd109e0c72c69ca179702c
+    # /code/client/munkilib/wrappers.py#L121-L125
     try:
         _ = basestring
     except NameError:
