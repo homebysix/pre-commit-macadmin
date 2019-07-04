@@ -288,7 +288,7 @@ def validate_required_proc_for_types(process, filename):
     }
 
     passed = True
-    processors = [x["Processor"] for x in process]
+    processors = [x.get("Processor") for x in process]
     for recipe_type in required_proc_for_type:
         req_procs = required_proc_for_type[recipe_type]
         type_hint = ".{}.".format(recipe_type)
