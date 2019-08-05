@@ -126,6 +126,35 @@ def main(argv=None):
                 )
                 retval = 1
 
+        # Ensure all pkginfo scripts have a proper shebang.
+        shebangs = (
+            "#!/bin/bash",
+            "#!/bin/sh",
+            "#!/usr/bin/osascript",
+            "#!/usr/bin/perl",
+            "#!/usr/bin/python",
+            "#!/usr/bin/ruby",
+            "#!/usr/local/munki/python",
+        )
+        script_types = (
+            "installcheck_script",
+            "uninstallcheck_script",
+            "postinstall_script",
+            "postuninstall_script",
+            "preinstall_script",
+            "preuninstall_script",
+            "uninstall_script",
+        )
+        for script_type in script_types:
+            if script_type in pkginfo:
+                if all(not pkginfo[script_type].startswith(x + "\n") for x in shebangs):
+                    print(
+                        "{}: has a {} that does not start with a shebang.".format(
+                            filename, script_type
+                        )
+                    )
+                    retval = 1
+
         # Ensure the items_to_copy list does not include trailing slashes.
         # Credit to @bruienne for this idea.
         # https://gist.github.com/bruienne/9baa958ec6dbe8f09d94#file-munki_fuzzinator-py-L211-L219
