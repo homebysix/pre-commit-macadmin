@@ -130,6 +130,7 @@ def main(argv=None):
         shebangs = (
             "#!/bin/bash",
             "#!/bin/sh",
+            "#!/bin/zsh",
             "#!/usr/bin/osascript",
             "#!/usr/bin/perl",
             "#!/usr/bin/python",
