@@ -29,29 +29,24 @@ def build_argument_parser():
 def validate_buildinfo_key_types(buildinfo, filename):
     """Ensure build-info files contain the proper types."""
 
-    # Remap basestring in Python 3
-    # Credit: https://github.com/munki/munki/blob/ff6248daafa527def0fd109e0c72c69ca179702c
-    # /code/client/munkilib/wrappers.py#L121-L125
-    try:
-        _ = basestring
-    except NameError:
-        basestring = str  # pylint: disable=W0622
+    # Remap string type to support unicode in both Python 2 and 3
+    string = basestring if sys.version_info.major == 2 else str
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
     # Source: https://github.com/munki/munki-pkg
     # Last updated 2019-06-27.
     buildinfo_types = {
         "distribution_style": bool,
-        "identifier": basestring,
-        "install_location": basestring,
-        "name": basestring,
-        "ownership": basestring,
-        "postinstall_action": basestring,
+        "identifier": string,
+        "install_location": string,
+        "name": string,
+        "ownership": string,
+        "postinstall_action": string,
         "preserve_xattr": bool,
-        "product id": basestring,
+        "product id": string,
         "signing_info": dict,
         "suppress_bundle_relocation": bool,
-        "version": basestring,
+        "version": string,
     }
 
     passed = True

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 from datetime import datetime
 
 
@@ -19,13 +20,8 @@ def validate_pkginfo_key_types(pkginfo, filename):
     Used for AutoPkg- and Munki-related hooks.
     """
 
-    # Remap basestring in Python 3
-    # Credit: https://github.com/munki/munki/blob/ff6248daafa527def0fd109e0c72c69ca179702c
-    # /code/client/munkilib/wrappers.py#L121-L125
-    try:
-        _ = basestring
-    except NameError:
-        basestring = str  # pylint: disable=W0622
+    # Remap string type to support unicode in both Python 2 and 3
+    string = basestring if sys.version_info.major == 2 else str
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
     # Source: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
@@ -36,58 +32,58 @@ def validate_pkginfo_key_types(pkginfo, filename):
         "autoremove": bool,
         "blocking_applications": list,
         "catalogs": list,
-        "category": basestring,
+        "category": string,
         "copy_local": bool,
-        "description": basestring,
-        "developer": basestring,
-        "display_name": basestring,
+        "description": string,
+        "developer": string,
+        "display_name": string,
         "force_install_after_date": datetime,
         "forced_install": bool,
         "forced_uninstall": bool,
-        "icon_name": basestring,
-        "installable_condition": basestring,
+        "icon_name": string,
+        "installable_condition": string,
         "installed_size": int,
-        "installer_item_hash": basestring,
-        "installer_item_location": basestring,
+        "installer_item_hash": string,
+        "installer_item_location": string,
         "installer_item_size": int,
-        "installer_type": basestring,
+        "installer_type": string,
         "installs": list,
         "items_to_copy": list,
         "installer_choices_xml": list,
         "installer_environment": dict,
-        "localized_basestrings": dict,
-        "minimum_munki_version": basestring,
-        "minimum_os_version": basestring,
-        "maximum_os_version": basestring,
-        "name": basestring,
-        "notes": basestring,
-        "PackageCompleteURL": basestring,
-        "PackageURL": basestring,
-        "package_path": basestring,
-        "installcheck_script": basestring,
-        "uninstallcheck_script": basestring,
+        "localized_strings": dict,
+        "minimum_munki_version": string,
+        "minimum_os_version": string,
+        "maximum_os_version": string,
+        "name": string,
+        "notes": string,
+        "PackageCompleteURL": string,
+        "PackageURL": string,
+        "package_path": string,
+        "installcheck_script": string,
+        "uninstallcheck_script": string,
         "OnDemand": bool,
-        "postinstall_script": basestring,
-        "postuninstall_script": basestring,
+        "postinstall_script": string,
+        "postuninstall_script": string,
         "precache": bool,
         "preinstall_alert": dict,
         "preuninstall_alert": dict,
         "preupgrade_alert": dict,
-        "preinstall_script": basestring,
-        "preuninstall_script": basestring,
+        "preinstall_script": string,
+        "preuninstall_script": string,
         "receipts": list,
         "requires": list,
-        "RestartAction": basestring,
+        "RestartAction": string,
         "supported_architectures": list,
         "suppress_bundle_relocation": bool,
         "unattended_install": bool,
         "unattended_uninstall": bool,
-        "uninstall_method": basestring,
-        "uninstall_script": basestring,
-        "uninstaller_item_location": basestring,
+        "uninstall_method": string,
+        "uninstall_script": string,
+        "uninstaller_item_location": string,
         "uninstallable": bool,
         "update_for": list,
-        "version": basestring,
+        "version": string,
     }
 
     passed = True
