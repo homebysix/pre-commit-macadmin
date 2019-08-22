@@ -288,7 +288,7 @@ def validate_required_proc_for_types(process, filename):
     }
 
     passed = True
-    processors = [x["Processor"] for x in process]
+    processors = [x.get("Processor") for x in process]
     for recipe_type in required_proc_for_type:
         req_procs = required_proc_for_type[recipe_type]
         type_hint = ".{}.".format(recipe_type)
@@ -323,6 +323,9 @@ def main(argv=None):
     if args.strict:
         args.ignore_min_vers_before = "0.1.0"
 
+    # Track identifiers we've seen.
+    seen_identifiers = []
+
     retval = 0
     for filename in args.filenames:
         try:
@@ -338,6 +341,13 @@ def main(argv=None):
         if not validate_required_keys(recipe, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file
+
+        # Ensure the recipe identifier isn't duplicated.
+        if recipe["Identifier"] in seen_identifiers:
+            print('{}: Identifier "{}" is shared by another recipe in this repo.')
+            retval = 1
+        else:
+            seen_identifiers.append(recipe["Identifier"])
 
         # Validate identifiers.
         if args.override_prefix and "Process" not in recipe:
