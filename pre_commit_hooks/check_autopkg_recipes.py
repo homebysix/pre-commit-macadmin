@@ -202,6 +202,24 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     return passed
 
 
+def validate_no_deprecated_procs(process, filename):
+    """Warn if any deprecated processors are used."""
+
+    # Processors that have been deprecated.
+    deprecated_procs = ("CURLDownloader",)
+
+    passed = True
+    for proc in process:
+        if proc.get("Processor") in deprecated_procs:
+            print(
+                "{}: WARNING: Deprecated processor {} is used.".format(
+                    filename, proc.get("Processor")
+                )
+            )
+
+    return passed
+
+
 def validate_no_var_in_app_path(process, filename):
     """Ensure %NAME% is not used in app paths that should be hard coded."""
 
@@ -391,6 +409,9 @@ def main(argv=None):
             if min_vers and not validate_minimumversion(
                 process, min_vers, args.ignore_min_vers_before, filename
             ):
+                retval = 1
+
+            if not validate_no_deprecated_procs(process, filename):
                 retval = 1
 
             if args.strict:
