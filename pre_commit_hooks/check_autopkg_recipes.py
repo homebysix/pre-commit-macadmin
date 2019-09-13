@@ -28,9 +28,9 @@ def build_argument_parser():
     )
     parser.add_argument(
         "--ignore-min-vers-before",
-        default="1.0.0",
+        default="1.0",
         help="Ignore MinimumVersion/processor mismatches below this version of AutoPkg "
-        '(defaults to "1.0.0").\nSet to 0.1.0 to warn about all '
+        '(defaults to "1.0").\nSet to 0.1.0 to warn about all '
         "MinimumVersion/processor mismatches.\nDefaults to 0.1.0 if --strict is used.",
     )
     parser.add_argument(
@@ -151,12 +151,12 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
 
     # Processors for which a minimum version of AutoPkg is required.
     proc_min_versions = {
-        "AppPkgCreator": "1.0.0",
+        "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
         "CodeSignatureVerifier": "0.3.1",
         "CURLDownloader": "0.5.1",
         "CURLTextSearcher": "0.5.1",
-        "DeprecationWarning": "1.1.0",
+        "DeprecationWarning": "1.1",
         "EndOfCheckPhase": "0.1.0",
         "FileFinder": "0.2.3",
         "FileMover": "0.2.9",
