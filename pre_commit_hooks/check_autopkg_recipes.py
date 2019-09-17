@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """This hook checks AutoPkg recipes to ensure they meet various
 requirements."""
 

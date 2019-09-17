@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Check Jamf scripts for common issues."""
 
 import argparse

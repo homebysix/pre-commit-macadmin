@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """Check Outset scripts to ensure they are executable."""
 
 import argparse
