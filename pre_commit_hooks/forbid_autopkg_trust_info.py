@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """This hook prevents AutoPkg recipes with trust info from being added to the
 repo."""
 

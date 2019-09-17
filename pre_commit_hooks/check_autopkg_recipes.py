@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 """This hook checks AutoPkg recipes to ensure they meet various
 requirements."""
 
@@ -18,19 +19,23 @@ def build_argument_parser():
     )
     parser.add_argument(
         "--override-prefix",
-        default="local.",
-        help='Expected prefix for recipe override identifiers (defaults to "local").',
+        nargs="+",
+        default=["local."],
+        help='Expected prefix(es) for recipe override identifiers (defaults to ["local."]). '
+        "Case sensitive. Multiple acceptable identifier prefixes can be provided.",
     )
     parser.add_argument(
         "--recipe-prefix",
-        default="com.github.",
-        help='Expected prefix for recipe identifiers (defaults to "com.github").',
+        nargs="+",
+        default=["com.github."],
+        help='Expected prefix(es) for recipe identifiers (defaults to ["com.github."]). '
+        "Case sensitive. Multiple acceptable identifier prefixes can be provided.",
     )
     parser.add_argument(
         "--ignore-min-vers-before",
-        default="1.0.0",
+        default="1.0",
         help="Ignore MinimumVersion/processor mismatches below this version of AutoPkg "
-        '(defaults to "1.0.0").\nSet to 0.1.0 to warn about all '
+        '(defaults to "1.0").\nSet to 0.1.0 to warn about all '
         "MinimumVersion/processor mismatches.\nDefaults to 0.1.0 if --strict is used.",
     )
     parser.add_argument(
@@ -46,14 +51,13 @@ def build_argument_parser():
 
 
 def validate_override_prefix(recipe, filename, prefix):
-    """Warn if the override identifier does not start with the expected
-    prefix."""
+    """Verify that the override identifier starts with the expected prefix."""
 
     passed = True
-    if not recipe["Identifier"].startswith(prefix):
+    if not any([recipe["Identifier"].startswith(x) for x in prefix]):
         print(
-            "{}: override identifier does not start with "
-            '"{}"'.format(filename, prefix)
+            "{}: override identifier does not start "
+            'with one of: "{}"'.format(filename, ", ".join(prefix))
         )
         passed = False
 
@@ -61,20 +65,22 @@ def validate_override_prefix(recipe, filename, prefix):
 
 
 def validate_recipe_prefix(recipe, filename, prefix):
-    """Warn if the recipe identifier does not start with the expected
-    prefix."""
+    """Verify that the recipe identifier starts with the expected prefix."""
 
     passed = True
-    if not recipe["Identifier"].startswith(prefix):
-        print('{}: recipe identifier does not start with "{}"'.format(filename, prefix))
+    if not any([recipe["Identifier"].startswith(x) for x in prefix]):
+        print(
+            "{}: recipe identifier does not start "
+            'with one of: "{}"'.format(filename, ", ".join(prefix))
+        )
         passed = False
 
     return passed
 
 
 def validate_comments(filename, strict):
-    """Warn about comments in <!-- --> format that would break during plutil
-    -convert xml1."""
+    """Warn about comments in <!-- --> format that would break during
+    plutil -convert xml1."""
 
     passed = True
     with open(filename, "r") as openfile:
@@ -150,13 +156,16 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     """Ensure MinimumVersion is set appropriately for the processors used."""
 
     # Processors for which a minimum version of AutoPkg is required.
+    # Note: Because LooseVersion considers version 1.0 to be "less than" 1.0.0,
+    # specifying more trailing zeros than needed in the dict below may result
+    # in false positive errors for users of the check-autopkg-recipes hook.
     proc_min_versions = {
-        "AppPkgCreator": "1.0.0",
+        "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
         "CodeSignatureVerifier": "0.3.1",
         "CURLDownloader": "0.5.1",
         "CURLTextSearcher": "0.5.1",
-        "DeprecationWarning": "1.1.0",
+        "DeprecationWarning": "1.1",
         "EndOfCheckPhase": "0.1.0",
         "FileFinder": "0.2.3",
         "FileMover": "0.2.9",
@@ -198,6 +207,24 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
                     "version {}".format(filename, proc, proc_min_versions[proc])
                 )
                 passed = False
+
+    return passed
+
+
+def validate_no_deprecated_procs(process, filename):
+    """Warn if any deprecated processors are used."""
+
+    # Processors that have been deprecated.
+    deprecated_procs = ("CURLDownloader",)
+
+    passed = True
+    for proc in process:
+        if proc.get("Processor") in deprecated_procs:
+            print(
+                "{}: WARNING: Deprecated processor {} is used.".format(
+                    filename, proc.get("Processor")
+                )
+            )
 
     return passed
 
@@ -391,6 +418,9 @@ def main(argv=None):
             if min_vers and not validate_minimumversion(
                 process, min_vers, args.ignore_min_vers_before, filename
             ):
+                retval = 1
+
+            if not validate_no_deprecated_procs(process, filename):
                 retval = 1
 
             if args.strict:
