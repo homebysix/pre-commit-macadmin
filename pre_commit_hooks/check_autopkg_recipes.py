@@ -157,7 +157,8 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
 
     # Processors for which a minimum version of AutoPkg is required.
     # Note: Because LooseVersion considers version 1.0 to be "less than" 1.0.0,
-    # specifying more trailing zeros than needed may result in false positive errors.
+    # specifying more trailing zeros than needed in the dict below may result
+    # in false positive errors for users of the check-autopkg-recipes hook.
     proc_min_versions = {
         "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
