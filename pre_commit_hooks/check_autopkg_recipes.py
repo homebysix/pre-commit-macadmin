@@ -19,13 +19,17 @@ def build_argument_parser():
     )
     parser.add_argument(
         "--override-prefix",
-        default="local.",
-        help='Expected prefix for recipe override identifiers (defaults to "local").',
+        nargs="+",
+        default=["local."],
+        help='Expected prefix(es) for recipe override identifiers (defaults to ["local."]). '
+        "Case sensitive. Multiple acceptable identifier prefixes can be provided.",
     )
     parser.add_argument(
         "--recipe-prefix",
-        default="com.github.",
-        help='Expected prefix for recipe identifiers (defaults to "com.github").',
+        nargs="+",
+        default=["com.github."],
+        help='Expected prefix(es) for recipe identifiers (defaults to ["com.github."]). '
+        "Case sensitive. Multiple acceptable identifier prefixes can be provided.",
     )
     parser.add_argument(
         "--ignore-min-vers-before",
@@ -47,14 +51,13 @@ def build_argument_parser():
 
 
 def validate_override_prefix(recipe, filename, prefix):
-    """Warn if the override identifier does not start with the expected
-    prefix."""
+    """Verify that the override identifier starts with the expected prefix."""
 
     passed = True
-    if not recipe["Identifier"].startswith(prefix):
+    if not any([recipe["Identifier"].startswith(x) for x in prefix]):
         print(
-            "{}: override identifier does not start with "
-            '"{}"'.format(filename, prefix)
+            "{}: override identifier does not start "
+            'with one of: "{}"'.format(filename, ", ".join(prefix))
         )
         passed = False
 
@@ -62,12 +65,14 @@ def validate_override_prefix(recipe, filename, prefix):
 
 
 def validate_recipe_prefix(recipe, filename, prefix):
-    """Warn if the recipe identifier does not start with the expected
-    prefix."""
+    """Verify that the recipe identifier starts with the expected prefix."""
 
     passed = True
-    if not recipe["Identifier"].startswith(prefix):
-        print('{}: recipe identifier does not start with "{}"'.format(filename, prefix))
+    if not any([recipe["Identifier"].startswith(x) for x in prefix]):
+        print(
+            "{}: recipe identifier does not start "
+            'with one of: "{}"'.format(filename, ", ".join(prefix))
+        )
         passed = False
 
     return passed
