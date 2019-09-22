@@ -118,6 +118,8 @@ def validate_endofcheckphase(process, filename):
         ),
         None,
     )
+    if downloader_idx is None:
+        return passed
     endofcheck_idx = next(
         (
             idx
@@ -126,11 +128,13 @@ def validate_endofcheckphase(process, filename):
         ),
         None,
     )
-    if (
-        downloader_idx is not None
-        and endofcheck_idx is not None
-        and endofcheck_idx < downloader_idx
-    ):
+    if endofcheck_idx is None:
+        print(
+            "{}: Contains a download processor, but no EndOfCheckPhase "
+            "processor.".format(filename)
+        )
+        passed = False
+    elif endofcheck_idx < downloader_idx:
         print(
             "{}: EndOfCheckPhase typically goes after a download processor, "
             "not before.".format(filename)
