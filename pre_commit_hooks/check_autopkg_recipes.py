@@ -50,28 +50,16 @@ def build_argument_parser():
     return parser
 
 
-def validate_override_prefix(recipe, filename, prefix):
-    """Verify that the override identifier starts with the expected prefix."""
-
-    passed = True
-    if not any([recipe["Identifier"].startswith(x) for x in prefix]):
-        print(
-            "{}: override identifier does not start "
-            'with one of: "{}"'.format(filename, ", ".join(prefix))
-        )
-        passed = False
-
-    return passed
-
-
 def validate_recipe_prefix(recipe, filename, prefix):
     """Verify that the recipe identifier starts with the expected prefix."""
 
     passed = True
     if not any([recipe["Identifier"].startswith(x) for x in prefix]):
         print(
-            "{}: recipe identifier does not start "
-            'with one of: "{}"'.format(filename, ", ".join(prefix))
+            "{}: identifier does not start with {}".format(
+                filename,
+                'one of: "%s"' % ", ".join(prefix) if len(prefix) > 1 else prefix[0],
+            )
         )
         passed = False
 
@@ -130,6 +118,8 @@ def validate_endofcheckphase(process, filename):
         ),
         None,
     )
+    if downloader_idx is None:
+        return passed
     endofcheck_idx = next(
         (
             idx
@@ -138,11 +128,13 @@ def validate_endofcheckphase(process, filename):
         ),
         None,
     )
-    if (
-        downloader_idx is not None
-        and endofcheck_idx is not None
-        and endofcheck_idx < downloader_idx
-    ):
+    if endofcheck_idx is None:
+        print(
+            "{}: Contains a download processor, but no EndOfCheckPhase "
+            "processor.".format(filename)
+        )
+        passed = False
+    elif endofcheck_idx < downloader_idx:
         print(
             "{}: EndOfCheckPhase typically goes after a download processor, "
             "not before.".format(filename)
@@ -221,9 +213,8 @@ def validate_no_deprecated_procs(process, filename):
     for proc in process:
         if proc.get("Processor") in deprecated_procs:
             print(
-                "{}: WARNING: Deprecated processor {} is used.".format(
-                    filename, proc.get("Processor")
-                )
+                "{}: WARNING: Deprecated processor {} "
+                "is used.".format(filename, proc.get("Processor"))
             )
 
     return passed
@@ -378,7 +369,7 @@ def main(argv=None):
 
         # Validate identifiers.
         if args.override_prefix and "Process" not in recipe:
-            if not validate_override_prefix(recipe, filename, args.override_prefix):
+            if not validate_recipe_prefix(recipe, filename, args.override_prefix):
                 retval = 1
         if args.recipe_prefix and "Process" in recipe:
             if not validate_recipe_prefix(recipe, filename, args.recipe_prefix):
