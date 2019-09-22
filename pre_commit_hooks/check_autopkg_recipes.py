@@ -213,9 +213,8 @@ def validate_no_deprecated_procs(process, filename):
     for proc in process:
         if proc.get("Processor") in deprecated_procs:
             print(
-                "{}: WARNING: Deprecated processor {} is used.".format(
-                    filename, proc.get("Processor")
-                )
+                "{}: WARNING: Deprecated processor {} "
+                "is used.".format(filename, proc.get("Processor"))
             )
 
     return passed
