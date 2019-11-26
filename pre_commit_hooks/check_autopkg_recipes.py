@@ -182,6 +182,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "StopProcessingIf": "0.1.0",
         "Symlinker": "0.1.0",
         "Unarchiver": "0.1.0",
+        "URLGetter": "1.4",
         "URLTextSearcher": "0.2.9",
         "Versioner": "0.1.0",
     }
