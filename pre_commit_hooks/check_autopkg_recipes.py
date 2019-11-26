@@ -297,7 +297,9 @@ def validate_required_proc_for_types(process, filename):
     # For each recipe type, this is the list of processors that
     # MUST exist in that type. Uses "OR" logic, not "AND."
     required_proc_for_type = {
-        "download": ["EndOfCheckPhase"],
+        # Skipping EndOfCheckPhase because validate_endofcheckphase()
+        # already tests this.
+        # "download": ["EndOfCheckPhase"],
         "munki": ["MunkiImporter"],
         "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
