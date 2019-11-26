@@ -58,7 +58,7 @@ def validate_recipe_prefix(recipe, filename, prefix):
         print(
             "{}: identifier does not start with {}".format(
                 filename,
-                'one of: "%s"' % ", ".join(prefix) if len(prefix) > 1 else prefix[0],
+                'one of: "%s"' % '", "'.join(prefix) if len(prefix) > 1 else prefix[0],
             )
         )
         passed = False
@@ -182,6 +182,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "StopProcessingIf": "0.1.0",
         "Symlinker": "0.1.0",
         "Unarchiver": "0.1.0",
+        "URLGetter": "1.4",
         "URLTextSearcher": "0.2.9",
         "Versioner": "0.1.0",
     }
@@ -297,7 +298,9 @@ def validate_required_proc_for_types(process, filename):
     # For each recipe type, this is the list of processors that
     # MUST exist in that type. Uses "OR" logic, not "AND."
     required_proc_for_type = {
-        "download": ["EndOfCheckPhase"],
+        # Skipping EndOfCheckPhase because validate_endofcheckphase()
+        # already tests this.
+        # "download": ["EndOfCheckPhase"],
         "munki": ["MunkiImporter"],
         "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
