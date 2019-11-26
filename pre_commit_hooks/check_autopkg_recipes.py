@@ -58,7 +58,7 @@ def validate_recipe_prefix(recipe, filename, prefix):
         print(
             "{}: identifier does not start with {}".format(
                 filename,
-                'one of: "%s"' % ", ".join(prefix) if len(prefix) > 1 else prefix[0],
+                'one of: "%s"' % '", "'.join(prefix) if len(prefix) > 1 else prefix[0],
             )
         )
         passed = False
