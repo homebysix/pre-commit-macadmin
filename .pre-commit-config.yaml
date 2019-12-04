@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v2.2.3
+  rev: v2.4.0
   hooks:
   - id: check-ast
   - id: check-byte-order-marker
@@ -16,7 +16,7 @@ repos:
   - id: trailing-whitespace
     args: [--markdown-linebreak-ext=md]
 - repo: https://github.com/python/black
-  rev: 19.3b0
+  rev: 19.10b0
   hooks:
   - id: black
     language_version: python3.7
