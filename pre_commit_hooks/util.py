@@ -15,6 +15,27 @@ def validate_required_keys(plist, filename, required_keys):
     return passed
 
 
+def validate_restart_action_key(pkginfo, filename):
+    """Verifies that required_keys are present in dictionary plist."""
+    passed = True
+    allowed_values = (
+        "RequireShutdown",
+        "RequireRestart",
+        "RecommendRestart",
+        "RequireLogout",
+        "None",
+    )
+    if "RestartAction" in pkginfo:
+        if pkginfo["RestartAction"] not in allowed_values:
+            print(
+                "{}: RestartAction key set to unexpected value: {}".format(
+                    filename, pkginfo["RestartAction"]
+                )
+            )
+            passed = False
+    return passed
+
+
 def validate_pkginfo_key_types(pkginfo, filename):
     """Validation of pkginfo key types.
 

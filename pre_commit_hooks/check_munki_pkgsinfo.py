@@ -7,7 +7,11 @@ import os
 import plistlib
 from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import validate_pkginfo_key_types, validate_required_keys
+from pre_commit_hooks.util import (
+    validate_pkginfo_key_types,
+    validate_required_keys,
+    validate_restart_action_key,
+)
 
 
 def build_argument_parser():
@@ -58,6 +62,10 @@ def main(argv=None):
 
         # Ensure pkginfo keys have expected types.
         if not validate_pkginfo_key_types(pkginfo, filename):
+            retval = 1
+
+        # Validate RestartAction key.
+        if not validate_restart_action_key(pkginfo, filename):
             retval = 1
 
         # Check for rogue categories.
