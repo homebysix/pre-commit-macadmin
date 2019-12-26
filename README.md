@@ -13,7 +13,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.5.2
+    rev: v1.6.0
     hooks:
     -   id: check-plists
     # -   id: ...
@@ -24,6 +24,11 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 ## Hooks available
 
 ### General
+
+- __check-git-config-email__
+
+    This hook checks to ensure the Git config email matches one of the specified domains:
+        `args: ['--domains', 'pretendco.com', 'contoso.com', '--']`
 
 - __check-plists__
 
@@ -114,7 +119,7 @@ When combining arguments that take lists (for example: `--required-keys`, `--cat
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.5.2
+    rev: v1.6.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--']
@@ -124,7 +129,7 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.5.2
+    rev: v1.6.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
@@ -136,7 +141,7 @@ If it looks better to your eye, feel free to use a multi-line list for long argu
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.5.2
+    rev: v1.6.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: [

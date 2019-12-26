@@ -8,7 +8,11 @@ import plistlib
 from distutils.version import LooseVersion
 from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import validate_pkginfo_key_types, validate_required_keys
+from pre_commit_hooks.util import (
+    validate_pkginfo_key_types,
+    validate_required_keys,
+    validate_restart_action_key,
+)
 
 
 def build_argument_parser():
@@ -384,9 +388,12 @@ def main(argv=None):
             )
             retval = 1
 
+        # If the Input key contains a pkginfo dict, make a best effort to validate its contents.
         input_key = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
         if input_key and "pkginfo" in input_key:
             if not validate_pkginfo_key_types(input_key["pkginfo"], filename):
+                retval = 1
+            if not validate_restart_action_key(input_key["pkginfo"], filename):
                 retval = 1
 
             # TODO: Additional pkginfo checks here.

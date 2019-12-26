@@ -7,7 +7,7 @@ setup(
     name="pre-commit-macadmin",
     description="Pre-commit hooks for Mac admins, client engineers, and IT consultants.",
     url="https://github.com/homebysix/pre-commit-macadmin",
-    version="1.5.2",
+    version="1.6.0",
     author="Elliot Jordan",
     author_email="elliot@elliotjordan.com",
     packages=["pre_commit_hooks"],
@@ -16,6 +16,7 @@ setup(
         "console_scripts": [
             "check-autopkg-recipe-list = pre_commit_hooks.check_autopkg_recipe_list:main",
             "check-autopkg-recipes = pre_commit_hooks.check_autopkg_recipes:main",
+            "check-git-config-email = pre_commit_hooks.check_git_config_email:main",
             "check-jamf-extension-attributes = pre_commit_hooks.check_jamf_extension_attributes:main",
             "check-jamf-scripts = pre_commit_hooks.check_jamf_scripts:main",
             "check-jamf-profiles = pre_commit_hooks.check_jamf_profiles:main",
