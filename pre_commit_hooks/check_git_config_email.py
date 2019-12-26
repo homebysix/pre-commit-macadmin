@@ -30,6 +30,7 @@ def main(argv=None):
     retval = 0
     if args.domains:
         user_email = subprocess.check_output(["git", "config", "--get", "user.email"])
+        user_email = user_email.decode().strip()
         if not any((user_email.endswith(x) for x in args.domains)):
             print("Git config email is from an unexpected domain.")
             retval = 1
