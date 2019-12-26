@@ -25,6 +25,11 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
 ### General
 
+- __check-git-config-email__
+
+    This hook checks to ensure the Git config email matches one of the specified domains:
+        `args: ['--domains', 'pretendco.com', 'contoso.com', '--']`
+
 - __check-plists__
 
     This hook checks XML property list (plist) files for basic syntax errors.
