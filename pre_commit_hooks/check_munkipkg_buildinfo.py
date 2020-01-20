@@ -3,9 +3,11 @@
 """Check MunkiPkg build-info files to ensure they are valid."""
 
 import argparse
-import plistlib
-from xml.parsers.expat import ExpatError
 import json
+import plistlib
+import sys
+from xml.parsers.expat import ExpatError
+
 import ruamel.yaml
 from pre_commit_hooks.util import validate_required_keys
 
