@@ -225,6 +225,26 @@ def validate_no_deprecated_procs(process, filename):
     return passed
 
 
+def validate_no_superclass_procs(process, filename):
+    """Warn if any superclass processors (which are used by other processors
+    rather than called in recipes) are used."""
+
+    # Processors that have been deprecated.
+    superclass_procs = ("URLGetter",)
+
+    passed = True
+    for proc in process:
+        if proc.get("Processor") in superclass_procs:
+            print(
+                "{}: WARNING: The processor {} is intended to be used "
+                "by other processors, not used directly in recipes.".format(
+                    filename, proc.get("Processor")
+                )
+            )
+
+    return passed
+
+
 def validate_no_var_in_app_path(process, filename):
     """Ensure %NAME% is not used in app paths that should be hard coded."""
 
@@ -422,6 +442,9 @@ def main(argv=None):
                 retval = 1
 
             if not validate_no_deprecated_procs(process, filename):
+                retval = 1
+
+            if not validate_no_superclass_procs(process, filename):
                 retval = 1
 
             if args.strict:

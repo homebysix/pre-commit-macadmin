@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Added
 - Added pre-commit-macadmin change log (this file)
+- Ensure no superclass processors (e.g. URLGetter) are used, as these are intended to be referred to by other processors rather than directly used in recipes
 
 
 ## [1.6.2] - 2020-01-20
