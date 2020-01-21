@@ -71,8 +71,8 @@ def validate_recipe_prefix(recipe, filename, prefix):
 
 
 def validate_comments(filename, strict):
-    """Warn about comments in <!-- --> format that would break during
-    plutil -convert xml1."""
+    """Warn about comments in <!-- --> format that would break when running
+    plutil -convert xml1."""
 
     passed = True
     with open(filename, "r") as openfile:
