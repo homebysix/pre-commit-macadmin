@@ -68,6 +68,26 @@ def main(argv=None):
         if not validate_restart_action_key(pkginfo, filename):
             retval = 1
 
+        # Check for common mistakes in min/max OS version keys.
+        os_vers_corrections = {
+            "min_os": "minimum_os_version",
+            "max_os": "maximum_os_version",
+            "min_os_vers": "minimum_os_version",
+            "max_os_vers": "maximum_os_version",
+            "minimum_os": "minimum_os_version",
+            "maximum_os": "maximum_os_version",
+            "minimum_os_vers": "minimum_os_version",
+            "maximum_os_vers": "maximum_os_version",
+        }
+        for os_vers_key in os_vers_corrections:
+            if os_vers_key in pkginfo:
+                print(
+                    "{}: You used {} when you probably meant {}.".format(
+                        filename, os_vers_key, os_vers_corrections[os_vers_key]
+                    )
+                )
+                retval = 1
+
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
             print(
