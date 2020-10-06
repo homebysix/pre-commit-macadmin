@@ -68,6 +68,26 @@ def main(argv=None):
         if not validate_restart_action_key(pkginfo, filename):
             retval = 1
 
+        # Check for common mistakes in min/max OS version keys.
+        os_vers_corrections = {
+            "min_os": "minimum_os_version",
+            "max_os": "maximum_os_version",
+            "min_os_vers": "minimum_os_version",
+            "max_os_vers": "maximum_os_version",
+            "minimum_os": "minimum_os_version",
+            "maximum_os": "maximum_os_version",
+            "minimum_os_vers": "minimum_os_version",
+            "maximum_os_vers": "maximum_os_version",
+        }
+        for os_vers_key in os_vers_corrections:
+            if os_vers_key in pkginfo:
+                print(
+                    "{}: You used {} when you probably meant {}.".format(
+                        filename, os_vers_key, os_vers_corrections[os_vers_key]
+                    )
+                )
+                retval = 1
+
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
             print(
@@ -144,7 +164,8 @@ def main(argv=None):
             "#!/usr/bin/perl",
             "#!/usr/bin/python",
             "#!/usr/bin/ruby",
-            "#!/usr/local/munki/python",
+            "#!/usr/local/munki/munki-python",
+            "#!/usr/local/munki/Python.framework/Versions/Current/bin/python3",
         )
         script_types = (
             "installcheck_script",
@@ -159,7 +180,7 @@ def main(argv=None):
             if script_type in pkginfo:
                 if all(not pkginfo[script_type].startswith(x + "\n") for x in shebangs):
                     print(
-                        "{}: has a {} that does not start with a shebang.".format(
+                        "{}: has a {} that does not start with a valid shebang.".format(
                             filename, script_type
                         )
                     )

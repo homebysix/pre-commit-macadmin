@@ -71,8 +71,8 @@ def validate_recipe_prefix(recipe, filename, prefix):
 
 
 def validate_comments(filename, strict):
-    """Warn about comments in <!-- --> format that would break during
-    plutil -convert xml1."""
+    """Warn about comments in <!-- --> format that would break when running
+    plutil -convert xml1."""
 
     passed = True
     with open(filename, "r") as openfile:
@@ -151,6 +151,14 @@ def validate_endofcheckphase(process, filename):
 def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename):
     """Ensure MinimumVersion is set appropriately for the processors used."""
 
+    # Warn if using a MinimumVersion greater than or equal to 2
+    if LooseVersion(min_vers) >= LooseVersion("2"):
+        print(
+            "{}: WARNING: Choosing MinimumVersion {} limits the potential "
+            "audience for your AutoPkg recipe. Consider using MinimumVersion "
+            "1.4.1 if your processors support it.".format(filename, min_vers)
+        )
+
     # Processors for which a minimum version of AutoPkg is required.
     # Note: Because LooseVersion considers version 1.0 to be "less than" 1.0.0,
     # specifying more trailing zeros than needed in the dict below may result
@@ -159,8 +167,8 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
         "CodeSignatureVerifier": "0.3.1",
-        "CURLDownloader": "0.5.1",
-        "CURLTextSearcher": "0.5.1",
+        "CURLDownloader": "1.4",
+        "CURLTextSearcher": "1.4",
         "DeprecationWarning": "1.1",
         "EndOfCheckPhase": "0.1.0",
         "FileFinder": "0.2.3",
@@ -186,8 +194,9 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "StopProcessingIf": "0.1.0",
         "Symlinker": "0.1.0",
         "Unarchiver": "0.1.0",
+        "URLDownloader": "1.4",
         "URLGetter": "1.4",
-        "URLTextSearcher": "0.2.9",
+        "URLTextSearcher": "1.4",
         "Versioner": "0.1.0",
     }
 
@@ -220,6 +229,26 @@ def validate_no_deprecated_procs(process, filename):
             print(
                 "{}: WARNING: Deprecated processor {} "
                 "is used.".format(filename, proc.get("Processor"))
+            )
+
+    return passed
+
+
+def validate_no_superclass_procs(process, filename):
+    """Warn if any superclass processors (which are used by other processors
+    rather than called in recipes) are used."""
+
+    # Processors that have been deprecated.
+    superclass_procs = ("URLGetter",)
+
+    passed = True
+    for proc in process:
+        if proc.get("Processor") in superclass_procs:
+            print(
+                "{}: WARNING: The processor {} is intended to be used "
+                "by other processors, not used directly in recipes.".format(
+                    filename, proc.get("Processor")
+                )
             )
 
     return passed
@@ -396,6 +425,26 @@ def main(argv=None):
             if not validate_restart_action_key(input_key["pkginfo"], filename):
                 retval = 1
 
+            # Check for common mistakes in min/max OS version keys
+            os_vers_corrections = {
+                "min_os": "minimum_os_version",
+                "max_os": "maximum_os_version",
+                "min_os_vers": "minimum_os_version",
+                "max_os_vers": "maximum_os_version",
+                "minimum_os": "minimum_os_version",
+                "maximum_os": "maximum_os_version",
+                "minimum_os_vers": "minimum_os_version",
+                "maximum_os_vers": "maximum_os_version",
+            }
+            for os_vers_key in os_vers_corrections:
+                if os_vers_key in input_key["pkginfo"]:
+                    print(
+                        "{}: You used {} when you probably meant {}.".format(
+                            filename, os_vers_key, os_vers_corrections[os_vers_key]
+                        )
+                    )
+                    retval = 1
+
             # TODO: Additional pkginfo checks here.
 
         # Warn about comments that would be lost during `plutil -convert xml1`
@@ -422,6 +471,9 @@ def main(argv=None):
                 retval = 1
 
             if not validate_no_deprecated_procs(process, filename):
+                retval = 1
+
+            if not validate_no_superclass_procs(process, filename):
                 retval = 1
 
             if args.strict:
