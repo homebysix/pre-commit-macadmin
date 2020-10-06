@@ -3,12 +3,17 @@
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [Unreleased](Unreleased)
+## [1.7.0] - 2020-10-06
 
 ### Added
 - Added pre-commit-macadmin change log (this file)
 - Ensure no superclass processors (e.g. URLGetter) are used, as these are intended to be referred to by other processors rather than directly used in recipes
 - Warn if setting a MinimumVersion greater than or equal to 2 in AutoPkg recipes, because some administrators may be running 1.4.1 and waiting for processor authors to add Python 3 compatibility
+- Validate `minimum_os_version` and `maximum_os_version` keys in Munki pkginfo files
+
+### Changed
+- Set MinimumVersion needed for [C]URL* processors to 1.4, to ensure utilization of URLGetter
+- Updated valid Munki script shebangs to include Munki embedded Python symlink and path
 
 
 ## [1.6.2] - 2020-01-20
@@ -183,7 +188,8 @@ All notable changes to this project will be documented in this file. This projec
 - Initial release
 
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.7.0...HEAD
+[1.6.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.2...v1.7.0
 [1.6.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.5.2...v1.6.0
