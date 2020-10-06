@@ -144,7 +144,8 @@ def main(argv=None):
             "#!/usr/bin/perl",
             "#!/usr/bin/python",
             "#!/usr/bin/ruby",
-            "#!/usr/local/munki/python",
+            "#!/usr/local/munki/munki-python",
+            "#!/usr/local/munki/Python.framework/Versions/Current/bin/python3",
         )
         script_types = (
             "installcheck_script",
@@ -159,7 +160,7 @@ def main(argv=None):
             if script_type in pkginfo:
                 if all(not pkginfo[script_type].startswith(x + "\n") for x in shebangs):
                     print(
-                        "{}: has a {} that does not start with a shebang.".format(
+                        "{}: has a {} that does not start with a valid shebang.".format(
                             filename, script_type
                         )
                     )
