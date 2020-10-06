@@ -167,8 +167,8 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
         "CodeSignatureVerifier": "0.3.1",
-        "CURLDownloader": "0.5.1",
-        "CURLTextSearcher": "0.5.1",
+        "CURLDownloader": "1.4",
+        "CURLTextSearcher": "1.4",
         "DeprecationWarning": "1.1",
         "EndOfCheckPhase": "0.1.0",
         "FileFinder": "0.2.3",
@@ -194,8 +194,9 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "StopProcessingIf": "0.1.0",
         "Symlinker": "0.1.0",
         "Unarchiver": "0.1.0",
+        "URLDownloader": "1.4",
         "URLGetter": "1.4",
-        "URLTextSearcher": "0.2.9",
+        "URLTextSearcher": "1.4",
         "Versioner": "0.1.0",
     }
 
