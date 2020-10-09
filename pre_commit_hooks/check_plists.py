@@ -27,7 +27,8 @@ def main(argv=None):
     retval = 0
     for filename in args.filenames:
         try:
-            plist = plistlib.readPlist(filename)
+            with open(filename, "rb") as openfile:
+                plist = plistlib.load(openfile)
             # Possible future addition, but disabled for now.
             # if not isinstance(plist, dict):
             #     print("{}: top level of plist should be type dict".format(filename))

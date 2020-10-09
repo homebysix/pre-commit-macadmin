@@ -49,7 +49,8 @@ def main(argv=None):
     retval = 0
     for filename in args.filenames:
         try:
-            pkginfo = plistlib.readPlist(filename)
+            with open(filename, "rb") as openfile:
+                pkginfo = plistlib.load(openfile)
         except (ExpatError, ValueError) as err:
             print("{}: plist parsing error: {}".format(filename, err))
             retval = 1
@@ -180,7 +181,7 @@ def main(argv=None):
             if script_type in pkginfo:
                 if all(not pkginfo[script_type].startswith(x + "\n") for x in shebangs):
                     print(
-                        "{}: has a {} that does not start with a valid shebang.".format(
+                        "{}: Has a {} that does not start with a valid shebang.".format(
                             filename, script_type
                         )
                     )

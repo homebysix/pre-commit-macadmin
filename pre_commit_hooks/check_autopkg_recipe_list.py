@@ -7,9 +7,10 @@ Category: AutoPkg
 """
 
 import argparse
+import json
 import plistlib
 from xml.parsers.expat import ExpatError
-import json
+
 import ruamel.yaml
 
 yaml = ruamel.yaml.YAML(typ="safe")
@@ -44,7 +45,8 @@ def main(argv=None):
                 ]
         elif filename.endswith(".plist"):
             try:
-                recipe_list = plistlib.readPlist(filename)
+                with open(filename, "rb") as openfile:
+                    recipe_list = plistlib.load(openfile)
             except (ExpatError, ValueError) as err:
                 print("{}: plist parsing error: {}".format(filename, err))
                 retval = 1
