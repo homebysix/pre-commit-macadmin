@@ -194,8 +194,9 @@ All notable changes to this project will be documented in this file. This projec
 - Initial release
 
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.7.0...HEAD
-[1.6.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.2...v1.7.0
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.7.0...v1.8.0
+[1.7.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.2...v1.7.0
 [1.6.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.1...v1.6.2
 [1.6.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.6.0...v1.6.1
 [1.6.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.5.2...v1.6.0
