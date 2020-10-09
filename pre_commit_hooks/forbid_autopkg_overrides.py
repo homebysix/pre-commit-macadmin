@@ -30,7 +30,8 @@ def main(argv=None):
     retval = 0
     for filename in args.filenames:
         try:
-            recipe = plistlib.readPlist(filename)
+            with open(filename, "rb") as openfile:
+                recipe = plistlib.load(openfile)
             for req_key in required_keys:
                 if req_key not in recipe:
                     print("{}: possible AutoPkg recipe override".format(filename))

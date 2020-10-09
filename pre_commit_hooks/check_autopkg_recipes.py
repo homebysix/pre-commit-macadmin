@@ -383,7 +383,8 @@ def main(argv=None):
     retval = 0
     for filename in args.filenames:
         try:
-            recipe = plistlib.readPlist(filename)
+            with open(filename, "rb") as openfile:
+                recipe = plistlib.load(openfile)
 
         except (ExpatError, ValueError) as err:
             print("{}: plist parsing error: {}".format(filename, err))

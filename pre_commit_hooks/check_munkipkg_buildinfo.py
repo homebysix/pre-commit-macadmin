@@ -81,7 +81,8 @@ def main(argv=None):
     for filename in args.filenames:
         if filename.endswith(".plist"):
             try:
-                buildinfo = plistlib.readPlist(filename)
+                with open(filename, "rb") as openfile:
+                    buildinfo = plistlib.load(openfile)
             except (ExpatError, ValueError) as err:
                 print("{}: plist parsing error: {}".format(filename, err))
                 retval = 1
