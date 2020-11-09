@@ -152,12 +152,14 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     """Ensure MinimumVersion is set appropriately for the processors used."""
 
     # Warn if using a MinimumVersion greater than or equal to 2
-    if LooseVersion(min_vers) >= LooseVersion("2"):
-        print(
-            "{}: WARNING: Choosing MinimumVersion {} limits the potential "
-            "audience for your AutoPkg recipe. Consider using MinimumVersion "
-            "1.4.1 if your processors support it.".format(filename, min_vers)
-        )
+    # warn_on_vers = "2"
+    # suggest_vers = "1.4.1"
+    # if LooseVersion(min_vers) >= LooseVersion(warn_on_vers):
+    #     print(
+    #         "{}: WARNING: Choosing MinimumVersion {} limits the potential "
+    #         "audience for your AutoPkg recipe. Consider using MinimumVersion "
+    #         "{} if your processors support it.".format(filename, min_vers, suggest_vers)
+    #     )
 
     # Processors for which a minimum version of AutoPkg is required.
     # Note: Because LooseVersion considers version 1.0 to be "less than" 1.0.0,
