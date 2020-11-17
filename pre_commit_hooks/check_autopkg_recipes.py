@@ -238,7 +238,7 @@ def validate_no_superclass_procs(process, filename):
     """Warn if any superclass processors (which are used by other processors
     rather than called in recipes) are used."""
 
-    # Processors that have been deprecated.
+    # Processors that are superclasses and shouldn't be referenced directly.
     superclass_procs = ("URLGetter",)
 
     passed = True
