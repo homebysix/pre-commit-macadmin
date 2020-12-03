@@ -1,5 +1,7 @@
 # Pre-Commit Hooks for Mac Admins
 
+![CodeQL](https://github.com/homebysix/pre-commit-macadmin/workflows/CodeQL/badge.svg)
+
 This repository contains hooks for [pre-commit](https://pre-commit.com/hooks.html) that may be useful to Mac admins, client engineers, and other Apple-focused IT professionals.
 
 ## Requirements
