@@ -152,12 +152,14 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     """Ensure MinimumVersion is set appropriately for the processors used."""
 
     # Warn if using a MinimumVersion greater than or equal to 2
-    if LooseVersion(min_vers) >= LooseVersion("2"):
-        print(
-            "{}: WARNING: Choosing MinimumVersion {} limits the potential "
-            "audience for your AutoPkg recipe. Consider using MinimumVersion "
-            "1.4.1 if your processors support it.".format(filename, min_vers)
-        )
+    # warn_on_vers = "2"
+    # suggest_vers = "1.4.1"
+    # if LooseVersion(min_vers) >= LooseVersion(warn_on_vers):
+    #     print(
+    #         "{}: WARNING: Choosing MinimumVersion {} limits the potential "
+    #         "audience for your AutoPkg recipe. Consider using MinimumVersion "
+    #         "{} if your processors support it.".format(filename, min_vers, suggest_vers)
+    #     )
 
     # Processors for which a minimum version of AutoPkg is required.
     # Note: Because LooseVersion considers version 1.0 to be "less than" 1.0.0,
@@ -167,8 +169,8 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
         "CodeSignatureVerifier": "0.3.1",
-        "CURLDownloader": "1.4",
-        "CURLTextSearcher": "1.4",
+        "CURLDownloader": "0.5.1",
+        "CURLTextSearcher": "0.5.1",
         "DeprecationWarning": "1.1",
         "EndOfCheckPhase": "0.1.0",
         "FileFinder": "0.2.3",
@@ -194,9 +196,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "StopProcessingIf": "0.1.0",
         "Symlinker": "0.1.0",
         "Unarchiver": "0.1.0",
-        "URLDownloader": "1.4",
-        "URLGetter": "1.4",
-        "URLTextSearcher": "1.4",
+        "URLTextSearcher": "0.2.9",
         "Versioner": "0.1.0",
     }
 
@@ -238,7 +238,7 @@ def validate_no_superclass_procs(process, filename):
     """Warn if any superclass processors (which are used by other processors
     rather than called in recipes) are used."""
 
-    # Processors that have been deprecated.
+    # Processors that are superclasses and shouldn't be referenced directly.
     superclass_procs = ("URLGetter",)
 
     passed = True
