@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file. This projec
 ### Added
 - Added check for unexpected processor arguments in CodeSignatureVerifier.
 
+## Changed
+- Renamed default branch to `main`.
+
 ## [1.8.1] - 2020-12-08
 
 ### Removed

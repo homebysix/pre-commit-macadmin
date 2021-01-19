@@ -4,7 +4,7 @@
 
 1. Update the change log.
 
-1. Merge development branch to master.
+1. Merge development branch to main.
 
 1. Create a GitHub release with version tag, prefixed with `v`. (For example: `v2.3.4`)
 
