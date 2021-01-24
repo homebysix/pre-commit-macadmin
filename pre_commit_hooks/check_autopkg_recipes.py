@@ -553,16 +553,16 @@ def main(argv=None):
             if not validate_no_superclass_procs(process, filename):
                 retval = 1
 
+            if HAS_AUTOPKGLIB:
+                if not validate_proc_args(process, filename):
+                    retval = 1
+
             if args.strict:
                 if not validate_proc_type_conventions(process, filename):
                     retval = 1
 
                 if not validate_required_proc_for_types(process, filename):
                     retval = 1
-
-                if HAS_AUTOPKGLIB:
-                    if not validate_proc_args(process, filename):
-                        retval = 1
 
     return retval
 
