@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.9.0] - 2021-01-18
+
+### Added
+- Added check for any unexpected processor arguments in any AutoPkg processor.
+
+### Removed
+- CodeSignatureVerifier processor argument verification (added in v1.8.2) has been replaced by the above.
 
 ## [1.8.2] - 2021-01-18
 
