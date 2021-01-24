@@ -52,7 +52,7 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
 - __check-autopkg-recipes__
 
-    This hook checks AutoPkg recipes to ensure they meet various requirements.
+    This hook checks AutoPkg recipes to ensure they meet various requirements and conventions.
 
     - Optionally specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:
         `args: ['--override-prefix=com.yourcompany.autopkg.']`  
@@ -65,7 +65,7 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
         (default: `1.0.0`)  
         Specifying `0.1.0` will not ignore any MinimumVersion mismatches.
 
-    - If you're a purist, you can also enable strict mode. This enforces recipe type conventions, all processor/MinimumVersion mismatches, and forbids `<!-- -->` style comments.  
+    - If you're a purist, you can also enable strict mode. This enforces recipe type conventions, all processor/MinimumVersion mismatches, forbids `<!-- -->` style comments, and ensures all processor input variables (arguments) are valid.  
         `args: ['--strict']`  
         (default: False)
 
