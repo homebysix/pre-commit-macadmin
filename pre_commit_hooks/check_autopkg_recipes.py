@@ -174,26 +174,6 @@ def validate_endofcheckphase(process, filename):
     return passed
 
 
-def validate_codesignatureverifier(process, filename):
-    """Ensure CodeSignatureVerifier uses correct arguments."""
-
-    passed = True
-    csv_args = [
-        x.get("Arguments")
-        for x in process
-        if x.get("Processor") == "CodeSignatureVerifier"
-    ]
-    if csv_args:
-        if "requirements" in csv_args[0]:
-            print(
-                '{}: Found unexpected key "{}" in '
-                "CodeSignatureVerifier arguments.".format(filename, "requirements")
-            )
-            passed = False
-
-    return passed
-
-
 def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename):
     """Ensure MinimumVersion is set appropriately for the processors used."""
 
@@ -556,9 +536,6 @@ def main(argv=None):
                 retval = 1
 
             if not validate_endofcheckphase(process, filename):
-                retval = 1
-
-            if not validate_codesignatureverifier(process, filename):
                 retval = 1
 
             if not validate_no_var_in_app_path(process, filename):
