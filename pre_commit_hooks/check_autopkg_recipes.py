@@ -280,6 +280,30 @@ def validate_no_superclass_procs(process, filename):
     return passed
 
 
+# def validate_unused_input_vars(recipe, recipe_text, filename):
+#     """Warn if any input variables are not referenced in the recipe."""
+
+#     # List of variables that are commonly allowed to be unreferenced (lowercase).
+#     ignored_vars = (
+#         "name",
+#         "pkginfo",
+#     )
+
+#     passed = True
+#     for input_var, _ in recipe.get("Input", {}).items():
+#         if input_var.lower() in ignored_vars:
+#             continue
+#         subst = "%" + input_var + "%"
+#         if subst not in recipe_text:
+#             print(
+#                 "{}: WARNING: Input variable {} not referenced in recipe.".format(
+#                     filename, input_var
+#                 )
+#             )
+
+#     return passed
+
+
 def validate_no_var_in_app_path(process, filename):
     """Ensure %NAME% is not used in app paths that should be hard coded."""
 
@@ -461,6 +485,9 @@ def main(argv=None):
         try:
             with open(filename, "rb") as openfile:
                 recipe = plistlib.load(openfile)
+            # For future implementation of validate_unused_input_vars()
+            # with open(filename, "r") as openfile:
+            #     recipe_text = openfile.read()
 
         except (ExpatError, ValueError) as err:
             print("{}: plist parsing error: {}".format(filename, err))
@@ -493,6 +520,13 @@ def main(argv=None):
                 "be the same.".format(filename)
             )
             retval = 1
+
+        # Validate that all input variables are used.
+        # (Disabled for now because it's a little too opinionated, and doesn't take into account
+        # whether environmental variables are used in custom processors.)
+        # if args.strict:
+        #     if not validate_unused_input_vars(recipe, recipe_text, filename):
+        #         retval = 1
 
         # If the Input key contains a pkginfo dict, make a best effort to validate its contents.
         input_key = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
