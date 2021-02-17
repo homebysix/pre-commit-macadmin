@@ -11,7 +11,7 @@
   description: This hook checks AutoPkg recipes to ensure they contain required top-level keys.
   entry: check-autopkg-recipes
   language: python
-  files: '\.recipe$'
+  files: '\.recipe(\.yaml|\.json)?$'
   types: [text]
 
 - id: check-git-config-email

@@ -4,12 +4,15 @@
 requirements."""
 
 import argparse
+import json
 import os
 import plistlib
 import sys
 from contextlib import contextmanager
 from distutils.version import LooseVersion
 from xml.parsers.expat import ExpatError
+
+from ruamel import yaml
 
 from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
@@ -482,17 +485,40 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        try:
-            with open(filename, "rb") as openfile:
-                recipe = plistlib.load(openfile)
-            # For future implementation of validate_unused_input_vars()
-            # with open(filename, "r") as openfile:
-            #     recipe_text = openfile.read()
 
-        except (ExpatError, ValueError) as err:
-            print("{}: plist parsing error: {}".format(filename, err))
-            retval = 1
-            break  # No need to continue checking this file
+        if filename.endswith(".yaml"):
+            try:
+                # try to read it as yaml
+                with open(filename, "rb") as f:
+                    recipe = yaml.safe_load(f)
+            except Exception as err:
+                print("{}: yaml parsing error: {}".format(filename, err))
+                retval = 1
+                break  # No need to continue checking this file
+
+        elif filename.endswith(".json"):
+            try:
+                # try to read it as json
+                with open(filename, "rb") as f:
+                    recipe = json.load(f)
+            except Exception as err:
+                print("{}: json parsing error: {}".format(filename, err))
+                retval = 1
+                break  # No need to continue checking this file
+
+        else:
+            try:
+                # try to read it as a plist
+                with open(filename, "rb") as f:
+                    recipe = plistlib.load(f)
+            except Exception as err:
+                print("{}: plist parsing error: {}".format(filename, err))
+                retval = 1
+                break  # No need to continue checking this file
+
+        # For future implementation of validate_unused_input_vars()
+        # with open(filename, "r") as openfile:
+        #     recipe_text = openfile.read()
 
         # Top level keys that all AutoPkg recipes should contain.
         required_keys = ["Identifier"]
