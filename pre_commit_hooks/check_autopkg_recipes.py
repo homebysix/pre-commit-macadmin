@@ -502,7 +502,11 @@ def main(argv=None):
 
         # Ensure the recipe identifier isn't duplicated.
         if recipe["Identifier"] in seen_identifiers:
-            print('{}: Identifier "{}" is shared by another recipe in this repo.')
+            print(
+                '{}: Identifier "{}" is shared by another recipe in this repo.'.format(
+                    filename, recipe["Identifier"]
+                )
+            )
             retval = 1
         else:
             seen_identifiers.append(recipe["Identifier"])
