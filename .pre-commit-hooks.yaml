@@ -11,7 +11,7 @@
   description: This hook checks AutoPkg recipes to ensure they contain required top-level keys.
   entry: check-autopkg-recipes
   language: python
-  files: '\.recipe$'
+  files: '\.recipe(\.plist|\.yaml|\.json)?$'
   types: [text]
 
 - id: check-git-config-email
@@ -97,7 +97,7 @@
   description: This hook prevents AutoPkg overrides from being added to the repo.
   entry: forbid-autopkg-overrides
   language: python
-  files: '\.recipe$'
+  files: '\.recipe(\.plist|\.yaml|\.json)?$'
   types: [text]
 
 - id: forbid-autopkg-trust-info
@@ -105,7 +105,7 @@
   description: This hook prevents AutoPkg recipes with trust info from being added to the repo.
   entry: forbid-autopkg-trust-info
   language: python
-  files: '\.recipe$'
+  files: '\.recipe(\.plist|\.yaml|\.json)?$'
   types: [text]
 
 - id: munki-makecatalogs

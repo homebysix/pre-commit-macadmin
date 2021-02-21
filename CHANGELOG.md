@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.0] - 2021-02-21
+
+### Added
+- In anticipation of AutoPkg 2.3, now supports checking YAML recipes (must have extension `.recipe.yaml`).
+- In anticipation of AutoPkg 2.3, supports additional AutoPkg plist extension `.recipe.plist`.
+- Supports JSON AutoPkg recipes (must have extension `.recipe.json`). NOTE: AutoPkg itself does not yet support JSON recipes.
+- Built placeholder for checking for unused AutoPkg recipe input variables in the future. Check is disabled for now.
+
+### Fixed
+- Fixed a bug preventing display of AutoPkg recipe path and identifier if duplicate identifier is found in the repo.
+
 ## [1.9.0] - 2021-01-18
 
 ### Added

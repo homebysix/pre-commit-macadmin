@@ -4,12 +4,15 @@
 requirements."""
 
 import argparse
+import json
 import os
 import plistlib
 import sys
 from contextlib import contextmanager
 from distutils.version import LooseVersion
 from xml.parsers.expat import ExpatError
+
+from ruamel import yaml
 
 from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
@@ -280,6 +283,30 @@ def validate_no_superclass_procs(process, filename):
     return passed
 
 
+# def validate_unused_input_vars(recipe, recipe_text, filename):
+#     """Warn if any input variables are not referenced in the recipe."""
+
+#     # List of variables that are commonly allowed to be unreferenced (lowercase).
+#     ignored_vars = (
+#         "name",
+#         "pkginfo",
+#     )
+
+#     passed = True
+#     for input_var, _ in recipe.get("Input", {}).items():
+#         if input_var.lower() in ignored_vars:
+#             continue
+#         subst = "%" + input_var + "%"
+#         if subst not in recipe_text:
+#             print(
+#                 "{}: WARNING: Input variable {} not referenced in recipe.".format(
+#                     filename, input_var
+#                 )
+#             )
+
+#     return passed
+
+
 def validate_no_var_in_app_path(process, filename):
     """Ensure %NAME% is not used in app paths that should be hard coded."""
 
@@ -458,14 +485,40 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        try:
-            with open(filename, "rb") as openfile:
-                recipe = plistlib.load(openfile)
 
-        except (ExpatError, ValueError) as err:
-            print("{}: plist parsing error: {}".format(filename, err))
-            retval = 1
-            break  # No need to continue checking this file
+        if filename.endswith(".yaml"):
+            try:
+                # try to read it as yaml
+                with open(filename, "rb") as f:
+                    recipe = yaml.safe_load(f)
+            except Exception as err:
+                print("{}: yaml parsing error: {}".format(filename, err))
+                retval = 1
+                break  # No need to continue checking this file
+
+        elif filename.endswith(".json"):
+            try:
+                # try to read it as json
+                with open(filename, "rb") as f:
+                    recipe = json.load(f)
+            except Exception as err:
+                print("{}: json parsing error: {}".format(filename, err))
+                retval = 1
+                break  # No need to continue checking this file
+
+        else:
+            try:
+                # try to read it as a plist
+                with open(filename, "rb") as f:
+                    recipe = plistlib.load(f)
+            except Exception as err:
+                print("{}: plist parsing error: {}".format(filename, err))
+                retval = 1
+                break  # No need to continue checking this file
+
+        # For future implementation of validate_unused_input_vars()
+        # with open(filename, "r") as openfile:
+        #     recipe_text = openfile.read()
 
         # Top level keys that all AutoPkg recipes should contain.
         required_keys = ["Identifier"]
@@ -475,7 +528,11 @@ def main(argv=None):
 
         # Ensure the recipe identifier isn't duplicated.
         if recipe["Identifier"] in seen_identifiers:
-            print('{}: Identifier "{}" is shared by another recipe in this repo.')
+            print(
+                '{}: Identifier "{}" is shared by another recipe in this repo.'.format(
+                    filename, recipe["Identifier"]
+                )
+            )
             retval = 1
         else:
             seen_identifiers.append(recipe["Identifier"])
@@ -493,6 +550,13 @@ def main(argv=None):
                 "be the same.".format(filename)
             )
             retval = 1
+
+        # Validate that all input variables are used.
+        # (Disabled for now because it's a little too opinionated, and doesn't take into account
+        # whether environmental variables are used in custom processors.)
+        # if args.strict:
+        #     if not validate_unused_input_vars(recipe, recipe_text, filename):
+        #         retval = 1
 
         # If the Input key contains a pkginfo dict, make a best effort to validate its contents.
         input_key = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
