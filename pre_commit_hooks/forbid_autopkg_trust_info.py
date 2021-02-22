@@ -4,8 +4,7 @@
 repo."""
 
 import argparse
-import plistlib
-from xml.parsers.expat import ExpatError
+from pre_commit_hooks.util import load_autopkg_recipe
 
 
 def build_argument_parser():
@@ -27,16 +26,11 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        try:
-            with open(filename, "rb") as openfile:
-                recipe = plistlib.load(openfile)
-            if "ParentRecipeTrustInfo" in recipe:
-                print("{}: trust info in recipe".format(filename))
-                retval = 1
-                break  # No need to continue checking this file.
-
-        except (ExpatError, ValueError) as err:
-            print("{}: plist parsing error: {}".format(filename, err))
+        recipe = load_autopkg_recipe(filename)
+        if not recipe:
+            retval = 1
+        elif "ParentRecipeTrustInfo" in recipe:
+            print("{}: trust info in recipe".format(filename))
             retval = 1
 
     return retval
