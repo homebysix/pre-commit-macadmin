@@ -1,8 +1,41 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import json
+import plistlib
 import sys
 from datetime import datetime
+
+from ruamel import yaml
+
+
+def load_autopkg_recipe(path):
+    """Loads an AutoPkg recipe in plist, yaml, or json format."""
+    recipe = None
+
+    if path.endswith(".yaml"):
+        try:
+            # try to read it as yaml
+            with open(path, "rb") as f:
+                recipe = yaml.safe_load(f)
+        except Exception as err:
+            print("{}: yaml parsing error: {}".format(path, err))
+    elif path.endswith(".json"):
+        try:
+            # try to read it as json
+            with open(path, "rb") as f:
+                recipe = json.load(f)
+        except Exception as err:
+            print("{}: json parsing error: {}".format(path, err))
+    else:
+        try:
+            # try to read it as a plist
+            with open(path, "rb") as f:
+                recipe = plistlib.load(f)
+        except Exception as err:
+            print("{}: plist parsing error: {}".format(path, err))
+
+    return recipe
 
 
 def validate_required_keys(plist, filename, required_keys):
