@@ -46,7 +46,7 @@ def main(argv=None):
         elif filename.endswith(".plist"):
             try:
                 with open(filename, "rb") as openfile:
-                    recipe_list = plistlib.load(openfile)
+                    recipe_list = plistlib.load(openfile).get("recipes")
             except (ExpatError, ValueError) as err:
                 print("{}: plist parsing error: {}".format(filename, err))
                 retval = 1
