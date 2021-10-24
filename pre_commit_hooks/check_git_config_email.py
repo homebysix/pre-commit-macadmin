@@ -33,6 +33,8 @@ def main(argv=None):
         user_email = user_email.decode().strip()
         if not any((user_email.endswith(x) for x in args.domains)):
             print("Git config email is from an unexpected domain.")
+            print("Git config email: " + user_email)
+            print("Expected domains: " + str(args.domains))
             retval = 1
 
     return retval
