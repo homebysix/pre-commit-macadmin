@@ -10,6 +10,10 @@ All notable changes to this project will be documented in this file. This projec
 }
 -->
 
+## [Unreleased]
+
+Nothing yet.
+
 ## [1.11.0] - 2021-11-20
 
 ### Added
@@ -258,8 +262,8 @@ All notable changes to this project will be documented in this file. This projec
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.10.2...HEAD
-[1.10.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.10.1...v1.10.2
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.11.0...HEAD
+[1.11.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.10.1...v1.11.0
 [1.10.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.9.0...v1.10.1
 [1.9.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.8.2...v1.9.0
 [1.8.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.8.1...v1.8.2
