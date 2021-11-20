@@ -246,7 +246,7 @@ def validate_no_deprecated_procs(process, filename):
     """Warn if any deprecated processors are used."""
 
     # Processors that have been deprecated.
-    deprecated_procs = ("CURLDownloader",)
+    deprecated_procs = ("CURLDownloader", "BrewCaskInfoProvider")
 
     passed = True
     for proc in process:
