@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Added
 - `BrewCaskInfoProvider` has been added to the list of deprecated AutoPkg processors.
 - More output when `check-git-config-email` fails.
+- Added processor type conventions for [JamfUploader](https://grahamrpugh.com/2020/12/14/introducing-jamf-upload.html) (`.jamf`) family of recipes.
 
 ## [1.10.1] - 2021-02-21
 

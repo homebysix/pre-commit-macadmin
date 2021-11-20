@@ -354,7 +354,22 @@ def validate_proc_type_conventions(process, filename):
         ],
         "pkg": ["AppPkgCreator", "PkgCreator"],
         "install": ["InstallFromDMG", "Installer"],
+        # https://github.com/jssimporter/JSSImporter
         "jss": ["JSSImporter"],
+        # https://github.com/grahampugh/jamf-upload
+        "jamf": [
+            "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
+        ],
+        # https://github.com/autopkg/filewave
         "filewave": ["FileWaveImporter"],
     }
 
