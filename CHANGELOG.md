@@ -2,12 +2,12 @@
 
 All notable changes to this project will be documented in this file. This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.10.2] - 2021-11-20
+## [1.11.0] - 2021-11-20
 
 ### Added
+- Added processor type conventions for [JamfUploader](https://grahamrpugh.com/2020/12/14/introducing-jamf-upload.html) (`.jamf`), [PkgSigner](https://derflounder.wordpress.com/2021/07/30/signing-autopkg-built-packages-using-a-sign-recipe/) (`.sign`), and [GPGSignatureVerifier](https://github.com/autopkg/gerardkok-recipes/blob/master/SharedProcessors/GPGSignatureVerifier.py) (`.verify`) families of recipes.
 - `BrewCaskInfoProvider` has been added to the list of deprecated AutoPkg processors.
 - More output when `check-git-config-email` fails.
-- Added processor type conventions for [JamfUploader](https://grahamrpugh.com/2020/12/14/introducing-jamf-upload.html) (`.jamf`) family of recipes.
 
 ## [1.10.1] - 2021-02-21
 

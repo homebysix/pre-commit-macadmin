@@ -401,8 +401,15 @@ def validate_required_proc_for_types(process, filename):
         "munki": ["MunkiImporter"],
         "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
+        # https://github.com/jssimporter/JSSImporter
         "jss": ["JSSImporter"],
+        # https://github.com/autopkg/filewave
         "filewave": ["com.github.autopkg.filewave.FWTool/FileWaveImporter"],
+        # https://derflounder.wordpress.com/2021/07/30/signing-autopkg-built-packages-using-a-sign-recipe/
+        "sign": ["com.github.rtrouton.SharedProcessors/PkgSigner"],
+        "verify": [
+            "com.github.autopkg.gerardkok-recipes.SharedProcessors/GPGSignatureVerifier"
+        ],
     }
 
     passed = True
