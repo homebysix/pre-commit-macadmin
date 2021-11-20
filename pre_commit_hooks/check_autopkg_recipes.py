@@ -246,7 +246,7 @@ def validate_no_deprecated_procs(process, filename):
     """Warn if any deprecated processors are used."""
 
     # Processors that have been deprecated.
-    deprecated_procs = ("CURLDownloader",)
+    deprecated_procs = ("CURLDownloader", "BrewCaskInfoProvider")
 
     passed = True
     for proc in process:
@@ -354,7 +354,22 @@ def validate_proc_type_conventions(process, filename):
         ],
         "pkg": ["AppPkgCreator", "PkgCreator"],
         "install": ["InstallFromDMG", "Installer"],
+        # https://github.com/jssimporter/JSSImporter
         "jss": ["JSSImporter"],
+        # https://github.com/grahampugh/jamf-upload
+        "jamf": [
+            "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
+        ],
+        # https://github.com/autopkg/filewave
         "filewave": ["FileWaveImporter"],
     }
 
@@ -386,8 +401,15 @@ def validate_required_proc_for_types(process, filename):
         "munki": ["MunkiImporter"],
         "pkg": ["AppPkgCreator", "PkgCreator", "PkgCopier"],
         "install": ["InstallFromDMG", "Installer"],
+        # https://github.com/jssimporter/JSSImporter
         "jss": ["JSSImporter"],
+        # https://github.com/autopkg/filewave
         "filewave": ["com.github.autopkg.filewave.FWTool/FileWaveImporter"],
+        # https://derflounder.wordpress.com/2021/07/30/signing-autopkg-built-packages-using-a-sign-recipe/
+        "sign": ["com.github.rtrouton.SharedProcessors/PkgSigner"],
+        "verify": [
+            "com.github.autopkg.gerardkok-recipes.SharedProcessors/GPGSignatureVerifier"
+        ],
     }
 
     passed = True

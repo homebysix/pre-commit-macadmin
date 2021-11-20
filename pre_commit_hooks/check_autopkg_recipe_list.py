@@ -46,11 +46,13 @@ def main(argv=None):
         elif filename.endswith(".plist"):
             try:
                 with open(filename, "rb") as openfile:
-                    recipe_list = plistlib.load(openfile)
+                    recipe_list = plistlib.load(openfile).get("recipes")
             except (ExpatError, ValueError) as err:
                 print("{}: plist parsing error: {}".format(filename, err))
                 retval = 1
         elif filename.endswith((".yaml", ".yml")):
+            # AutoPkg does not support YAML recipe lists, but AutoPkg users
+            # may have developed custom tooling for this.
             try:
                 with open(filename, "r") as openfile:
                     recipe_list = yaml.load(openfile)
@@ -58,6 +60,8 @@ def main(argv=None):
                 print("{}: yaml parsing error: {}".format(filename, err))
                 retval = 1
         elif filename.endswith(".json"):
+            # AutoPkg does not support JSON recipe lists, but AutoPkg users
+            # may have developed custom tooling for this.
             try:
                 with open(filename, "r") as openfile:
                     recipe_list = json.load(openfile)
