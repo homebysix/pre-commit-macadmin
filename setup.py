@@ -26,7 +26,7 @@ setup(
             "check-munkipkg-buildinfo = pre_commit_hooks.check_munkipkg_buildinfo:main",
             "check-outset-scripts = pre_commit_hooks.check_outset_scripts:main",
             "check-plists = pre_commit_hooks.check_plists:main",
-            "check-profilecreator-manifests = pre_commit_hooks.check_profilecreator_manifests:main",
+            "check-preference-manifests = pre_commit_hooks.check_preference_manifests:main",
             "forbid-autopkg-overrides = pre_commit_hooks.forbid_autopkg_overrides:main",
             "forbid-autopkg-trust-info = pre_commit_hooks.forbid_autopkg_trust_info:main",
             "munki-makecatalogs = pre_commit_hooks.munki_makecatalogs:main",

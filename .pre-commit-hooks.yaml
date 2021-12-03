@@ -100,10 +100,10 @@
   files: '\.(plist|recipe|mobileconfig|pkginfo)$'
   types: [text]
 
-- id: check-profilecreator-manifests
-  name: Check ProfileCreator Manifests
-  description: This hook checks ProfileCreator manifest plists for inconsistencies and common issues.
-  entry: check-profilecreator-manifests
+- id: check-preference-manifests
+  name: Check Apple Preference Manifests
+  description: This hook checks preference manifest plists for inconsistencies and common issues.
+  entry: check-preference-manifests
   language: python
   files: '\.plist$'
   types: [text]
