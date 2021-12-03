@@ -366,13 +366,13 @@ def main(argv=None):
         #     break  # No need to continue checking this file
 
         # Ensure pfm_format_version has expected value
-        # if manifest.get("pfm_format_version", 1) != 1:
-        #     print(
-        #         "{}: pfm_format_version should be 1, not {}".format(
-        #             filename, manifest.get("pfm_format_version")
-        #         )
-        #     )
-        #     retval = 1
+        if manifest.get("pfm_format_version", 1) != 1:
+            print(
+                "{}: pfm_format_version should be 1, not {}".format(
+                    filename, manifest.get("pfm_format_version")
+                )
+            )
+            retval = 1
 
         # Ensure top level keys and their list items have expected types.
         if not validate_manifest_key_types(manifest, filename):
