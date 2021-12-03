@@ -360,10 +360,10 @@ def main(argv=None):
             retval = 1
 
         # Check for presence of required keys.
-        # required_keys = ("pfm_title", "pfm_domain", "pfm_description")
-        # if not validate_required_keys(manifest, filename, required_keys):
-        #     retval = 1
-        #     break  # No need to continue checking this file
+        required_keys = ("pfm_title", "pfm_domain", "pfm_description")
+        if not validate_required_keys(manifest, filename, required_keys):
+            retval = 1
+            break  # No need to continue checking this file
 
         # Ensure pfm_format_version has expected value
         if manifest.get("pfm_format_version", 1) != 1:
