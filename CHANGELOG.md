@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- Check for the [recommended order](https://youtu.be/srz4U9RHliQ?list=PLlxHm_Px-Ie1EIRlDHG2lW5H7c2UYvops&t=1010) of JamfUploader processors.
 
 ## [1.11.0] - 2021-11-20
 
