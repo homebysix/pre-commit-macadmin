@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Added
 
+- New `check-jamf-json-schemas` hook for checking [Jamf JSON schemas](https://docs.jamf.com/technical-papers/jamf-pro/json-schema/10.19.0/Introduction.html) for management of app settings.
+- New `check-profilecreator-manifests` hook for checking ProfileCreator and iMazing Profile Editor [manifest plists](https://github.com/ProfileCreator/ProfileManifests).
 - Check for the [recommended order](https://youtu.be/srz4U9RHliQ?list=PLlxHm_Px-Ie1EIRlDHG2lW5H7c2UYvops&t=1010) of JamfUploader processors.
 
 ## [1.11.0] - 2021-11-20
