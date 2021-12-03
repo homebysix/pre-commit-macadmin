@@ -9,8 +9,6 @@
 
 import argparse
 import plistlib
-import sys
-import re
 from datetime import datetime
 from xml.parsers.expat import ExpatError
 
@@ -28,6 +26,20 @@ PFM_TYPES = {
     "float": float,
     "real": float,
     "date": datetime,
+}
+
+# List keys and their expected item types
+PFM_LIST_TYPES = {
+    "pfm_allowed_file_types": str,
+    "pfm_conditionals": dict,
+    "pfm_exclude": dict,
+    "pfm_subkeys": dict,
+    "pfm_target_conditions": str,
+    "pfm_targets": str,
+    "pfm_upk_input_keys": str,
+    "pfm_n_platforms": str,
+    "pfm_platforms": str,
+    "pfm_range_list_titles": str,
 }
 
 
@@ -137,32 +149,18 @@ def validate_manifest_key_types(manifest, filename):
 def validate_list_item_types(manifest, filename):
     """Validation of list member items."""
 
-    # manifest list names and their member item types
-    item_types = {
-        "pfm_allowed_file_types": str,
-        "pfm_conditionals": dict,
-        "pfm_exclude": dict,
-        "pfm_subkeys": dict,
-        "pfm_target_conditions": str,
-        "pfm_targets": str,
-        "pfm_upk_input_keys": str,
-        "pfm_n_platforms": str,
-        "pfm_platforms": str,
-        "pfm_range_list_titles": str,
-    }
-
     passed = True
-    for name in item_types:
+    for name in PFM_LIST_TYPES:
         if name in manifest:
             try:
                 actual_type = type(manifest[name][0])
             except IndexError:
                 # Probably an empty array; no way to validate items
                 continue
-            if actual_type is not item_types[name]:
+            if actual_type is not PFM_LIST_TYPES[name]:
                 print(
                     '{}: "{}" items should be type {}, not type {}'.format(
-                        filename, name, item_types[name], actual_type
+                        filename, name, PFM_LIST_TYPES[name], actual_type
                     )
                 )
                 passed = False
@@ -274,22 +272,53 @@ def validate_pfm_targets(subkey, filename):
     return passed
 
 
-def validate_pfm_default_and_placeholder(subkey, filename):
-    """Ensure that default and placeholder values have the expected type."""
+def validate_pfm_default(subkey, filename):
+    """Ensure that default values have the expected type."""
     passed = True
 
     if "pfm_type" in subkey:
-        for test_key in ("pfm_default", "pfm_value_placeholder"):
+        # TODO: Should we validate pfm_value_placeholder here too?
+        for test_key in ("pfm_default",):
             if test_key in subkey:
-                if type(subkey[test_key]) != PFM_TYPES[subkey["pfm_type"]]:
+                if PFM_TYPES[subkey["pfm_type"]] == list:
+                    desired_type = type(subkey["pfm_subkeys"][0])
+                else:
+                    try:
+                        desired_type = PFM_TYPES[subkey["pfm_type"]]
+                    except IndexError:
+                        # Unknown desired type
+                        continue
+                if type(subkey[test_key]) != desired_type:
                     print(
-                        '{}: test_key value should be type "{}", not type "{}"'.format(
+                        "{}: {} value for {} should be {}, not {}".format(
                             filename,
+                            test_key,
+                            subkey.get("pfm_name"),
                             PFM_TYPES[subkey["pfm_type"]],
                             type(subkey[test_key]),
                         )
                     )
                     passed = False
+
+    return passed
+
+
+def validate_urls(subkey, filename):
+    """Ensure that URL values are actual URLs."""
+    passed = True
+
+    url_keys = ("pfm_app_url", "pfm_documentation_url")
+    for url_key in url_keys:
+        if url_key in subkey:
+            if not subkey[url_key].startswith("http"):
+                print(
+                    "{}: {} value doesn't look like a URL: {}".format(
+                        filename,
+                        url_key,
+                        subkey[url_key],
+                    )
+                )
+                passed = False
 
     return passed
 
@@ -324,13 +353,13 @@ def validate_subkeys(subkeys, filename):
         if not validate_pfm_targets(subkey, filename):
             passed = False
 
-        # Check default and placeholder values to ensure consistent type
-        if not validate_pfm_default_and_placeholder(subkey, filename):
+        # Check default values to ensure consistent type
+        if not validate_pfm_default(subkey, filename):
             passed = False
 
-        # TODO: Ensure pfm_placeholder_value is consistent with pfm_type
-
-        # TODO: Ensure pfm_documentation_url is a URL
+        # Validate URLs
+        if not validate_urls(subkey, filename):
+            passed = False
 
         # TODO: Validate pfm_conditionals
         # https://github.com/ProfileCreator/ProfileManifests/wiki/Manifest-Format#example-conditions--exclusions
