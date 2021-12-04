@@ -157,14 +157,14 @@ def validate_pfm_type_strings(subkey, filename):
     """Ensure subkey pfm_type strings are as expected."""
     passed = True
 
-    pfm_depr_types = (
-        "union policy",
-        "url",
-    )
+    pfm_depr_types = ("union policy", "url")
     if subkey["pfm_type"] in pfm_depr_types:
-        # print('{}: Subkey type "{}" is deprecated'.format(filename, subkey["pfm_type"]))
+        print(
+            '{}: WARNING: Subkey type "{}" is deprecated'.format(
+                filename, subkey["pfm_type"]
+            )
+        )
         # passed = False
-        pass  # DEBUG ONLY
     elif subkey["pfm_type"] not in PLIST_TYPES:
         print('{}: Unexpected subkey type "{}"'.format(filename, subkey["pfm_type"]))
         passed = False
@@ -266,13 +266,13 @@ def validate_pfm_default(subkey, filename):
         for test_key in ("pfm_default",):
             if test_key in subkey:
                 if PLIST_TYPES[subkey["pfm_type"]] == list:
-                    desired_type = type(subkey["pfm_subkeys"][0])
-                else:
                     try:
-                        desired_type = PLIST_TYPES[subkey["pfm_type"]]
+                        desired_type = type(subkey["pfm_subkeys"][0])
                     except IndexError:
                         # Unknown desired type
                         continue
+                else:
+                    desired_type = PLIST_TYPES[subkey["pfm_type"]]
                 if type(subkey[test_key]) != desired_type:
                     print(
                         "{}: {} value for {} should be {}, not {}".format(
