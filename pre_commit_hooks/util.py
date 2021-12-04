@@ -8,6 +8,20 @@ from datetime import datetime
 
 from ruamel import yaml
 
+# Plist data types and their Python equivalents
+PLIST_TYPES = {
+    "string": str,
+    "boolean": bool,
+    "dict": dict,
+    "dictionary": dict,
+    "integer": int,
+    "array": list,
+    "data": None,  # TODO: How to represent this?
+    "float": float,
+    "real": float,
+    "date": datetime,
+}
+
 
 def load_autopkg_recipe(path):
     """Loads an AutoPkg recipe in plist, yaml, or json format."""

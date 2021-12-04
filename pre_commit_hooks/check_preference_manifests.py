@@ -10,23 +10,8 @@
 import argparse
 import plistlib
 from datetime import datetime
-from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import validate_required_keys
-
-# Plist types expected in preference manifests, and their Python equivalents
-PFM_TYPES = {
-    "string": str,
-    "boolean": bool,
-    "dict": dict,
-    "dictionary": dict,
-    "integer": int,
-    "array": list,
-    "data": None,  # TODO: How to represent this?
-    "float": float,
-    "real": float,
-    "date": datetime,
-}
+from pre_commit_hooks.util import PLIST_TYPES, validate_required_keys
 
 # List keys and their expected item types
 PFM_LIST_TYPES = {
@@ -180,7 +165,7 @@ def validate_pfm_type_strings(subkey, filename):
         # print('{}: Subkey type "{}" is deprecated'.format(filename, subkey["pfm_type"]))
         # passed = False
         pass  # DEBUG ONLY
-    elif subkey["pfm_type"] not in PFM_TYPES:
+    elif subkey["pfm_type"] not in PLIST_TYPES:
         print('{}: Unexpected subkey type "{}"'.format(filename, subkey["pfm_type"]))
         passed = False
 
@@ -280,11 +265,11 @@ def validate_pfm_default(subkey, filename):
         # TODO: Should we validate pfm_value_placeholder here too?
         for test_key in ("pfm_default",):
             if test_key in subkey:
-                if PFM_TYPES[subkey["pfm_type"]] == list:
+                if PLIST_TYPES[subkey["pfm_type"]] == list:
                     desired_type = type(subkey["pfm_subkeys"][0])
                 else:
                     try:
-                        desired_type = PFM_TYPES[subkey["pfm_type"]]
+                        desired_type = PLIST_TYPES[subkey["pfm_type"]]
                     except IndexError:
                         # Unknown desired type
                         continue
@@ -294,7 +279,7 @@ def validate_pfm_default(subkey, filename):
                             filename,
                             test_key,
                             subkey.get("pfm_name"),
-                            PFM_TYPES[subkey["pfm_type"]],
+                            PLIST_TYPES[subkey["pfm_type"]],
                             type(subkey[test_key]),
                         )
                     )
