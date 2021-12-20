@@ -1,11 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-"""This hook checks Jamf JSON schemas for inconsistencies and common issues."""
+"""This hook checks Jamf JSON schema custom app manifests for inconsistencies and common issues."""
 
 # References:
-# - https://developer.apple.com/library/archive/documentation/MacOSXServer/Conceptual/Preference_schema_Files/Preface/Preface.html
-# - https://github.com/ProfileCreator/Profileschemas/wiki/schema-Format
-# - https://mosen.github.io/profiledocs/schema.html
+# - https://docs.jamf.com/technical-papers/jamf-pro/json-schema/10.19.0/Understanding_the_Structure_of_a_JSON_Schema_Manifest.html
+# - https://github.com/Jamf-Custom-Profile-Schemas
 
 import argparse
 import json
@@ -13,21 +12,22 @@ from datetime import datetime
 
 from pre_commit_hooks.util import PLIST_TYPES, validate_required_keys
 
-# Types found in the Jamf JSON schemas
-SCHEMA_TYPES = (
-    "string",
-    "boolean",
-    "object",
-    "integer",
+# Types found in the Jamf JSON manifests
+MANIFEST_TYPES = (
     "array",
+    "boolean",
     "data",
-    "float",
-    "real",
     "date",
+    "float",
+    "integer",
+    "number",
+    "object",
+    "real",
+    "string",
 )
 
 # List keys and their expected item types
-SCHEMA_LIST_TYPES = {
+MANIFEST_LIST_TYPES = {
     "enum_titles": str,
     "enum": (str, int, float, bool),
     "links": dict,
@@ -45,10 +45,10 @@ def build_argument_parser():
     return parser
 
 
-def validate_schema_key_types(name, schema, filename):
-    """Validation of schema key types."""
+def validate_key_types(name, manifest, filename):
+    """Validation of manifest key types."""
 
-    # Schema keys and their known types. Omitted keys are left unvalidated.
+    # Manifest keys and their known types. Omitted keys are left unvalidated.
     key_types = {
         "description": str,
         "enum_titles": list,
@@ -67,16 +67,16 @@ def validate_schema_key_types(name, schema, filename):
     }
 
     passed = True
-    for schema_key, expected_type in key_types.items():
-        if schema_key in schema:
-            if not isinstance(schema[schema_key], expected_type):
+    for manifest_key, expected_type in key_types.items():
+        if manifest_key in manifest:
+            if not isinstance(manifest[manifest_key], expected_type):
                 print(
                     "{}: {} key {} should be type {}, not type {}".format(
                         filename,
                         name,
-                        schema_key,
+                        manifest_key,
                         expected_type,
-                        type(schema[schema_key]),
+                        type(manifest[manifest_key]),
                     )
                 )
                 passed = False
@@ -97,32 +97,32 @@ def validate_type(name, property, filename):
                 type_found = t
                 break
 
-    if type_found not in SCHEMA_TYPES:
+    if type_found not in MANIFEST_TYPES:
         print('{}: Unexpected "{}" type "{}"'.format(filename, name, type_found))
         passed = False
 
     return passed, type_found
 
 
-def validate_list_item_types(name, schema, filename):
+def validate_list_item_types(name, manifest, filename):
     """Validation of list member items."""
 
     passed = True
-    for name in SCHEMA_LIST_TYPES:
-        if name in schema:
+    for name in MANIFEST_LIST_TYPES:
+        if name in manifest:
             try:
-                actual_type = type(schema[name][0])
+                actual_type = type(manifest[name][0])
             except IndexError:
                 # Probably an empty array; no way to validate items
                 continue
-            if isinstance(SCHEMA_LIST_TYPES[name], tuple):
-                desired_types = SCHEMA_LIST_TYPES[name]
+            if isinstance(MANIFEST_LIST_TYPES[name], tuple):
+                desired_types = MANIFEST_LIST_TYPES[name]
             else:
-                desired_types = [SCHEMA_LIST_TYPES[name]]
+                desired_types = [MANIFEST_LIST_TYPES[name]]
             if actual_type not in desired_types:
                 print(
                     '{}: "{}" items should be {}, not {}'.format(
-                        filename, name, SCHEMA_LIST_TYPES[name], actual_type
+                        filename, name, MANIFEST_LIST_TYPES[name], actual_type
                     )
                 )
                 passed = False
@@ -203,7 +203,7 @@ def validate_properties(properties, filename):
             passed = False
 
         # TODO: Validate pfm_conditionals
-        # https://github.com/ProfileCreator/Profileschemas/wiki/schema-Format#example-conditions--exclusions
+        # https://github.com/ProfileCreator/ProfileManifests/wiki/Manifest-Format#example-conditions--exclusions
 
         # TODO: Process $ref references
 
@@ -226,7 +226,7 @@ def main(argv=None):
     for filename in args.filenames:
         try:
             with open(filename, "rb") as openfile:
-                schema = json.load(openfile)
+                manifest = json.load(openfile)
         except json.decoder.JSONDecodeError as err:
             print("{}: json parsing error: {}".format(filename, err))
             retval = 1
@@ -234,19 +234,19 @@ def main(argv=None):
 
         # Check for presence of required keys.
         required_keys = ("title", "properties", "description")
-        if not validate_required_keys(schema, filename, required_keys):
+        if not validate_required_keys(manifest, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file
 
         # Ensure top level keys and their list items have expected types.
-        if not validate_schema_key_types("<root>", schema, filename):
+        if not validate_key_types("<root>", manifest, filename):
             retval = 1
-        if not validate_list_item_types("<root>", schema, filename):
+        if not validate_list_item_types("<root>", manifest, filename):
             retval = 1
 
         # Run checks recursively for all properties
-        if "properties" in schema:
-            if not validate_properties(schema["properties"], filename):
+        if "properties" in manifest:
+            if not validate_properties(manifest["properties"], filename):
                 retval = 1
 
     return retval
