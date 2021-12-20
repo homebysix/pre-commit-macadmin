@@ -14,6 +14,13 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.12.0] - 2021-12-19
+
+### Added
+
+- New `check-preference-manifests` hook for checking Apple preference manifests like those used by ProfileCreator and iMazing Profile Editor [manifests](https://github.com/ProfileCreator/ProfileManifests).
+- Check for the [recommended order](https://youtu.be/srz4U9RHliQ?list=PLlxHm_Px-Ie1EIRlDHG2lW5H7c2UYvops&t=1010) of JamfUploader processors.
+
 ## [1.11.0] - 2021-11-20
 
 ### Added
@@ -262,7 +269,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.11.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.10.1...v1.11.0
 [1.10.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.9.0...v1.10.1
 [1.9.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.8.2...v1.9.0

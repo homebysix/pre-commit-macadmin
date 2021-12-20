@@ -8,6 +8,20 @@ from datetime import datetime
 
 from ruamel import yaml
 
+# Plist data types and their Python equivalents
+PLIST_TYPES = {
+    "string": str,
+    "boolean": bool,
+    "dict": dict,
+    "dictionary": dict,
+    "integer": int,
+    "array": list,
+    "data": None,  # TODO: How to represent this?
+    "float": float,
+    "real": float,
+    "date": datetime,
+}
+
 
 def load_autopkg_recipe(path):
     """Loads an AutoPkg recipe in plist, yaml, or json format."""
@@ -38,18 +52,18 @@ def load_autopkg_recipe(path):
     return recipe
 
 
-def validate_required_keys(plist, filename, required_keys):
-    """Verifies that required_keys are present in dictionary plist."""
+def validate_required_keys(input_dict, filename, required_keys):
+    """Verifies that required_keys are present in dictionary."""
     passed = True
     for req_key in required_keys:
-        if not plist.get(req_key):
+        if not input_dict.get(req_key):
             print("{}: missing required key {}".format(filename, req_key))
             passed = False
     return passed
 
 
 def validate_restart_action_key(pkginfo, filename):
-    """Verifies that required_keys are present in dictionary plist."""
+    """Verifies that required_keys are present in pkginfo dictionary."""
     passed = True
     allowed_values = (
         "RequireShutdown",

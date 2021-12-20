@@ -279,6 +279,46 @@ def validate_no_superclass_procs(process, filename):
     return passed
 
 
+def validate_jamf_processor_order(process, filename):
+    """Warn if JamfUploader processors are not in their conventional order.
+    https://youtu.be/srz4U9RHliQ?list=PLlxHm_Px-Ie1EIRlDHG2lW5H7c2UYvops&t=1010
+    """
+
+    # Recommended order of Jamf processors
+    rec_order = (
+        "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
+        # TODO: The three below may depend on computer groups, but there's no
+        # easy way to ignore relative order if multiple are used. Focusing on
+        # JamfPolicyUploader only for now.
+        "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
+        # "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
+        # "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
+    )
+
+    passed = True
+    # All JamfUploader processors in recipe, ignoring duplicates, preserving order.
+    actual_order = list(
+        dict.fromkeys(
+            [x.get("Processor") for x in process if x.get("Processor") in rec_order]
+        )
+    )
+    desired_order = [x for x in rec_order if x in actual_order]
+    if desired_order != actual_order:
+        print(
+            "{}: WARNING: JamfUploader processors are not in "
+            "the recommended order: {}.".format(
+                filename,
+                ", ".join([x.split("/")[-1] for x in desired_order]),
+            )
+        )
+
+    return passed
+
+
 # def validate_unused_input_vars(recipe, recipe_text, filename):
 #     """Warn if any input variables are not referenced in the recipe."""
 
@@ -367,7 +407,6 @@ def validate_proc_type_conventions(process, filename):
             "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
         ],
         # https://github.com/autopkg/filewave
         "filewave": ["FileWaveImporter"],
@@ -608,6 +647,9 @@ def main(argv=None):
                 retval = 1
 
             if not validate_no_superclass_procs(process, filename):
+                retval = 1
+
+            if not validate_jamf_processor_order(process, filename):
                 retval = 1
 
             if HAS_AUTOPKGLIB:

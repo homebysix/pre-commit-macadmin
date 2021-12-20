@@ -32,15 +32,14 @@
   files: '(jamf|jss)/extension.?attributes/.*\.(sh|bash|py|rb|js|pl)$'
   types: [text]
 
-- id: check-jamf-scripts
-  name: Check Jamf Scripts
-  description: This hook checks Jamf scripts for common issues.
-  entry: check-jamf-scripts
-  language: python
-  # Switch from files regex to "OR" types when that feature is available:
-  # https://github.com/pre-commit/pre-commit/issues/607
-  files: '(jamf|jss)/scripts/.*\.(sh|bash|py|rb|js|pl)$'
-  types: [text]
+# WORK IN PROGRESS
+# - id: check-jamf-json-manifests
+#   name: Check Jamf JSON Manifests
+#   description: This hook checks Jamf JSON manifests for inconsistencies and common issues.
+#   entry: check-jamf-json-manifests
+#   language: python
+#   files: '\.json$'
+#   types: [text]
 
 - id: check-jamf-profiles
   name: Check Jamf Profiles
@@ -52,12 +51,22 @@
   files: '(jamf|jss)/profiles/.*\.(mobileconfig|plist)$'
   types: [text]
 
+- id: check-jamf-scripts
+  name: Check Jamf Scripts
+  description: This hook checks Jamf scripts for common issues.
+  entry: check-jamf-scripts
+  language: python
+  # Switch from files regex to "OR" types when that feature is available:
+  # https://github.com/pre-commit/pre-commit/issues/607
+  files: '(jamf|jss)/scripts/.*\.(sh|bash|py|rb|js|pl)$'
+  types: [text]
+
 - id: check-munki-pkgsinfo
   name: Check Munki Pkginfo Files
   description: This hook checks Munki pkginfo files to ensure they are valid.
   entry: check-munki-pkgsinfo
   language: python
-  files: '^pkgsinfo/'
+  files: "^pkgsinfo/"
   types: [text]
 
 - id: check-munkiadmin-scripts
@@ -65,7 +74,7 @@
   description: This hook ensures MunkiAdmin scripts are executable.
   entry: check-munkiadmin-scripts
   language: python
-  files: '^MunkiAdmin/scripts/'
+  files: "^MunkiAdmin/scripts/"
   types: [text]
 
 - id: check-munkipkg-buildinfo
@@ -81,7 +90,7 @@
   description: This hook checks Outset scripts to ensure they're executable.
   entry: check-outset-scripts
   language: python
-  files: 'usr/local/outset/(boot-once|boot-every|login-once|login-every|login-privileged-once|login-privileged-every|on-demand)/'
+  files: "usr/local/outset/(boot-once|boot-every|login-once|login-every|login-privileged-once|login-privileged-every|on-demand)/"
   types: [text]
 
 - id: check-plists
@@ -90,6 +99,14 @@
   entry: check-plists
   language: python
   files: '\.(plist|recipe|mobileconfig|pkginfo)$'
+  types: [text]
+
+- id: check-preference-manifests
+  name: Check Apple Preference Manifests
+  description: This hook checks preference manifest plists for inconsistencies and common issues.
+  entry: check-preference-manifests
+  language: python
+  files: '\.plist$'
   types: [text]
 
 - id: forbid-autopkg-overrides
