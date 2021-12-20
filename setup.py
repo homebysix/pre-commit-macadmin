@@ -18,7 +18,7 @@ setup(
             "check-autopkg-recipes = pre_commit_hooks.check_autopkg_recipes:main",
             "check-git-config-email = pre_commit_hooks.check_git_config_email:main",
             "check-jamf-extension-attributes = pre_commit_hooks.check_jamf_extension_attributes:main",
-            "check-jamf-json-schemas = pre_commit_hooks.check_jamf_json_schemas:main",
+            # "check-jamf-json-manifests = pre_commit_hooks.check_jamf_json_manifests:main",
             "check-jamf-profiles = pre_commit_hooks.check_jamf_profiles:main",
             "check-jamf-scripts = pre_commit_hooks.check_jamf_scripts:main",
             "check-munki-pkgsinfo = pre_commit_hooks.check_munki_pkgsinfo:main",

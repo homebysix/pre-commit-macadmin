@@ -32,13 +32,14 @@
   files: '(jamf|jss)/extension.?attributes/.*\.(sh|bash|py|rb|js|pl)$'
   types: [text]
 
-- id: check-jamf-json-schemas
-  name: Check Jamf JSON Schemas
-  description: This hook checks Jamf JSON schemas for inconsistencies and common issues.
-  entry: check-jamf-json-schemas
-  language: python
-  files: '\.json$'
-  types: [text]
+# WORK IN PROGRESS
+# - id: check-jamf-json-manifests
+#   name: Check Jamf JSON Manifests
+#   description: This hook checks Jamf JSON manifests for inconsistencies and common issues.
+#   entry: check-jamf-json-manifests
+#   language: python
+#   files: '\.json$'
+#   types: [text]
 
 - id: check-jamf-profiles
   name: Check Jamf Profiles
