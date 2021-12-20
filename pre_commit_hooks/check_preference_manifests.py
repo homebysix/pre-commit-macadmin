@@ -10,8 +10,9 @@
 import argparse
 import plistlib
 from datetime import datetime
+from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import PLIST_TYPES, validate_required_keys
+from pre_commit_hooks.util import PLIST_TYPES
 
 # List keys and their expected item types
 PFM_LIST_TYPES = {
@@ -36,6 +37,16 @@ def build_argument_parser():
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
+
+
+def validate_required_keys(input_dict, required_keys, dict_name, filename):
+    """Verifies that required_keys are present in dictionary."""
+    passed = True
+    for req_key in required_keys:
+        if not input_dict.get(req_key):
+            print("{}: {} missing required key {}".format(filename, dict_name, req_key))
+            passed = False
+    return passed
 
 
 def validate_manifest_key_types(manifest, filename):
@@ -265,17 +276,18 @@ def validate_pfm_default(subkey, filename):
         # TODO: Should we validate pfm_value_placeholder here too?
         for test_key in ("pfm_default",):
             if test_key in subkey:
-                if PLIST_TYPES[subkey["pfm_type"]] == list:
-                    try:
-                        desired_type = type(subkey["pfm_subkeys"][0])
-                    except IndexError:
-                        # Unknown desired type
-                        continue
-                else:
-                    desired_type = PLIST_TYPES[subkey["pfm_type"]]
+                # TODO: Should the default for list types be the type of the first list item, or <list> itself?
+                # if PLIST_TYPES[subkey["pfm_type"]] == list:
+                #     try:
+                #         desired_type = type(subkey["pfm_subkeys"][0])
+                #     except IndexError:
+                #         # Unknown desired type
+                #         continue
+                # else:
+                desired_type = PLIST_TYPES[subkey["pfm_type"]]
                 if type(subkey[test_key]) != desired_type:
                     print(
-                        "{}: {} value for {} should be {}, not {}".format(
+                        "{}: {} value for {} should be type {}, not type {}".format(
                             filename,
                             test_key,
                             subkey.get("pfm_name"),
@@ -316,13 +328,22 @@ def validate_subkeys(subkeys, filename):
 
         # Check for presence of required keys.
         required_keys = ("pfm_type",)
-        if not validate_required_keys(subkey, filename, required_keys):
+        if not validate_required_keys(
+            subkey, required_keys, subkey.get("pfm_name", "<unnamed key>"), filename
+        ):
             passed = False
             break  # No need to continue checking this list of subkeys
 
         # Check for rogue pfm_type strings and deprecated keys.
         if not validate_pfm_type_strings(subkey, filename):
             passed = False
+
+        # Check that list items are of the expected type
+        if "pfm_type" not in subkey:
+            print(
+                "WARNING: Recommend adding a pfm_title to %s"
+                % subkey.get("pfm_name", "<unnamed key>")
+            )
 
         # Check that list items are of the expected type
         if not validate_list_item_types(subkey, filename):
@@ -375,14 +396,16 @@ def main(argv=None):
 
         # Check for presence of required keys.
         required_keys = ("pfm_title", "pfm_domain", "pfm_description")
-        if not validate_required_keys(manifest, filename, required_keys):
+        if not validate_required_keys(manifest, required_keys, "<root dict>", filename):
             retval = 1
             break  # No need to continue checking this file
 
         # Ensure pfm_format_version has expected value
         if manifest.get("pfm_format_version", 1) != 1:
             print(
-                "{}: pfm_format_version should be 1, not {}".format(
+                "{}: pfm_format_version should be 1, not {} "
+                "(https://github.com/ProfileCreator/ProfileManifests"
+                "/wiki/Manifest-Format-Versions)".format(
                     filename, manifest.get("pfm_format_version")
                 )
             )
