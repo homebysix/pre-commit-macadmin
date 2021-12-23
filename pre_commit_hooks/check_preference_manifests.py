@@ -43,7 +43,7 @@ def validate_required_keys(input_dict, required_keys, dict_name, filename):
     """Verifies that required_keys are present in dictionary."""
     passed = True
     for req_key in required_keys:
-        if not input_dict.get(req_key):
+        if input_dict.get(req_key, "") == "":
             print("{}: {} missing required key {}".format(filename, dict_name, req_key))
             passed = False
     return passed
@@ -338,12 +338,12 @@ def validate_subkeys(subkeys, filename):
         if not validate_pfm_type_strings(subkey, filename):
             passed = False
 
-        # Check that list items are of the expected type
-        if "pfm_type" not in subkey:
-            print(
-                "WARNING: Recommend adding a pfm_title to %s"
-                % subkey.get("pfm_name", "<unnamed key>")
-            )
+        # TODO: Suggest adding a title if one is missing
+        # if "pfm_title" not in subkey:
+        #     print(
+        #         "WARNING: Recommend adding a pfm_title to %s"
+        #         % subkey.get("pfm_name", "<unnamed key>")
+        #     )
 
         # Check that list items are of the expected type
         if not validate_list_item_types(subkey, filename):
@@ -393,12 +393,13 @@ def main(argv=None):
         except (ExpatError, ValueError) as err:
             print("{}: plist parsing error: {}".format(filename, err))
             retval = 1
+            continue  # No need to continue checking this file
 
         # Check for presence of required keys.
         required_keys = ("pfm_title", "pfm_domain", "pfm_description")
         if not validate_required_keys(manifest, required_keys, "<root dict>", filename):
             retval = 1
-            break  # No need to continue checking this file
+            continue  # No need to continue checking this file
 
         # Ensure pfm_format_version has expected value
         if manifest.get("pfm_format_version", 1) != 1:
