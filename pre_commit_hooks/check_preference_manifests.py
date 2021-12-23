@@ -338,12 +338,12 @@ def validate_subkeys(subkeys, filename):
         if not validate_pfm_type_strings(subkey, filename):
             passed = False
 
-        # Check that list items are of the expected type
-        if "pfm_type" not in subkey:
-            print(
-                "WARNING: Recommend adding a pfm_title to %s"
-                % subkey.get("pfm_name", "<unnamed key>")
-            )
+        # TODO: Suggest adding a title if one is missing
+        # if "pfm_title" not in subkey:
+        #     print(
+        #         "WARNING: Recommend adding a pfm_title to %s"
+        #         % subkey.get("pfm_name", "<unnamed key>")
+        #     )
 
         # Check that list items are of the expected type
         if not validate_list_item_types(subkey, filename):
