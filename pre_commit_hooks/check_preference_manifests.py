@@ -43,7 +43,7 @@ def validate_required_keys(input_dict, required_keys, dict_name, filename):
     """Verifies that required_keys are present in dictionary."""
     passed = True
     for req_key in required_keys:
-        if not input_dict.get(req_key):
+        if input_dict.get(req_key, "") == "":
             print("{}: {} missing required key {}".format(filename, dict_name, req_key))
             passed = False
     return passed
