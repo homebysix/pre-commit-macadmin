@@ -14,6 +14,12 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.12.1] - 2021-12-22
+
+### Changed
+
+- Minor adjustments to `check-preference-manifests` hook.
+
 ## [1.12.0] - 2021-12-19
 
 ### Added
@@ -269,7 +275,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.1...HEAD
+[1.12.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.11.0...v1.12.0
 [1.11.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.10.1...v1.11.0
 [1.10.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.9.0...v1.10.1
