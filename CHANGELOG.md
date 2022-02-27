@@ -14,6 +14,14 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.12.2] - 2022-02-27
+
+### Changed
+
+- Adjusted preference manifest checks to require `pfm_name` for every preference key except immediate descendants of keys whose `pfm_type` is `array` (#54).
+- Improved preference manifest output to more accurately specify which key or subkey is failing `pfm_name` or `pfm_type` checks.
+- Continued development work on a hook that checks Jamf JSON schema manifests.
+
 ## [1.12.1] - 2021-12-22
 
 ### Changed
