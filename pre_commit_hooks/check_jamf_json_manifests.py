@@ -140,13 +140,13 @@ def validate_default(name, property, type_found, filename):
                 actual_type = str
             else:
                 actual_type = type(property[test_key])
-            if actual_type != PLIST_TYPES[type_found]:
+            if actual_type != PLIST_TYPES.get(type_found):
                 print(
                     "{}: {} value for {} should be {}, not {}".format(
                         filename,
                         test_key,
                         name,
-                        PLIST_TYPES[type_found],
+                        PLIST_TYPES.get(type_found),
                         type(property[test_key]),
                     )
                 )
