@@ -52,7 +52,7 @@ def validate_required_keys(input_dict, required_keys, dict_name, filename):
 def validate_manifest_key_types(manifest, filename):
     """Validation of manifest key types."""
 
-    # manifest keys and their known types. Omitted keys are left unvalidated.
+    # manifest keys and their known types. Omitted keys are left un-validated.
     # Last updated 2021-12-03.
     key_types = {
         "pfm_conditionals": list,
@@ -160,6 +160,23 @@ def validate_list_item_types(manifest, filename):
                     )
                 )
                 passed = False
+
+    return passed
+
+
+def validate_required_subkeys(subkey, req_keys, filename):
+    """Ensure specific keys are defined in subkeys."""
+    passed = True
+
+    for subsubkey in subkey.get("pfm_subkeys", []):
+        if subsubkey.get("pfm_name"):
+            display_name = subsubkey["pfm_name"]
+        elif subkey.get("pfm_name"):
+            display_name = subkey["pfm_name"] + " subkey"
+        else:
+            display_name = "<unnamed key> subkey"
+        if not validate_required_keys(subsubkey, req_keys, display_name, filename):
+            passed = False
 
     return passed
 
@@ -326,11 +343,19 @@ def validate_subkeys(subkeys, filename):
 
     for subkey in subkeys:
 
-        # Check for presence of required keys.
-        required_keys = ("pfm_type",)
-        if not validate_required_keys(
-            subkey, required_keys, subkey.get("pfm_name", "<unnamed key>"), filename
-        ):
+        # Check for presence of required subkeys
+        # (Not calling validate_required_keys() directly because the output would not be
+        # specific enough to indicate *where* in the manifest the problem exists.)
+        # Example of validate_required_keys() output:
+        #   menu.nomad.NoMADPro.plist: <unnamed key> missing required key pfm_type
+        # Example of validate_required_subkeys() output:
+        #   menu.nomad.NoMADPro.plist: ChangePasswordItem subkey missing required key pfm_type
+        if subkey["pfm_type"] != "array":
+            # pfm_name is required only if the pfm_type is not array
+            required_keys = ("pfm_type", "pfm_name")
+        else:
+            required_keys = ("pfm_type",)
+        if not validate_required_subkeys(subkey, required_keys, filename):
             passed = False
             break  # No need to continue checking this list of subkeys
 
