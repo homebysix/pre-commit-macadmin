@@ -1,6 +1,6 @@
 # Releasing new versions of pre-commit-macadmin
 
-1. Update the versions in __README.md__ and __pre_commit_hooks/\_\_init\_\_.py__.
+1. Update the versions in __README.md__ and __setup.py__.
 
 1. Update the change log.
 

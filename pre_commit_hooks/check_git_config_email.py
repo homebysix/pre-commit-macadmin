@@ -29,9 +29,21 @@ def main(argv=None):
 
     retval = 0
     if args.domains:
-        user_email = subprocess.check_output(["git", "config", "--get", "user.email"])
-        user_email = user_email.decode().strip()
-        if not any((user_email.endswith(x) for x in args.domains)):
+        proc = subprocess.run(
+            ["git", "config", "--get", "user.email"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        user_email = proc.stdout.strip()
+        if not user_email:
+            print("Git config email is not set.")
+            retval = 1
+        elif "@" not in user_email:
+            print("Git config email does not look like an email address.")
+            print("Git config email: " + user_email)
+            retval = 1
+        elif not any((user_email.endswith("@" + x) for x in args.domains)):
             print("Git config email is from an unexpected domain.")
             print("Git config email: " + user_email)
             print("Expected domains: " + str(args.domains))

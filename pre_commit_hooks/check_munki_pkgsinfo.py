@@ -129,11 +129,10 @@ def main(argv=None):
             )
         ):
             print(
-                "{}: contains a pkg installer but has no blocking applications".format(
+                "WARNING: {}: contains a pkg installer but has no blocking applications".format(
                     filename
                 )
             )
-            retval = 1
 
         # Ensure an icon exists for the item.
         if not any(

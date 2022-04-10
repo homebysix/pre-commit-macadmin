@@ -14,6 +14,16 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.12.3] - 2022-04-09
+
+### Changed
+
+- Changed check-munki-pkgsinfo to WARN on the absence of the `blocking_applications` array for installers in pkg format, rather than to fail the pre-commit test. This better aligns with Munki's own design, which does not require `blocking_applications`.
+
+### Fixed
+
+- Resolved an uncaught exception if the git config email is unset. (#58)
+
 ## [1.12.2] - 2022-02-27
 
 ### Changed
@@ -283,7 +293,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.2...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.3...HEAD
+[1.12.3]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.2...v1.12.3
 [1.12.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.11.0...v1.12.0
