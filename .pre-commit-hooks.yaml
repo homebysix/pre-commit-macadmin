@@ -66,7 +66,7 @@
   description: This hook checks Munki pkginfo files to ensure they are valid.
   entry: check-munki-pkgsinfo
   language: python
-  files: "^pkgsinfo/"
+  files: "pkgsinfo/"
   types: [text]
 
 - id: check-munkiadmin-scripts
