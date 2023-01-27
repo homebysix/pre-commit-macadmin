@@ -35,6 +35,8 @@ def build_argument_parser():
         help="Require a blocking_applications array for pkg installers.",
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
+    parser.add_argument("--munki_repo", default='.',
+                        help="path to local munki repo defaults to '.'")
     return parser
 
 
@@ -174,7 +176,8 @@ def main(argv=None):
         if not any(
             (
                 pkginfo.get("icon_name"),
-                os.path.isfile("icons/{}.png".format(pkginfo["name"])),
+                os.path.isfile(os.path.join(args.munki_repo,
+                               "icons/{}.png".format(pkginfo["name"]))),
                 pkginfo.get("installer_type") == "apple_update_metadata",
             )
         ):
