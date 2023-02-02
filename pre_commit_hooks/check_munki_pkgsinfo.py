@@ -35,8 +35,17 @@ def build_argument_parser():
         help="Require a blocking_applications array for pkg installers.",
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
-    parser.add_argument("--munki_repo", default='.',
-                        help="path to local munki repo defaults to '.'")
+    parser.add_argument(
+        "--munki_repo",
+        default=".",
+        help="path to local munki repo defaults to '.'"
+    )
+    parser.add_argument(
+        "--warn_on_missing_icons",
+        help="If added, this will only warn on missing icons.",
+        action="store_true",
+        default=False,
+    )
     return parser
 
 
@@ -176,13 +185,19 @@ def main(argv=None):
         if not any(
             (
                 pkginfo.get("icon_name"),
-                os.path.isfile(os.path.join(args.munki_repo,
-                               "icons/{}.png".format(pkginfo["name"]))),
+                os.path.isfile(
+                    os.path.join(
+                        args.munki_repo, "icons/{}.png".format(pkginfo["name"])
+                    )
+                ),
                 pkginfo.get("installer_type") == "apple_update_metadata",
             )
         ):
-            print("{}: missing icon".format(filename))
-            retval = 1
+            if args.warn_on_missing_icons:
+                print("WARNING: {}: missing icon".format(filename))
+            else:
+                print("{}: missing icon".format(filename))
+                retval = 1
 
         # Ensure uninstall method is set correctly if uninstall_script exists.
         if "uninstall_script" in pkginfo:
