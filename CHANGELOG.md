@@ -16,6 +16,10 @@ All notable changes to this project will be documented in this file. This projec
 
 - Added compatibility checks for MunkiOptionalReceiptEditor processor, included in AutoPkg 2.7+.
 
+### Changed
+
+- Improved compatibility with Munki repos where the pkgsinfo folder is not at the root level. (#63, thanks to @kbrewersq)
+
 ## [1.12.3] - 2022-04-09
 
 ### Changed
