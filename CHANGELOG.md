@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- Added compatibility checks for MunkiOptionalReceiptEditor processor, included in AutoPkg 2.7+.
 
 ## [1.12.3] - 2022-04-09
 
