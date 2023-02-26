@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Added
 
 - Added compatibility checks for MunkiOptionalReceiptEditor processor, included in AutoPkg 2.7+.
+- Added a `--require-pkg-blocking-apps` argument for the `check-munki-pkgsinfo` hook. If specified, tests will fail for any pkg installer that does not have a `blocking_applications` array (even an empty one). This change maintains the alignment with Munki's design established in 1.12.3 while allowing Munki repo admins flexibility to be stricter in their own environments.
 
 ### Changed
 
