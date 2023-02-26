@@ -28,6 +28,11 @@ def build_argument_parser():
         default=["description", "name"],
         help="List of required top-level keys.",
     )
+    parser.add_argument(
+        "--require-pkg-blocking-apps",
+        action="store_true",
+        help="Require a blocking_applications array for pkg installers.",
+    )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
 
@@ -120,7 +125,7 @@ def main(argv=None):
 
         # Checking for the absence of blocking_applications for pkg installers.
         # If a pkg doesn't require blocking_applications, use empty "<array/>" in pkginfo.
-        if all(
+        if args.require_pkg_blocking_apps and all(
             (
                 "blocking_applications" not in pkginfo,
                 pkginfo.get("installer_item_location", "").endswith(".pkg"),
@@ -129,10 +134,11 @@ def main(argv=None):
             )
         ):
             print(
-                "WARNING: {}: contains a pkg installer but has no blocking applications".format(
+                "{}: contains a pkg installer but missing a blocking applications array".format(
                     filename
                 )
             )
+            retval = 1
 
         # Ensure an icon exists for the item.
         if not any(

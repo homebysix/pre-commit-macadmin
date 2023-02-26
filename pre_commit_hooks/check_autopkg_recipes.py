@@ -208,6 +208,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "MunkiCatalogBuilder": "0.1.0",
         "MunkiImporter": "0.1.0",
         "MunkiInstallsItemsCreator": "0.1.0",
+        "MunkiOptionalReceiptEditor": "2.7",
         "MunkiPkginfoMerger": "0.1.0",
         "MunkiSetDefaultCatalog": "0.4.2",
         "PackageRequired": "0.5.1",
@@ -376,7 +377,7 @@ def validate_proc_type_conventions(process, filename):
     """Ensure that processors used align with recipe type conventions."""
 
     # For each processor type, this is the list of processors that
-    # we only expect to see in that type.
+    # we only expect to see in that type. List order is unimportant.
     proc_type_conventions = {
         "download": [
             "SparkleUpdateInfoProvider",
@@ -390,6 +391,7 @@ def validate_proc_type_conventions(process, filename):
             "MunkiPkginfoMerger",
             "MunkiCatalogBuilder",
             "MunkiSetDefaultCatalog",
+            "MunkiOptionalReceiptEditor",
             "MunkiImporter",
         ],
         "pkg": ["AppPkgCreator", "PkgCreator"],

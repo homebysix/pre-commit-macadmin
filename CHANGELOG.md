@@ -14,6 +14,17 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.12.4] - 2023-02-26
+
+### Added
+
+- Added compatibility checks for MunkiOptionalReceiptEditor processor, included in AutoPkg 2.7+.
+- Added a `--require-pkg-blocking-apps` argument for the `check-munki-pkgsinfo` hook. If specified, tests will fail for any pkg installer that does not have a `blocking_applications` array (even an empty one). This change maintains the alignment with Munki's design established in 1.12.3 while allowing Munki repo admins flexibility to be stricter in their own environments.
+
+### Changed
+
+- Improved compatibility with Munki repos where the pkgsinfo folder is not at the root level. (#63, thanks to @kbrewersq)
+
 ## [1.12.3] - 2022-04-09
 
 ### Changed
@@ -293,7 +304,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.3...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.4...HEAD
+[1.12.4]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.3...v1.12.4
 [1.12.3]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.2...v1.12.3
 [1.12.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.1...v1.12.2
 [1.12.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.0...v1.12.1

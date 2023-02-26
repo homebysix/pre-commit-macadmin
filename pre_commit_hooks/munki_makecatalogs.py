@@ -14,17 +14,15 @@ def build_argument_parser():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--munki_repo", default='.',
-                        help="path to local munki repo defaults to '.'")
+    parser.add_argument(
+        "--munki_repo", default=".", help="Path to local Munki repo. (Defaults to '.')"
+    )
     # TODO: Support makecatalogs options, ideally with kwargs for flexibility.
     return parser
 
 
 def main(argv=None):
     """Main process."""
-
-    # Path to munki's python.
-    python = "/usr/local/munki/munki-python"
 
     # Path to makecatalogs.
     makecatalogs = "/usr/local/munki/makecatalogs"
