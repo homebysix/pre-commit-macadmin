@@ -14,6 +14,8 @@ def build_argument_parser():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    parser.add_argument("--munki_repo", default='.',
+                        help="path to local munki repo defaults to '.'")
     # TODO: Support makecatalogs options, ideally with kwargs for flexibility.
     return parser
 
@@ -21,8 +23,8 @@ def build_argument_parser():
 def main(argv=None):
     """Main process."""
 
-    # Path to Python 2.
-    python = "/usr/bin/python"
+    # Path to munki's python.
+    python = "/usr/local/munki/munki-python"
 
     # Path to makecatalogs.
     makecatalogs = "/usr/local/munki/makecatalogs"
@@ -32,7 +34,7 @@ def main(argv=None):
     args = argparser.parse_args(argv)
 
     retval = 0
-    if not os.path.isdir("pkgsinfo"):
+    if not os.path.isdir(os.path.join(args.munki_repo, "pkgsinfo")):
         print("Could not find pkgsinfo folder.")
         retval = 1
     elif not os.path.isfile(python):
@@ -42,7 +44,7 @@ def main(argv=None):
         print("{} does not exist.".format(makecatalogs))
         retval = 1
     else:
-        retval = subprocess.call([python, makecatalogs, "."])
+        retval = subprocess.call([makecatalogs, args.munki_repo])
 
     return retval
 
