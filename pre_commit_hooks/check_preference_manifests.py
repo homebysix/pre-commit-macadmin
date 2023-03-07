@@ -338,7 +338,7 @@ def validate_urls(subkey, filename):
 
 
 def validate_platforms(subkey, filename):
-    """Ensure that `pfm_platforms` values are valid."""
+    """Ensure that `pfm_platforms` and `pfm_n_platforms` values are valid."""
     passed = True
 
     valid_platforms = ["macOS", "iOS", "tvOS"]
