@@ -415,7 +415,7 @@ def validate_subkeys(subkeys, filename):
         if not validate_urls(subkey, filename):
             passed = False
 
-        # Validate Platforms
+        # Validate platforms
         if not validate_platforms(subkey, filename):
             passed = False
 
