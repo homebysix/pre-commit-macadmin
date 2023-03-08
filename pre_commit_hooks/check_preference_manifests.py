@@ -337,6 +337,29 @@ def validate_urls(subkey, filename):
     return passed
 
 
+def validate_platforms(subkey, filename):
+    """Ensure that `pfm_platforms` and `pfm_n_platforms` values are valid."""
+    passed = True
+
+    valid_platforms = ["macOS", "iOS", "tvOS"]
+
+    platform_keys = ["pfm_platforms", "pfm_n_platforms"]
+    for platform_key in platform_keys:
+        if platform_key in subkey:
+            for platform in subkey[platform_key]:
+                if platform not in valid_platforms:
+                    print(
+                        "{}: {} value doesn't look like a valid platform string: {}".format(
+                            filename,
+                            platform_key,
+                            platform,
+                        )
+                    )
+                    passed = False
+
+    return passed
+
+
 def validate_subkeys(subkeys, filename):
     """Given a list of subkeys, run validation on their contents."""
     passed = True
@@ -392,6 +415,10 @@ def validate_subkeys(subkeys, filename):
         if not validate_urls(subkey, filename):
             passed = False
 
+        # Validate platforms
+        if not validate_platforms(subkey, filename):
+            passed = False
+
         # TODO: Validate pfm_conditionals
         # https://github.com/ProfileCreator/ProfileManifests/wiki/Manifest-Format#example-conditions--exclusions
 
@@ -435,6 +462,10 @@ def main(argv=None):
                     filename, manifest.get("pfm_format_version")
                 )
             )
+            retval = 1
+
+        # Ensure platform values are valid
+        if not validate_platforms(manifest, filename):
             retval = 1
 
         # Ensure top level keys and their list items have expected types.
