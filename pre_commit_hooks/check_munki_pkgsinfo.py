@@ -5,6 +5,7 @@
 import argparse
 import os
 import plistlib
+from pathlib import Path
 from xml.parsers.expat import ExpatError
 
 from pre_commit_hooks.util import (
@@ -35,6 +36,22 @@ def build_argument_parser():
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     return parser
+
+
+def _check_case_sensitive_path(path):
+    # Return immediately if the file does not exist
+    if not os.path.exists(path):
+        return False
+
+    p = Path(path)
+    while True:
+        # At root, p == p.parent --> break loop and return True
+        if p == p.parent:
+            return True
+        # If string representation of path is not in parent directory, return False
+        if str(p) not in map(str, p.parent.iterdir()):
+            return False
+        p = p.parent
 
 
 def main(argv=None):
@@ -113,6 +130,22 @@ def main(argv=None):
                         )
                     )
                     retval = 1
+
+        # Check for missing installer items
+        if all(
+            (
+                "installer_item_location" in pkginfo,
+                not _check_case_sensitive_path(
+                    os.path.join("pkgs", pkginfo.get("installer_item_location"))
+                ),
+            )
+        ):
+            print(
+                "{}: installer item does not exist or path is not case sensitive".format(
+                    filename
+                )
+            )
+            retval = 1
 
         # Check for pkg filenames showing signs of duplicate imports.
         if pkginfo.get("installer_item_location", "").endswith(tuple(dupe_suffixes)):
