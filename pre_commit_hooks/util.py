@@ -6,7 +6,9 @@ import plistlib
 import sys
 from datetime import datetime
 
-from ruamel import yaml
+import ruamel.yaml
+
+yaml = ruamel.yaml.YAML(typ="safe")
 
 # Plist data types and their Python equivalents
 PLIST_TYPES = {
@@ -31,7 +33,7 @@ def load_autopkg_recipe(path):
         try:
             # try to read it as yaml
             with open(path, "rb") as f:
-                recipe = yaml.safe_load(f)
+                recipe = yaml.load(f)
         except Exception as err:
             print("{}: yaml parsing error: {}".format(path, err))
     elif path.endswith(".json"):
