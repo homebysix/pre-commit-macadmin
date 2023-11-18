@@ -324,7 +324,15 @@ def validate_urls(subkey, filename):
     url_keys = ("pfm_app_url", "pfm_documentation_url")
     for url_key in url_keys:
         if url_key in subkey:
-            if not subkey[url_key].startswith("http"):
+            if len(subkey[url_key]) == 0:
+                print(
+                    "{}: {} URL value is empty.".format(
+                        filename,
+                        url_key,
+                    )
+                )
+                passed = False
+            elif not subkey[url_key].startswith("http"):
                 print(
                     "{}: {} value doesn't look like a URL: {}".format(
                         filename,
