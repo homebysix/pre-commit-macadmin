@@ -14,6 +14,13 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.13.0] - 2023-11-18
+
+### Changed
+
+- Now uses `packaging.version.Version` instead of `distutils.version.LooseVersion` for AutoPkg version comparisons. This may cause unexpected behavior if unusual versions are used in `MinimumVersion` keys.
+- Updated `yaml.safe_load()` to `YAML(typ='safe')`.
+
 ## [1.12.4] - 2023-02-26
 
 ### Added
@@ -304,7 +311,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.4...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.4...v1.13.0
 [1.12.4]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.3...v1.12.4
 [1.12.3]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.2...v1.12.3
 [1.12.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.1...v1.12.2

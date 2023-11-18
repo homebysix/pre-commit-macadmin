@@ -7,7 +7,7 @@ import argparse
 import os
 import sys
 from contextlib import contextmanager
-from distutils.version import LooseVersion
+from packaging.version import Version
 
 from pre_commit_hooks.util import (
     load_autopkg_recipe,
@@ -179,7 +179,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     # Warn if using a MinimumVersion greater than or equal to 2
     # warn_on_vers = "2"
     # suggest_vers = "1.4.1"
-    # if LooseVersion(min_vers) >= LooseVersion(warn_on_vers):
+    # if Version(min_vers) >= Version(warn_on_vers):
     #     print(
     #         "{}: WARNING: Choosing MinimumVersion {} limits the potential "
     #         "audience for your AutoPkg recipe. Consider using MinimumVersion "
@@ -187,9 +187,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     #     )
 
     # Processors for which a minimum version of AutoPkg is required.
-    # Note: Because LooseVersion considers version 1.0 to be "less than" 1.0.0,
-    # specifying more trailing zeros than needed in the dict below may result
-    # in false positive errors for users of the check-autopkg-recipes hook.
+    # Note: packaging.version.Version considers this True: "1.0" == "1.0.0"
     proc_min_versions = {
         "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
@@ -230,10 +228,10 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     for proc in [
         x
         for x in proc_min_versions
-        if LooseVersion(proc_min_versions[x]) >= LooseVersion(ignore_min_vers_before)
+        if Version(proc_min_versions[x]) >= Version(ignore_min_vers_before)
     ]:
         if proc in [x.get("Processor") for x in process]:
-            if LooseVersion(min_vers) < LooseVersion(proc_min_versions[proc]):
+            if Version(min_vers) < Version(proc_min_versions[proc]):
                 print(
                     "{}: {} processor requires minimum AutoPkg "
                     "version {}".format(filename, proc, proc_min_versions[proc])
@@ -544,7 +542,6 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-
         recipe = load_autopkg_recipe(filename)
         if not recipe:
             retval = 1
