@@ -11,7 +11,7 @@ setup(
     author="Elliot Jordan",
     author_email="elliot@elliotjordan.com",
     packages=["pre_commit_hooks"],
-    install_requires=["ruamel.yaml>=0.15"],
+    install_requires=["ruamel.yaml>=0.15", "packaging>=23.2"],
     entry_points={
         "console_scripts": [
             "check-autopkg-recipe-list = pre_commit_hooks.check_autopkg_recipe_list:main",
