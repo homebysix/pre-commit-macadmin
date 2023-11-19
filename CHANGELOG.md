@@ -14,6 +14,13 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.14.0] - 2023-11-19
+
+### Added
+
+- `check-preference-manifests` hook now outputs more specific error message if `pfm_documentation_url` is empty (#67, thanks to @relgit).
+- `check-munki-pkgsinfo` hook now detects path mismatches on case-sensitive filesystems (#66, thanks to @AaronBurchfield).
+
 ## [1.13.0] - 2023-11-18
 
 ### Changed
