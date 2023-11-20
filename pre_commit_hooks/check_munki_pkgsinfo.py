@@ -39,6 +39,8 @@ def build_argument_parser():
 
 
 def _check_case_sensitive_path(path):
+    """Check whether a path exists, and on case-sensitive filesystems check
+    that there is no case conflict."""
     # Return immediately if the file does not exist
     if not os.path.exists(path):
         return False
@@ -131,14 +133,9 @@ def main(argv=None):
                     )
                     retval = 1
 
-        # Check for missing installer items
-        if all(
-            (
-                "installer_item_location" in pkginfo,
-                not _check_case_sensitive_path(
-                    os.path.join("pkgs", pkginfo.get("installer_item_location"))
-                ),
-            )
+        # Check for missing or case-conflicted installer items
+        if not _check_case_sensitive_path(
+            os.path.join("pkgs", pkginfo.get("installer_item_location", ""))
         ):
             print(
                 "{}: installer item does not exist or path is not case sensitive".format(
