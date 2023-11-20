@@ -14,6 +14,12 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.14.1] - 2023-11-20
+
+### Fixed
+
+- Fixed a bug that would cause a Python traceback when checking Munki repos that use `nopkg` type items.
+
 ## [1.14.0] - 2023-11-19
 
 ### Added
@@ -318,7 +324,9 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.13.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.1...HEAD
+[1.14.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.0...v1.14.1
+[1.14.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.4...v1.13.0
 [1.12.4]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.3...v1.12.4
 [1.12.3]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.2...v1.12.3

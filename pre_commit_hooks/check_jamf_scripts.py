@@ -3,7 +3,6 @@
 """Check Jamf scripts for common issues."""
 
 import argparse
-import os
 
 
 def build_argument_parser():
@@ -25,7 +24,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        with open(filename, "r") as openfile:
+        with open(filename, "r", encoding="utf-8") as openfile:
             script_content = openfile.read()
 
         # Ensure script starts with a shebang of some sort.

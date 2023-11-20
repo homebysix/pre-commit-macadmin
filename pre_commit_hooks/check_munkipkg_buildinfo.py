@@ -89,7 +89,7 @@ def main(argv=None):
                 break  # no need to continue testing this file
         elif filename.endswith((".yaml", ".yml")):
             try:
-                with open(filename, "r") as openfile:
+                with open(filename, "r", encoding="utf-8") as openfile:
                     buildinfo = yaml.load(openfile)
             except Exception as err:
                 print("{}: yaml parsing error: {}".format(filename, err))
@@ -97,7 +97,7 @@ def main(argv=None):
                 break  # no need to continue testing this file
         elif filename.endswith(".json"):
             try:
-                with open(filename, "r") as openfile:
+                with open(filename, "r", encoding="utf-8") as openfile:
                     buildinfo = json.load(openfile)
             except Exception as err:
                 print("{}: json parsing error: {}".format(filename, err))

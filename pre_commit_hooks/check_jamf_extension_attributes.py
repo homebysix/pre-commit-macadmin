@@ -25,7 +25,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        with open(filename, "r") as openfile:
+        with open(filename, "r", encoding="utf-8") as openfile:
             ea_content = openfile.read()
 
         if "<result>" not in ea_content or "</result>" not in ea_content:
