@@ -35,9 +35,6 @@ def main(argv=None):
     if not os.path.isdir(os.path.join(args.munki_repo, "pkgsinfo")):
         print("Could not find pkgsinfo folder.")
         retval = 1
-    elif not os.path.isfile(python):
-        print("{} does not exist.".format(python))
-        retval = 1
     elif not os.path.isfile(makecatalogs):
         print("{} does not exist.".format(makecatalogs))
         retval = 1
