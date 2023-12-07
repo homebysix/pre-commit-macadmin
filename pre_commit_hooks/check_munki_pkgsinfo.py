@@ -146,7 +146,7 @@ def main(argv=None):
 
         # Check for missing or case-conflicted installer items
         if not _check_case_sensitive_path(
-            os.path.join("pkgs", pkginfo.get("installer_item_location", ""))
+            os.path.join(args.munki_repo, "pkgs", pkginfo.get("installer_item_location", ""))
         ):
             print(
                 "{}: installer item does not exist or path is not case sensitive".format(
