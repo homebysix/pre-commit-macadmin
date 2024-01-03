@@ -97,15 +97,22 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook checks Munki pkginfo files to ensure they are valid.
 
-    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:  
+    - Specify your preferred list of pkginfo catalogs, if you wish to enforce it, followed by `--` to signal the end of the list:
         `args: ['--catalogs', 'testing', 'stable', '--']`
 
-    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:  
+    - Specify your preferred list of pkginfo categories, if you wish to enforce it, followed by `--`:
         `args: ['--categories', 'Productivity', 'Design', 'Utilities', 'Web Browsers', '--']`
 
-    - Specify required pkginfo keys, followed by `--`:  
-        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`  
+    - Specify required pkginfo keys, followed by `--`:
+        `args: ['--required-keys', 'category', 'description', 'developer', 'name', 'version', '--']`
         (default: description, name)
+
+    - Specify an alternate munki repo location by passing the argument:
+        `args: ['--munki-repo', './my_repo_location']`
+        (default: ".")
+
+    - Choose to just warn on missing icons with a flag, note if no other issues exist this will allow pre-commit to pass without seeing the warnings:
+        `args: ['--warn-on-missing-icons]`
 
 - __check-munkiadmin-scripts__
 

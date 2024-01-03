@@ -36,12 +36,12 @@ def build_argument_parser():
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     parser.add_argument(
-        "--munki_repo",
+        "--munki-repo",
         default=".",
         help="path to local munki repo defaults to '.'"
     )
     parser.add_argument(
-        "--warn_on_missing_icons",
+        "--warn-on-missing-icons",
         help="If added, this will only warn on missing icons.",
         action="store_true",
         default=False,
