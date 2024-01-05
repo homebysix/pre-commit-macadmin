@@ -122,6 +122,10 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook runs the "makecatalogs" command to ensure all referenced packages are present and catalogs are up to date.
 
+    - Specify an alternate munki repo location by passing the argument:
+        `args: ['--munki-repo', './my_repo_location']`
+        (default: ".")
+
 ## Note about combining arguments
 
 When combining arguments that take lists (for example: `--required-keys`, `--catalogs`, and `--categories`), only the _last_ list needs to have a trailing `--`. For example, if you use the check-munki-pkgsinfo hook with only the `--catalogs` argument, your yaml config would look like this:

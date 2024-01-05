@@ -15,7 +15,7 @@ def build_argument_parser():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        "--munki_repo", default=".", help="Path to local Munki repo. (Defaults to '.')"
+        "--munki-repo", default=".", help="Path to local Munki repo. (Defaults to '.')"
     )
     # TODO: Support makecatalogs options, ideally with kwargs for flexibility.
     return parser
