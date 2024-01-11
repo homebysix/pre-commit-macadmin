@@ -32,7 +32,7 @@ def main(argv=None):
             print(f"{filename}: missing <result> and/or </result> tags")
             retval = 1
         all_results = len(re.findall("result.*\/result", ea_content))
-        proper_results = len(re.findall("<.*>.*<\/.*>", ea_content))
+        proper_results = len(re.findall("<result>.*<\/result>", ea_content))
         if proper_results < all_results:
             print(f"{filename}: has an incomplete <result> tags!")
 
