@@ -3,7 +3,7 @@
 """Check Jamf extension attributes for common issues."""
 
 import argparse
-import os
+import re
 
 
 def build_argument_parser():
@@ -29,8 +29,12 @@ def main(argv=None):
             ea_content = openfile.read()
 
         if "<result>" not in ea_content or "</result>" not in ea_content:
-            print("{}: missing <result> and/or </result> tags".format(filename))
+            print(f"{filename}: missing <result> and/or </result> tags")
             retval = 1
+        all_results = len(re.findall("result.*\/result", ea_content))
+        proper_results = len(re.findall("<.*>.*<\/.*>", ea_content))
+        if proper_results < all_results:
+            print(f"{filename}: has an incomplete <result> tags!")
 
     return retval
 
