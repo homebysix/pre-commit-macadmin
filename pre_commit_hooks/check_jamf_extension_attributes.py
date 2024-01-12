@@ -34,7 +34,7 @@ def main(argv=None):
         all_results = len(re.findall("result.*\/result", ea_content))
         proper_results = len(re.findall("<result>.*<\/result>", ea_content))
         if proper_results < all_results:
-            print(f"{filename}: has an incomplete <result> tags!")
+            print(f"{filename}: has incomplete <result> tags!")
 
     return retval
 
