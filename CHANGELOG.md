@@ -14,6 +14,17 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.15.0] - 2024-02-11
+
+### Added
+
+- Now validates that all XML `<result>` tags are closed in Jamf extension attributes (#76, thanks to @WardsParadox).
+
+### Fixed
+
+- Fixed a bug in the `munki-makecatalogs` hook (#72, thanks to @kbrewersq).
+- Added optional `--munki-repo` parameter to `check-munki-pkgsinfo` and `munki-makecatalogs` hooks, in order to specify a path to your Munki repo. Useful for situations where the Munki repo is a subdirectory of the Git repo itself. (#73 and #74, thanks to @kbrewersq).
+
 ## [1.14.1] - 2023-11-20
 
 ### Fixed
@@ -324,7 +335,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.1...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.15.0...HEAD
+[1.15.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.1...v1.15.0
 [1.14.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.13.0...v1.14.0
 [1.13.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.12.4...v1.13.0
