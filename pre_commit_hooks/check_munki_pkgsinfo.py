@@ -223,6 +223,7 @@ def main(argv=None):
             "#!/usr/bin/osascript",
             "#!/usr/bin/perl",
             "#!/usr/bin/python3",
+            "#!/usr/bin/python",
             "#!/usr/bin/ruby",
             "#!/usr/local/munki/munki-python",
             "#!/usr/local/munki/Python.framework/Versions/Current/bin/python3",
