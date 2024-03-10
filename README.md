@@ -118,6 +118,9 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
     - Choose to just warn on missing icons with a flag, note if no other issues exist this will allow pre-commit to pass without seeing the warnings:
         `args: ['--warn-on-missing-icons]`
 
+    - Add additional shebangs that are valid for your environment:
+        `args: ['--valid-shebangs', '#!/bin/macadmin/python37', '#!/bin/macadmin/python42', '--']`
+
 - __check-munkiadmin-scripts__
 
     This hook ensures MunkiAdmin scripts are executable.
