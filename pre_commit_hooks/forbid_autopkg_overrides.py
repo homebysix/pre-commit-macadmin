@@ -35,7 +35,7 @@ def main(argv=None):
             break  # No need to continue checking this file.
         for req_key in required_keys:
             if req_key not in recipe:
-                print("{}: possible AutoPkg recipe override".format(filename))
+                print(f"{filename}: possible AutoPkg recipe override")
                 retval = 1
 
     return retval

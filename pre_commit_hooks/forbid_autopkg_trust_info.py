@@ -30,7 +30,7 @@ def main(argv=None):
         if not recipe:
             retval = 1
         elif "ParentRecipeTrustInfo" in recipe:
-            print("{}: trust info in recipe".format(filename))
+            print(f"{filename}: trust info in recipe")
             retval = 1
 
     return retval

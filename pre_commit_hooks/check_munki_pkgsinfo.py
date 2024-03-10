@@ -50,7 +50,7 @@ def build_argument_parser():
         "--valid-shebangs",
         nargs="+",
         default=[],
-        help="Add other valid shebangs for your environment"
+        help="Add other valid shebangs for your environment",
     )
     return parser
 
@@ -78,7 +78,7 @@ def main(argv=None):
 
     # Typical extensions for installer packages.
     pkg_exts = ("pkg", "dmg")
-    dupe_suffixes = ["__{}.{}".format(i, ext) for ext in pkg_exts for i in range(1, 9)]
+    dupe_suffixes = [f"__{i}.{ext}" for ext in pkg_exts for i in range(1, 9)]
 
     # RestartAction values that obviate the need to check blocking applications.
     blocking_actions = ("RequireRestart", "RequireShutdown", "RequireLogout")
@@ -93,7 +93,7 @@ def main(argv=None):
             with open(filename, "rb") as openfile:
                 pkginfo = plistlib.load(openfile)
         except (ExpatError, ValueError) as err:
-            print("{}: plist parsing error: {}".format(filename, err))
+            print(f"{filename}: plist parsing error: {err}")
             retval = 1
 
         # Check for presence of required pkginfo keys.
@@ -124,18 +124,14 @@ def main(argv=None):
         for os_vers_key in os_vers_corrections:
             if os_vers_key in pkginfo:
                 print(
-                    "{}: You used {} when you probably meant {}.".format(
-                        filename, os_vers_key, os_vers_corrections[os_vers_key]
-                    )
+                    f"{filename}: You used {os_vers_key} when you probably meant {os_vers_corrections[os_vers_key]}."
                 )
                 retval = 1
 
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
             print(
-                '{}: category "{}" is not in list of approved categories'.format(
-                    filename, pkginfo.get("category")
-                )
+                f"{filename}: category \"{pkginfo.get('category')}\" is not in list of approved categories"
             )
             retval = 1
 
@@ -143,11 +139,7 @@ def main(argv=None):
         if args.catalogs:
             for catalog in pkginfo.get("catalogs"):
                 if catalog not in args.catalogs:
-                    print(
-                        '{}: catalog "{}" is not in approved list'.format(
-                            filename, catalog
-                        )
-                    )
+                    print(f'{filename}: catalog "{catalog}" is not in approved list')
                     retval = 1
 
         # Check for missing or case-conflicted installer items
@@ -157,18 +149,14 @@ def main(argv=None):
             )
         ):
             print(
-                "{}: installer item does not exist or path is not case sensitive".format(
-                    filename
-                )
+                f"{filename}: installer item does not exist or path is not case sensitive"
             )
             retval = 1
 
         # Check for pkg filenames showing signs of duplicate imports.
         if pkginfo.get("installer_item_location", "").endswith(tuple(dupe_suffixes)):
             print(
-                '{}: installer item "{}" may be a duplicate import'.format(
-                    filename, pkginfo.get("installer_item_location")
-                )
+                f'{filename}: installer item "{pkginfo.get("installer_item_location")}" may be a duplicate import'
             )
             retval = 1
 
@@ -183,9 +171,7 @@ def main(argv=None):
             )
         ):
             print(
-                "{}: contains a pkg installer but missing a blocking applications array".format(
-                    filename
-                )
+                f"{filename}: contains a pkg installer but missing a blocking applications array"
             )
             retval = 1
 
@@ -194,26 +180,22 @@ def main(argv=None):
             (
                 pkginfo.get("icon_name"),
                 os.path.isfile(
-                    os.path.join(
-                        args.munki_repo, "icons/{}.png".format(pkginfo["name"])
-                    )
+                    os.path.join(args.munki_repo, f"icons/{pkginfo['name']}.png")
                 ),
                 pkginfo.get("installer_type") == "apple_update_metadata",
             )
         ):
             if args.warn_on_missing_icons:
-                print("WARNING: {}: missing icon".format(filename))
+                print(f"WARNING: {filename}: missing icon")
             else:
-                print("{}: missing icon".format(filename))
+                print(f"{filename}: missing icon")
                 retval = 1
 
         # Ensure uninstall method is set correctly if uninstall_script exists.
         if "uninstall_script" in pkginfo:
             if pkginfo.get("uninstall_method") != "uninstall_script":
                 print(
-                    '{}: has uninstall script, but the uninstall method is set to "{}"'.format(
-                        filename, pkginfo.get("uninstall_method")
-                    )
+                    f'{filename}: has uninstall script, but the uninstall method is set to "{pkginfo.get("uninstall_method")}"'
                 )
                 retval = 1
 
@@ -242,9 +224,7 @@ def main(argv=None):
             for item_to_copy in pkginfo.get("items_to_copy"):
                 if item_to_copy.get("destination_path").endswith("/"):
                     print(
-                        '{}: has an items_to_copy with a trailing slash: "{}"'.format(
-                            filename, item_to_copy["destination_path"]
-                        )
+                        f'{filename}: has an items_to_copy with a trailing slash: "{item_to_copy["destination_path"]}"'
                     )
                     retval = 1
 

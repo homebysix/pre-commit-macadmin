@@ -71,13 +71,8 @@ def validate_key_types(name, manifest, filename):
         if manifest_key in manifest:
             if not isinstance(manifest[manifest_key], expected_type):
                 print(
-                    "{}: {} key {} should be type {}, not type {}".format(
-                        filename,
-                        name,
-                        manifest_key,
-                        expected_type,
-                        type(manifest[manifest_key]),
-                    )
+                    f"{filename}: {name} key {manifest_key} should be type "
+                    f"{expected_type}, not type {type(manifest[manifest_key])}"
                 )
                 passed = False
 
@@ -98,7 +93,7 @@ def validate_type(name, property, filename):
                 break
 
     if type_found not in MANIFEST_TYPES:
-        print('{}: Unexpected "{}" type "{}"'.format(filename, name, type_found))
+        print(f'{filename}: Unexpected "{name}" type "{type_found}"')
         passed = False
 
     return passed, type_found
@@ -121,55 +116,42 @@ def validate_list_item_types(name, manifest, filename):
                 desired_types = [MANIFEST_LIST_TYPES[name]]
             if actual_type not in desired_types:
                 print(
-                    '{}: "{}" items should be {}, not {}'.format(
-                        filename, name, MANIFEST_LIST_TYPES[name], actual_type
-                    )
+                    f'{filename}: "{name}" items should be {MANIFEST_LIST_TYPES[name]}, not {actual_type}'
                 )
                 passed = False
 
     return passed
 
 
-def validate_default(name, property, type_found, filename):
+def validate_default(name, prop, type_found, filename):
     """Ensure that default values have the expected type."""
     passed = True
 
     for test_key in ("default",):
-        if test_key in property:
-            if type(property[test_key]) == datetime:
+        if test_key in prop:
+            if isinstance(prop[test_key], datetime):
                 actual_type = str
             else:
-                actual_type = type(property[test_key])
+                actual_type = type(prop[test_key])
             if actual_type != PLIST_TYPES.get(type_found):
                 print(
-                    "{}: {} value for {} should be {}, not {}".format(
-                        filename,
-                        test_key,
-                        name,
-                        PLIST_TYPES.get(type_found),
-                        type(property[test_key]),
-                    )
+                    f"{filename}: {test_key} value for {name} should be {PLIST_TYPES.get(type_found)}, not {type(prop[test_key])}"
                 )
                 passed = False
 
     return passed
 
 
-def validate_urls(name, property, filename):
+def validate_urls(name, prop, filename):
     """Ensure that URL values are actual URLs."""
     passed = True
 
     url_keys = ("pfm_app_url", "pfm_documentation_url")
     for url_key in url_keys:
-        if url_key in property:
-            if not property[url_key].startswith("http"):
+        if url_key in prop:
+            if not prop[url_key].startswith("http"):
                 print(
-                    "{}: {} {} value doesn't look like a URL: {}".format(
-                        filename,
-                        name,
-                        url_key,
-                        property[url_key],
-                    )
+                    f"{filename}: {name} {url_key} value doesn't look like a URL: {prop[url_key]}"
                 )
                 passed = False
 
@@ -228,7 +210,7 @@ def main(argv=None):
             with open(filename, "rb") as openfile:
                 manifest = json.load(openfile)
         except json.decoder.JSONDecodeError as err:
-            print("{}: json parsing error: {}".format(filename, err))
+            print(f"{filename}: json parsing error: {err}")
             retval = 1
             break  # No need to continue checking this file
 

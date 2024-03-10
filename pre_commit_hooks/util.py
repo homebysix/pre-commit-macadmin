@@ -50,21 +50,21 @@ def load_autopkg_recipe(path):
             with open(path, "rb") as f:
                 recipe = yaml.load(f)
         except Exception as err:
-            print("{}: yaml parsing error: {}".format(path, err))
+            print(f"{path}: yaml parsing error: {err}")
     elif path.endswith(".json"):
         try:
             # try to read it as json
             with open(path, "rb") as f:
                 recipe = json.load(f)
         except Exception as err:
-            print("{}: json parsing error: {}".format(path, err))
+            print(f"{path}: json parsing error: {err}")
     else:
         try:
             # try to read it as a plist
             with open(path, "rb") as f:
                 recipe = plistlib.load(f)
         except Exception as err:
-            print("{}: plist parsing error: {}".format(path, err))
+            print(f"{path}: plist parsing error: {err}")
 
     return recipe
 
@@ -74,7 +74,7 @@ def validate_required_keys(input_dict, filename, required_keys):
     passed = True
     for req_key in required_keys:
         if not input_dict.get(req_key):
-            print("{}: missing required key {}".format(filename, req_key))
+            print(f"{filename}: missing required key {req_key}")
             passed = False
     return passed
 
@@ -92,9 +92,7 @@ def validate_restart_action_key(pkginfo, filename):
     if "RestartAction" in pkginfo:
         if pkginfo["RestartAction"] not in allowed_values:
             print(
-                "{}: RestartAction key set to unexpected value: {}".format(
-                    filename, pkginfo["RestartAction"]
-                )
+                f"{filename}: RestartAction key set to unexpected value: {pkginfo['RestartAction']}"
             )
             passed = False
     return passed
@@ -177,9 +175,8 @@ def validate_pkginfo_key_types(pkginfo, filename):
         if pkginfo_key in pkginfo:
             if not isinstance(pkginfo[pkginfo_key], expected_type):
                 print(
-                    "{}: pkginfo key {} should be type {}, not type {}".format(
-                        filename, pkginfo_key, expected_type, type(pkginfo[pkginfo_key])
-                    )
+                    f"{filename}: pkginfo key {pkginfo_key} should be type "
+                    f"{expected_type}, not type {type(pkginfo[pkginfo_key])}"
                 )
                 passed = False
 
