@@ -24,6 +24,21 @@ PLIST_TYPES = {
     "date": datetime,
 }
 
+# List of common shebangs used by Mac admin scripts
+# (Can be augmented with --valid-shebangs parameter)
+BUILTIN_SHEBANGS = [
+    "#!/bin/bash",
+    "#!/bin/sh",
+    "#!/bin/zsh",
+    "#!/usr/bin/osascript",
+    "#!/usr/bin/perl",
+    "#!/usr/bin/python3",
+    "#!/usr/bin/python",  # removed since macOS 12.3
+    "#!/usr/bin/ruby",
+    "#!/usr/local/munki/munki-python",
+    "#!/usr/local/munki/Python.framework/Versions/Current/bin/python3",
+]
+
 
 def load_autopkg_recipe(path):
     """Loads an AutoPkg recipe in plist, yaml, or json format."""
@@ -168,4 +183,14 @@ def validate_pkginfo_key_types(pkginfo, filename):
                 )
                 passed = False
 
+    return passed
+
+
+def validate_shebangs(script_content, filename, addl_shebangs=[]):
+    """Verifies that scripts begin with a valid shebang."""
+    passed = True
+    shebangs = BUILTIN_SHEBANGS + addl_shebangs
+    if not any((script_content.startswith(x) + "\n" for x in shebangs)):
+        print(f"{filename}: does not start with a valid shebang")
+        passed = False
     return passed

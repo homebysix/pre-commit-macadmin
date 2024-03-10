@@ -8,6 +8,8 @@ import plistlib
 from pathlib import Path
 from xml.parsers.expat import ExpatError
 
+from util import validate_shebangs
+
 from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
     validate_required_keys,
@@ -216,19 +218,6 @@ def main(argv=None):
                 retval = 1
 
         # Ensure all pkginfo scripts have a proper shebang.
-        builtin_shebangs = [
-            "#!/bin/bash",
-            "#!/bin/sh",
-            "#!/bin/zsh",
-            "#!/usr/bin/osascript",
-            "#!/usr/bin/perl",
-            "#!/usr/bin/python3",
-            "#!/usr/bin/python",
-            "#!/usr/bin/ruby",
-            "#!/usr/local/munki/munki-python",
-            "#!/usr/local/munki/Python.framework/Versions/Current/bin/python3",
-        ]
-        shebangs = builtin_shebangs + args.valid_shebangs
         script_types = (
             "installcheck_script",
             "uninstallcheck_script",
@@ -238,14 +227,12 @@ def main(argv=None):
             "preuninstall_script",
             "uninstall_script",
         )
-        for script_type in script_types:
-            if script_type in pkginfo:
-                if all(not pkginfo[script_type].startswith(x + "\n") for x in shebangs):
-                    print(
-                        "{}: Has a {} that does not start with a valid shebang.".format(
-                            filename, script_type
-                        )
-                    )
+        for s_type in script_types:
+            if s_type in pkginfo:
+                if not validate_shebangs(
+                    pkginfo[s_type], filename, args.valid_shebangs
+                ):
+                    print(f"{filename}: {s_type} does not start with a valid shebang")
                     retval = 1
 
         # Ensure the items_to_copy list does not include trailing slashes.
