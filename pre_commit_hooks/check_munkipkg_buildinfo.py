@@ -33,6 +33,7 @@ def validate_buildinfo_key_types(buildinfo, filename):
     """Ensure build-info files contain the proper types."""
 
     # Remap string type to support unicode in both Python 2 and 3
+    # DEPRECATED: Python 2 support will be removed in the future
     string = basestring if sys.version_info.major == 2 else str
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
