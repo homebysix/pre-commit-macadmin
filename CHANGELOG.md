@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- New `plist-format-xml` hook to auto-format XML property list (plist) files to use tabs instead of spaces, and will alphabetically sort keys.
 
 ## [1.15.0] - 2024-02-11
 

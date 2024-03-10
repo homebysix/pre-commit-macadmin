@@ -44,6 +44,10 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook checks [Outset](https://github.com/chilcote/outset) scripts to ensure they're executable.
 
+- __plist-format-xml__
+
+    This hook will auto-format XML property list (plist) files to use tabs instead of spaces, and will alphabetically sort keys.
+
 ### [AutoPkg](https://github.com/autopkg/autopkg)
 
 - __check-autopkg-recipe-list__
