@@ -32,10 +32,6 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
     This hook checks to ensure the Git config email matches one of the specified domains:
         `args: ['--domains', 'pretendco.com', 'contoso.com', '--']`
 
-- __check-plists__
-
-    This hook checks XML property list (plist) files for basic syntax errors.
-
 - __check-munkipkg-buildinfo__
 
     This hook checks [MunkiPkg](https://github.com/munki/munki-pkg) build-info files to ensure they are valid.
@@ -44,9 +40,15 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook checks [Outset](https://github.com/chilcote/outset) scripts to ensure they're executable.
 
-- __plist-format-xml__
+- __check-plists__
+
+    This hook checks XML property list (plist) files for basic syntax errors. Does not modify or autoformat these files; see the `format-xml-plist` hook below if you want autoformatting.
+
+- __format-xml-plist__
 
     This hook will auto-format XML property list (plist) files to use tabs instead of spaces, and will alphabetically sort keys.
+
+    __NOTE__: This will remove any HTML-style comments `<!--like this-->` in your plist files, so convert those to `<key>Comment</key>` format first.
 
 ### [AutoPkg](https://github.com/autopkg/autopkg)
 
