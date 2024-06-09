@@ -169,7 +169,8 @@ def validate_endofcheckphase(process, filename):
 
 
 def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename):
-    """Ensure MinimumVersion is set appropriately for the processors used."""
+    """Ensure MinimumVersion is a string and is set appropriately for the
+    processors used."""
 
     # Processors for which a minimum version of AutoPkg is required.
     # Note: packaging.version.Version considers this True: "1.0" == "1.0.0"
@@ -210,13 +211,20 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     }
 
     passed = True
+
+    # Validate that the MinimumVersion value is a string
+    if not isinstance(min_vers, str):
+        print(f"{filename}: MinimumVersion should be a string.")
+        passed = False
+
+    # Validate that the MinimumVersion value fits the processors used
     for proc in [
         x
         for x in proc_min_versions
         if Version(proc_min_versions[x]) >= Version(ignore_min_vers_before)
     ]:
         if proc in [x.get("Processor") for x in process]:
-            if Version(min_vers) < Version(proc_min_versions[proc]):
+            if Version(str(min_vers)) < Version(proc_min_versions[proc]):
                 print(
                     f"{filename}: {proc} processor requires minimum AutoPkg version {proc_min_versions[proc]}"
                 )
