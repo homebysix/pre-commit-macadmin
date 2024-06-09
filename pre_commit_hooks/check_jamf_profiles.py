@@ -28,9 +28,9 @@ def main(argv=None):
     for filename in args.filenames:
         try:
             with open(filename, "rb") as openfile:
-                profile = plistlib.load(openfile)
+                _ = plistlib.load(openfile)
         except (ExpatError, ValueError) as err:
-            print("{}: plist parsing error: {}".format(filename, err))
+            print(f"{filename}: plist parsing error: {err}")
             retval = 1
 
     return retval

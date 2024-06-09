@@ -36,7 +36,7 @@ def main(argv=None):
         print("Could not find pkgsinfo folder.")
         retval = 1
     elif not os.path.isfile(makecatalogs):
-        print("{} does not exist.".format(makecatalogs))
+        print(f"{makecatalogs} does not exist.")
         retval = 1
     else:
         retval = subprocess.call([makecatalogs, args.munki_repo])

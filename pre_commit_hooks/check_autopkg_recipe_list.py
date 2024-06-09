@@ -48,7 +48,7 @@ def main(argv=None):
                 with open(filename, "rb") as openfile:
                     recipe_list = plistlib.load(openfile).get("recipes")
             except (ExpatError, ValueError) as err:
-                print("{}: plist parsing error: {}".format(filename, err))
+                print(f"{filename}: plist parsing error: {err}")
                 retval = 1
         elif filename.endswith((".yaml", ".yml")):
             # AutoPkg does not support YAML recipe lists, but AutoPkg users
@@ -57,7 +57,7 @@ def main(argv=None):
                 with open(filename, "r", encoding="utf-8") as openfile:
                     recipe_list = yaml.load(openfile)
             except Exception as err:
-                print("{}: yaml parsing error: {}".format(filename, err))
+                print(f"{filename}: yaml parsing error: {err}")
                 retval = 1
         elif filename.endswith(".json"):
             # AutoPkg does not support JSON recipe lists, but AutoPkg users
@@ -66,11 +66,11 @@ def main(argv=None):
                 with open(filename, "r", encoding="utf-8") as openfile:
                     recipe_list = json.load(openfile)
             except Exception as err:
-                print("{}: json parsing error: {}".format(filename, err))
+                print(f"{filename}: json parsing error: {err}")
                 retval = 1
 
         if not recipe_list or not isinstance(recipe_list, list):
-            print("{}: invalid recipe list".format(filename))
+            print(f"{filename}: invalid recipe list")
             retval = 1
         else:
             if any((".munki" in recipe for recipe in recipe_list)):

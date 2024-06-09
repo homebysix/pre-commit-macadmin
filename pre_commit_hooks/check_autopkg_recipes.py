@@ -105,14 +105,13 @@ def validate_comments(filename, strict):
         if "<!--" in recipe_text and "-->" in recipe_text:
             if strict:
                 print(
-                    "{}: Convert from <!-- --> style comments "
-                    "to a Comment key.".format(filename)
+                    f"{filename}: Convert from <!-- --> style comments to a Comment key."
                 )
                 passed = False
             else:
                 print(
-                    "{}: WARNING: Recommend converting from <!-- --> style comments "
-                    "to a Comment key.".format(filename)
+                    f"{filename}: WARNING: Recommend converting from <!-- --> style comments "
+                    "to a Comment key."
                 )
 
     return passed
@@ -126,9 +125,7 @@ def validate_processor_keys(process, filename):
     if missing_processor_keys:
         for missing_proc in missing_processor_keys:
             print(
-                '{}: Item in processor array is missing "Processor" key:\n{}'.format(
-                    filename, missing_proc
-                )
+                f'{filename}: Item in processor array is missing "Processor" key:\n{missing_proc}'
             )
         passed = False
 
@@ -159,14 +156,12 @@ def validate_endofcheckphase(process, filename):
     )
     if endofcheck_idx is None:
         print(
-            "{}: Contains a download processor, but no EndOfCheckPhase "
-            "processor.".format(filename)
+            f"{filename}: Contains a download processor, but no EndOfCheckPhase processor."
         )
         passed = False
     elif endofcheck_idx < downloader_idx:
         print(
-            "{}: EndOfCheckPhase typically goes after a download processor, "
-            "not before.".format(filename)
+            f"{filename}: EndOfCheckPhase typically goes after a download processor, not before."
         )
         passed = False
 
@@ -174,17 +169,8 @@ def validate_endofcheckphase(process, filename):
 
 
 def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename):
-    """Ensure MinimumVersion is set appropriately for the processors used."""
-
-    # Warn if using a MinimumVersion greater than or equal to 2
-    # warn_on_vers = "2"
-    # suggest_vers = "1.4.1"
-    # if Version(min_vers) >= Version(warn_on_vers):
-    #     print(
-    #         "{}: WARNING: Choosing MinimumVersion {} limits the potential "
-    #         "audience for your AutoPkg recipe. Consider using MinimumVersion "
-    #         "{} if your processors support it.".format(filename, min_vers, suggest_vers)
-    #     )
+    """Ensure MinimumVersion is a string and is set appropriately for the
+    processors used."""
 
     # Processors for which a minimum version of AutoPkg is required.
     # Note: packaging.version.Version considers this True: "1.0" == "1.0.0"
@@ -225,16 +211,22 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     }
 
     passed = True
+
+    # Validate that the MinimumVersion value is a string
+    if not isinstance(min_vers, str):
+        print(f"{filename}: MinimumVersion should be a string.")
+        passed = False
+
+    # Validate that the MinimumVersion value fits the processors used
     for proc in [
         x
         for x in proc_min_versions
         if Version(proc_min_versions[x]) >= Version(ignore_min_vers_before)
     ]:
         if proc in [x.get("Processor") for x in process]:
-            if Version(min_vers) < Version(proc_min_versions[proc]):
+            if Version(str(min_vers)) < Version(proc_min_versions[proc]):
                 print(
-                    "{}: {} processor requires minimum AutoPkg "
-                    "version {}".format(filename, proc, proc_min_versions[proc])
+                    f"{filename}: {proc} processor requires minimum AutoPkg version {proc_min_versions[proc]}"
                 )
                 passed = False
 
@@ -251,8 +243,7 @@ def validate_no_deprecated_procs(process, filename):
     for proc in process:
         if proc.get("Processor") in deprecated_procs:
             print(
-                "{}: WARNING: Deprecated processor {} "
-                "is used.".format(filename, proc.get("Processor"))
+                f'{filename}: WARNING: Deprecated processor {proc.get("Processor")} is used.'
             )
 
     return passed
@@ -269,10 +260,8 @@ def validate_no_superclass_procs(process, filename):
     for proc in process:
         if proc.get("Processor") in superclass_procs:
             print(
-                "{}: WARNING: The processor {} is intended to be used "
-                "by other processors, not used directly in recipes.".format(
-                    filename, proc.get("Processor")
-                )
+                f"{filename}: WARNING: The processor {proc.get('Processor')} is intended to be used "
+                "by other processors, not used directly in recipes."
             )
 
     return passed
@@ -334,9 +323,7 @@ def validate_jamf_processor_order(process, filename):
 #         subst = "%" + input_var + "%"
 #         if subst not in recipe_text:
 #             print(
-#                 "{}: WARNING: Input variable {} not referenced in recipe.".format(
-#                     filename, input_var
-#                 )
+#                 f"{filename}: WARNING: Input variable {input_var} not referenced in recipe."
 #             )
 
 #     return passed
@@ -363,8 +350,8 @@ def validate_no_var_in_app_path(process, filename):
             for _, argvalue in proc["Arguments"].items():
                 if isinstance(argvalue, str) and "%NAME%.app" in argvalue:
                     print(
-                        "{}: Use actual app name instead of %NAME%.app in {} "
-                        "processor argument.".format(filename, proc.get("Processor"))
+                        f"{filename}: Use actual app name instead of %NAME%.app in {proc.get('Processor')} "
+                        "processor argument."
                     )
                     passed = False
 
@@ -415,13 +402,13 @@ def validate_proc_type_conventions(process, filename):
     passed = True
     processors = [x.get("Processor") for x in process]
     for recipe_type in proc_type_conventions:
-        type_hint = ".{}.".format(recipe_type)
+        type_hint = f".{recipe_type}."
         if type_hint not in filename:
             for processor in processors:
                 if processor in proc_type_conventions[recipe_type]:
                     print(
-                        "{}: Processor {} is not conventional for this "
-                        "recipe type.".format(filename, processor)
+                        f"{filename}: Processor {processor} is not conventional for this "
+                        "recipe type."
                     )
                     passed = False
 
@@ -455,7 +442,7 @@ def validate_required_proc_for_types(process, filename):
     processors = [x.get("Processor") for x in process]
     for recipe_type in required_proc_for_type:
         req_procs = required_proc_for_type[recipe_type]
-        type_hint = ".{}.".format(recipe_type)
+        type_hint = f".{recipe_type}."
         if type_hint in filename:
             if recipe_type == "pkg" and processors == []:
                 # OK for pkg recipes to have an empty process list, as long as
@@ -465,13 +452,13 @@ def validate_required_proc_for_types(process, filename):
             if not any([x in processors for x in req_procs]):
                 if len(req_procs) == 1:
                     print(
-                        "{}: Recipe type {} should contain processor "
-                        "{}.".format(filename, recipe_type, req_procs[0])
+                        f"{filename}: Recipe type {recipe_type} should contain processor "
+                        f"{req_procs[0]}."
                     )
                 else:
                     print(
-                        "{}: Recipe type {} should contain one of these "
-                        "processors: {}.".format(filename, recipe_type, req_procs)
+                        f"{filename}: Recipe type {recipe_type} should contain one of these "
+                        f"processors: {req_procs}."
                     )
                 passed = False
 
@@ -505,23 +492,14 @@ def validate_proc_args(process, filename):
 
             if not core_procs[proc["Processor"]]:
                 print(
-                    "{}: Unknown argument {} for processor {}, "
-                    "which does not accept any arguments.".format(
-                        filename,
-                        arg,
-                        proc["Processor"],
-                    )
+                    f"{filename}: Unknown argument {arg} for processor {proc['Processor']}, "
+                    "which does not accept any arguments."
                 )
                 passed = False
             elif arg not in core_procs[proc["Processor"]]:
                 print(
-                    "{}: Unknown argument {} for processor {}. "
-                    "Allowed arguments are: {}".format(
-                        filename,
-                        arg,
-                        proc["Processor"],
-                        ", ".join(core_procs[proc["Processor"]]),
-                    )
+                    f"{filename}: Unknown argument {arg} for processor {proc['Processor']}. Allowed arguments are: "
+                    + ", ".join(core_procs[proc["Processor"]])
                 )
                 passed = False
 
@@ -560,9 +538,7 @@ def main(argv=None):
         # Ensure the recipe identifier isn't duplicated.
         if recipe["Identifier"] in seen_identifiers:
             print(
-                '{}: Identifier "{}" is shared by another recipe in this repo.'.format(
-                    filename, recipe["Identifier"]
-                )
+                f'{filename}: Identifier "{recipe["Identifier"]}" is shared by another recipe in this repo.'
             )
             retval = 1
         else:
@@ -576,10 +552,7 @@ def main(argv=None):
             if not validate_recipe_prefix(recipe, filename, args.recipe_prefix):
                 retval = 1
         if recipe["Identifier"] == recipe.get("ParentRecipe"):
-            print(
-                "{}: Identifier and ParentRecipe should not "
-                "be the same.".format(filename)
-            )
+            print(f"{filename}: Identifier and ParentRecipe should not be the same.")
             retval = 1
 
         # Validate that all input variables are used.
@@ -611,9 +584,7 @@ def main(argv=None):
             for os_vers_key in os_vers_corrections:
                 if os_vers_key in input_key["pkginfo"]:
                     print(
-                        "{}: You used {} when you probably meant {}.".format(
-                            filename, os_vers_key, os_vers_corrections[os_vers_key]
-                        )
+                        f"{filename}: You used {os_vers_key} when you probably meant {os_vers_corrections[os_vers_key]}."
                     )
                     retval = 1
 

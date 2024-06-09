@@ -44,7 +44,7 @@ def validate_required_keys(input_dict, required_keys, dict_name, filename):
     passed = True
     for req_key in required_keys:
         if input_dict.get(req_key, "") == "":
-            print("{}: {} missing required key {}".format(filename, dict_name, req_key))
+            print(f"{filename}: {dict_name} missing required key {req_key}")
             passed = False
     return passed
 
@@ -130,12 +130,8 @@ def validate_manifest_key_types(manifest, filename):
         if manifest_key in manifest:
             if not isinstance(manifest[manifest_key], expected_type):
                 print(
-                    "{}: manifest key {} should be type {}, not type {}".format(
-                        filename,
-                        manifest_key,
-                        expected_type,
-                        type(manifest[manifest_key]),
-                    )
+                    f"{filename}: manifest key {manifest_key} should be type "
+                    f"{expected_type}, not type {type(manifest[manifest_key])}"
                 )
                 passed = False
 
@@ -155,9 +151,8 @@ def validate_list_item_types(manifest, filename):
                 continue
             if actual_type is not PFM_LIST_TYPES[name]:
                 print(
-                    '{}: "{}" items should be type {}, not type {}'.format(
-                        filename, name, PFM_LIST_TYPES[name], actual_type
-                    )
+                    f'{filename}: "{name}" items should be type '
+                    f"{PFM_LIST_TYPES[name]}, not type {actual_type}"
                 )
                 passed = False
 
@@ -187,14 +182,10 @@ def validate_pfm_type_strings(subkey, filename):
 
     pfm_depr_types = ("union policy", "url")
     if subkey["pfm_type"] in pfm_depr_types:
-        print(
-            '{}: WARNING: Subkey type "{}" is deprecated'.format(
-                filename, subkey["pfm_type"]
-            )
-        )
+        print(f'{filename}: WARNING: Subkey type "{subkey["pfm_type"]}" is deprecated')
         # passed = False
     elif subkey["pfm_type"] not in PLIST_TYPES:
-        print('{}: Unexpected subkey type "{}"'.format(filename, subkey["pfm_type"]))
+        print(f'{filename}: Unexpected subkey type "{subkey["pfm_type"]}"')
         passed = False
 
     return passed
@@ -227,9 +218,8 @@ def validate_subkey_known_types(subkey, filename):
             name_types = [pfm_name_types[subkey["pfm_name"]]]
         if subkey["pfm_type"] not in name_types:
             print(
-                '{}: Subkey name "{}" should be type "string", not type "{}"'.format(
-                    filename, subkey["pfm_name"], subkey["pfm_type"]
-                )
+                f'{filename}: Subkey name "{subkey["pfm_name"]}" should be '
+                f'type "string", not type "{subkey["pfm_type"]}"'
             )
             passed = False
 
@@ -245,25 +235,18 @@ def validate_pfm_required(subkey, filename):
     if "pfm_require" in subkey:
         if subkey["pfm_require"] not in require_options:
             print(
-                '{}: "pfm_require" value "{}" should be one of: {}'.format(
-                    filename, subkey["pfm_require"], require_options
-                )
+                f'{filename}: "pfm_require" value "{subkey["pfm_require"]}" '
+                f"should be one of: {require_options}"
             )
             passed = False
     if "pfm_required" in subkey:
         if subkey["pfm_required"] is not True:
             print(
-                '{}: "pfm_required" value "{}" should be True, if used at all'.format(
-                    filename, subkey["pfm_required"]
-                )
+                f'{filename}: "pfm_required" value "{subkey["pfm_required"]}" should be True, if used at all'
             )
             passed = False
     if "pfm_required" in subkey and "pfm_require" in subkey:
-        print(
-            '{}: No need to specify both "pfm_required" and "pfm_require"'.format(
-                filename
-            )
-        )
+        print(f'{filename}: No need to specify both "pfm_required" and "pfm_require"')
 
     return passed
 
@@ -276,9 +259,7 @@ def validate_pfm_targets(subkey, filename):
     if "pfm_targets" in subkey:
         if any([x not in target_options for x in subkey["pfm_targets"]]):
             print(
-                '{}: "pfm_targets" values should be one of: {}'.format(
-                    filename, target_options
-                )
+                f'{filename}: "pfm_targets" values should be one of: {target_options}'
             )
             passed = False
 
@@ -302,15 +283,10 @@ def validate_pfm_default(subkey, filename):
                 #         continue
                 # else:
                 desired_type = PLIST_TYPES[subkey["pfm_type"]]
-                if type(subkey[test_key]) != desired_type:
+                if isinstance(subkey[test_key], desired_type):
                     print(
-                        "{}: {} value for {} should be type {}, not type {}".format(
-                            filename,
-                            test_key,
-                            subkey.get("pfm_name"),
-                            PLIST_TYPES[subkey["pfm_type"]],
-                            type(subkey[test_key]),
-                        )
+                        f"{filename}: {test_key} value for {subkey.get('pfm_name')} should be type "
+                        f"{PLIST_TYPES[subkey['pfm_type']]}, not type {type(subkey[test_key])}"
                     )
                     passed = False
 
@@ -325,20 +301,11 @@ def validate_urls(subkey, filename):
     for url_key in url_keys:
         if url_key in subkey:
             if len(subkey[url_key]) == 0:
-                print(
-                    "{}: {} URL value is empty.".format(
-                        filename,
-                        url_key,
-                    )
-                )
+                print(f"{filename}: {url_key} URL value is empty.")
                 passed = False
             elif not subkey[url_key].startswith("http"):
                 print(
-                    "{}: {} value doesn't look like a URL: {}".format(
-                        filename,
-                        url_key,
-                        subkey[url_key],
-                    )
+                    f"{filename}: {url_key} value doesn't look like a URL: {subkey[url_key]}"
                 )
                 passed = False
 
@@ -357,11 +324,7 @@ def validate_platforms(subkey, filename):
             for platform in subkey[platform_key]:
                 if platform not in valid_platforms:
                     print(
-                        "{}: {} value doesn't look like a valid platform string: {}".format(
-                            filename,
-                            platform_key,
-                            platform,
-                        )
+                        f"{filename}: {platform_key} value doesn't look like a valid platform string: {platform}"
                     )
                     passed = False
 
@@ -451,7 +414,7 @@ def main(argv=None):
             with open(filename, "rb") as openfile:
                 manifest = plistlib.load(openfile)
         except (ExpatError, ValueError) as err:
-            print("{}: plist parsing error: {}".format(filename, err))
+            print(f"{filename}: plist parsing error: {err}")
             retval = 1
             continue  # No need to continue checking this file
 
@@ -464,11 +427,9 @@ def main(argv=None):
         # Ensure pfm_format_version has expected value
         if manifest.get("pfm_format_version", 1) != 1:
             print(
-                "{}: pfm_format_version should be 1, not {} "
+                f"{filename}: pfm_format_version should be 1, not {manifest.get('pfm_format_version')} "
                 "(https://github.com/ProfileCreator/ProfileManifests"
-                "/wiki/Manifest-Format-Versions)".format(
-                    filename, manifest.get("pfm_format_version")
-                )
+                "/wiki/Manifest-Format-Versions)"
             )
             retval = 1
 

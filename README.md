@@ -15,7 +15,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.15.0
+    rev: v1.16.1
     hooks:
     -   id: check-plists
     # -   id: ...
@@ -32,10 +32,6 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
     This hook checks to ensure the Git config email matches one of the specified domains:
         `args: ['--domains', 'pretendco.com', 'contoso.com', '--']`
 
-- __check-plists__
-
-    This hook checks XML property list (plist) files for basic syntax errors.
-
 - __check-munkipkg-buildinfo__
 
     This hook checks [MunkiPkg](https://github.com/munki/munki-pkg) build-info files to ensure they are valid.
@@ -43,6 +39,16 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 - __check-outset-scripts__
 
     This hook checks [Outset](https://github.com/chilcote/outset) scripts to ensure they're executable.
+
+- __check-plists__
+
+    This hook checks XML property list (plist) files for basic syntax errors. Does not modify or autoformat these files; see the `format-xml-plist` hook below if you want autoformatting.
+
+- __format-xml-plist__
+
+    This hook will auto-format XML property list (plist) files to use tabs instead of spaces, and will alphabetically sort keys.
+
+    __NOTE__: This will remove any HTML-style comments `<!--like this-->` in your plist files, so convert those to `<key>Comment</key>` format first.
 
 ### [AutoPkg](https://github.com/autopkg/autopkg)
 
@@ -135,7 +141,7 @@ When combining arguments that take lists (for example: `--required-keys`, `--cat
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.15.0
+    rev: v1.16.1
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--']
@@ -145,7 +151,7 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.15.0
+    rev: v1.16.1
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
@@ -157,7 +163,7 @@ If it looks better to your eye, feel free to use a multi-line list for long argu
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.15.0
+    rev: v1.16.1
     hooks:
     -   id: check-munki-pkgsinfo
         args: [

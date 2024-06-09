@@ -14,16 +14,33 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.16.1] - 2024-06-08
+
+### Added
+
+- New `format-xml-plist` hook to auto-format XML property list (plist) files to use tabs instead of spaces, and will alphabetically sort keys. (#79, thanks to n8felton)
+- New `--valid-shebangs` parameter to specify additional custom shebangs in use for your environment. Works with the `check-munki-pkgsinfo`, `check-jamf-scripts`, `check-jamf-extension-attributes`, `check-outset-scripts`, and `check-munkiadmin-scripts` hooks. (#75, thanks to @kbrewersq)
+- Checks to ensure the MinimumVersion key in AutoPkg recipes is a string. (If quotes are omitted in yaml-formatted recipes, this key could be interpreted as a float.)
+
+### Removed
+
+- No longer warn when using AutoPkg MinimumVersion greater than 2.0.
+- Python 2 support deprecated and will be removed in the future.
+
+### Changed
+
+- Hook output rewritten to use f-strings instead of `.format()`.
+
 ## [1.15.0] - 2024-02-11
 
 ### Added
 
-- Now validates that all XML `<result>` tags are closed in Jamf extension attributes (#76, thanks to @WardsParadox).
+- Now validates that all XML `<result>` tags are closed in Jamf extension attributes. (#76, thanks to @WardsParadox)
 
 ### Fixed
 
 - Fixed a bug in the `munki-makecatalogs` hook (#72, thanks to @kbrewersq).
-- Added optional `--munki-repo` parameter to `check-munki-pkgsinfo` and `munki-makecatalogs` hooks, in order to specify a path to your Munki repo. Useful for situations where the Munki repo is a subdirectory of the Git repo itself. (#73 and #74, thanks to @kbrewersq).
+- Added optional `--munki-repo` parameter to `check-munki-pkgsinfo` and `munki-makecatalogs` hooks, in order to specify a path to your Munki repo. Useful for situations where the Munki repo is a subdirectory of the Git repo itself. (#73 and #74, thanks to @kbrewersq)
 
 ## [1.14.1] - 2023-11-20
 
@@ -35,8 +52,8 @@ Nothing yet.
 
 ### Added
 
-- `check-preference-manifests` hook now outputs more specific error message if `pfm_documentation_url` is empty (#67, thanks to @relgit).
-- `check-munki-pkgsinfo` hook now detects path mismatches on case-sensitive filesystems (#66, thanks to @AaronBurchfield).
+- `check-preference-manifests` hook now outputs more specific error message if `pfm_documentation_url` is empty. (#67, thanks to @relgit)
+- `check-munki-pkgsinfo` hook now detects path mismatches on case-sensitive filesystems. (#66, thanks to @AaronBurchfield)
 
 ## [1.13.0] - 2023-11-18
 
@@ -335,7 +352,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.15.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.1...HEAD
+[1.16.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.15.0...v1.16.1
 [1.15.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.1...v1.15.0
 [1.14.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.13.0...v1.14.0

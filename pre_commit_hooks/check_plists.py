@@ -28,13 +28,13 @@ def main(argv=None):
     for filename in args.filenames:
         try:
             with open(filename, "rb") as openfile:
-                plist = plistlib.load(openfile)
+                _ = plistlib.load(openfile)
             # Possible future addition, but disabled for now.
             # if not isinstance(plist, dict):
-            #     print("{}: top level of plist should be type dict".format(filename))
+            #     print(f"{filename}: top level of plist should be type dict")
             #     retval = 1
         except (ExpatError, ValueError) as err:
-            print("{}: plist parsing error: {}".format(filename, err))
+            print(f"{filename}: plist parsing error: {err}")
             retval = 1
 
     return retval

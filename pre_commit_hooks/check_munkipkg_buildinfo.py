@@ -33,6 +33,7 @@ def validate_buildinfo_key_types(buildinfo, filename):
     """Ensure build-info files contain the proper types."""
 
     # Remap string type to support unicode in both Python 2 and 3
+    # DEPRECATED: Python 2 support will be removed in the future
     string = basestring if sys.version_info.major == 2 else str
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
@@ -57,12 +58,8 @@ def validate_buildinfo_key_types(buildinfo, filename):
         if buildinfo_key in buildinfo:
             if not isinstance(buildinfo[buildinfo_key], expected_type):
                 print(
-                    "{}: buildinfo key {} should be type {}, not type {}".format(
-                        filename,
-                        buildinfo_key,
-                        expected_type,
-                        type(buildinfo[buildinfo_key]),
-                    )
+                    f"{filename}: buildinfo key {buildinfo_key} should be type "
+                    f"{expected_type}, not type {type(buildinfo[buildinfo_key])}"
                 )
                 passed = False
 
@@ -84,7 +81,7 @@ def main(argv=None):
                 with open(filename, "rb") as openfile:
                     buildinfo = plistlib.load(openfile)
             except (ExpatError, ValueError) as err:
-                print("{}: plist parsing error: {}".format(filename, err))
+                print(f"{filename}: plist parsing error: {err}")
                 retval = 1
                 break  # no need to continue testing this file
         elif filename.endswith((".yaml", ".yml")):
@@ -92,7 +89,7 @@ def main(argv=None):
                 with open(filename, "r", encoding="utf-8") as openfile:
                     buildinfo = yaml.load(openfile)
             except Exception as err:
-                print("{}: yaml parsing error: {}".format(filename, err))
+                print(f"{filename}: yaml parsing error: {err}")
                 retval = 1
                 break  # no need to continue testing this file
         elif filename.endswith(".json"):
@@ -100,12 +97,12 @@ def main(argv=None):
                 with open(filename, "r", encoding="utf-8") as openfile:
                     buildinfo = json.load(openfile)
             except Exception as err:
-                print("{}: json parsing error: {}".format(filename, err))
+                print(f"{filename}: json parsing error: {err}")
                 retval = 1
                 break  # no need to continue testing this file
 
         if not buildinfo or not isinstance(buildinfo, dict):
-            print("{}: cannot parse build-info file".format(filename))
+            print(f"{filename}: cannot parse build-info file")
             retval = 1
             break
 
@@ -121,8 +118,7 @@ def main(argv=None):
             # Warn if the identifier does not start with the expected prefix.
             if not buildinfo.get("identifier", "").startswith(args.identifier_prefix):
                 print(
-                    "{}: identifier does not start "
-                    "with {}.".format(filename, args.identifier_prefix)
+                    f"{filename}: identifier does not start with {args.identifier_prefix}."
                 )
                 retval = 1
 
@@ -133,8 +129,7 @@ def main(argv=None):
         # Warn if install_location is not the startup disk.
         if buildinfo.get("install_location") != "/":
             print(
-                "{}: WARNING: install_location is not set to the "
-                "startup disk.".format(filename)
+                f"{filename}: WARNING: install_location is not set to the startup disk."
             )
 
     return retval
