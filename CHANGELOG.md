@@ -367,7 +367,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.1...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.2...HEAD
+[1.16.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.1...v1.16.2
 [1.16.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.15.0...v1.16.1
 [1.15.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.1...v1.15.0
 [1.14.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.0...v1.14.1
