@@ -3,7 +3,7 @@
 
 import argparse
 
-from util import validate_shebangs
+from pre_commit_hooks.util import validate_shebangs
 
 
 def build_argument_parser():

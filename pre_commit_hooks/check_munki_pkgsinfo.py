@@ -7,12 +7,12 @@ import plistlib
 from pathlib import Path
 from xml.parsers.expat import ExpatError
 
-from util import validate_shebangs
 
 from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
     validate_required_keys,
     validate_restart_action_key,
+    validate_shebangs,
 )
 
 
