@@ -14,6 +14,21 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.16.2] - 2024-06-10
+
+### Fixed
+
+- Fixed two bugs in shebang validation that would result in ModuleNotFoundError when running check-munki-pkgsinfo hook.
+
+### Removed
+
+- Dropped Python 2 string instance validation. No further support will be provided for Python 2.
+
+### Changed
+
+- Added PyUpgrade hook to this repo's own pre-commit linting, in order to ensure modern Python syntax.
+- Don't specify `"r"` mode when using `open()`, as this is the default behavior.
+
 ## [1.16.1] - 2024-06-08
 
 ### Added

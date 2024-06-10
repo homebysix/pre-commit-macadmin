@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """Check MunkiPkg build-info files to ensure they are valid."""
 
 import argparse
@@ -86,7 +85,7 @@ def main(argv=None):
                 break  # no need to continue testing this file
         elif filename.endswith((".yaml", ".yml")):
             try:
-                with open(filename, "r", encoding="utf-8") as openfile:
+                with open(filename, encoding="utf-8") as openfile:
                     buildinfo = yaml.load(openfile)
             except Exception as err:
                 print(f"{filename}: yaml parsing error: {err}")
@@ -94,7 +93,7 @@ def main(argv=None):
                 break  # no need to continue testing this file
         elif filename.endswith(".json"):
             try:
-                with open(filename, "r", encoding="utf-8") as openfile:
+                with open(filename, encoding="utf-8") as openfile:
                     buildinfo = json.load(openfile)
             except Exception as err:
                 print(f"{filename}: json parsing error: {err}")

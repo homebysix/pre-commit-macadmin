@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 
 from setuptools import setup
 
@@ -7,7 +6,7 @@ setup(
     name="pre-commit-macadmin",
     description="Pre-commit hooks for Mac admins, client engineers, and IT consultants.",
     url="https://github.com/homebysix/pre-commit-macadmin",
-    version="1.16.1",
+    version="1.16.2",
     author="Elliot Jordan",
     author_email="elliot@elliotjordan.com",
     packages=["pre_commit_hooks"],

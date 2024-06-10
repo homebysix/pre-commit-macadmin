@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook checks Jamf JSON schema custom app manifests for inconsistencies and common issues."""
 
 # References:

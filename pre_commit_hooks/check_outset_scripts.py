@@ -1,11 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """Check Outset scripts to ensure they are executable."""
 
 import argparse
 import os
 
-from util import validate_shebangs
+from pre_commit_hooks.util import validate_shebangs
 
 
 def build_argument_parser():
@@ -32,7 +31,7 @@ def main(argv=None):
             retval = 1
 
         # Ensure scripts have a proper shebang
-        with open(filename, "r", encoding="utf-8") as openfile:
+        with open(filename, encoding="utf-8") as openfile:
             script_content = openfile.read()
         if not validate_shebangs(script_content, filename):
             print(f"{filename}: does not start with a valid shebang")

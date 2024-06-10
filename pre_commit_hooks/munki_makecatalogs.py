@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook runs the "makecatalogs" command to ensure all referenced packages
 are present and catalogs are up to date."""
 

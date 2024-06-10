@@ -1,10 +1,9 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """Check Jamf scripts for common issues."""
 
 import argparse
 
-from util import validate_shebangs
+from pre_commit_hooks.util import validate_shebangs
 
 
 def build_argument_parser():
@@ -32,7 +31,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        with open(filename, "r", encoding="utf-8") as openfile:
+        with open(filename, encoding="utf-8") as openfile:
             script_content = openfile.read()
 
         # Ensure script starts with a shebang of some sort.
