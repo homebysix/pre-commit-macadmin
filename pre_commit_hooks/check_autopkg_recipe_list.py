@@ -36,7 +36,7 @@ def main(argv=None):
     for filename in args.filenames:
         recipe_list = None
         if filename.endswith(".txt"):
-            with open(filename, "r", encoding="utf-8") as openfile:
+            with open(filename, encoding="utf-8") as openfile:
                 recipe_list = [
                     line
                     for line in openfile.read().splitlines()
@@ -53,7 +53,7 @@ def main(argv=None):
             # AutoPkg does not support YAML recipe lists, but AutoPkg users
             # may have developed custom tooling for this.
             try:
-                with open(filename, "r", encoding="utf-8") as openfile:
+                with open(filename, encoding="utf-8") as openfile:
                     recipe_list = yaml.load(openfile)
             except Exception as err:
                 print(f"{filename}: yaml parsing error: {err}")
@@ -62,7 +62,7 @@ def main(argv=None):
             # AutoPkg does not support JSON recipe lists, but AutoPkg users
             # may have developed custom tooling for this.
             try:
-                with open(filename, "r", encoding="utf-8") as openfile:
+                with open(filename, encoding="utf-8") as openfile:
                     recipe_list = json.load(openfile)
             except Exception as err:
                 print(f"{filename}: json parsing error: {err}")

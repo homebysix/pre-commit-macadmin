@@ -32,7 +32,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        with open(filename, "r", encoding="utf-8") as openfile:
+        with open(filename, encoding="utf-8") as openfile:
             ea_content = openfile.read()
 
         # Ensure script contains both <result> and </result> tags

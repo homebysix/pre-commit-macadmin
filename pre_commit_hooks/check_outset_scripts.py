@@ -31,7 +31,7 @@ def main(argv=None):
             retval = 1
 
         # Ensure scripts have a proper shebang
-        with open(filename, "r", encoding="utf-8") as openfile:
+        with open(filename, encoding="utf-8") as openfile:
             script_content = openfile.read()
         if not validate_shebangs(script_content, filename):
             print(f"{filename}: does not start with a valid shebang")

@@ -99,7 +99,7 @@ def validate_comments(filename, strict):
     plutil -convert xml1."""
 
     passed = True
-    with open(filename, "r", encoding="utf-8") as openfile:
+    with open(filename, encoding="utf-8") as openfile:
         recipe_text = openfile.read()
         if "<!--" in recipe_text and "-->" in recipe_text:
             if strict:
