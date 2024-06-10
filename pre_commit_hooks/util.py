@@ -186,7 +186,7 @@ def validate_shebangs(script_content, filename, addl_shebangs=[]):
     """Verifies that scripts begin with a valid shebang."""
     passed = True
     shebangs = BUILTIN_SHEBANGS + addl_shebangs
-    if not any((script_content.startswith(x) + "\n" for x in shebangs)):
+    if not any(script_content.startswith(x + "\n") for x in shebangs):
         print(f"{filename}: does not start with a valid shebang")
         passed = False
     return passed
