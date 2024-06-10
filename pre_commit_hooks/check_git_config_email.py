@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook checks to ensure the Git config email matches one of the specified domains."""
 
 import argparse

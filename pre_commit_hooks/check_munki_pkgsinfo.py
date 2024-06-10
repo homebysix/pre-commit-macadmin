@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook checks Munki pkginfo files to ensure they are valid."""
 
 import argparse

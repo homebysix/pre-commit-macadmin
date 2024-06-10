@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook checks XML property list (plist) files for basic syntax errors."""
 
 import argparse

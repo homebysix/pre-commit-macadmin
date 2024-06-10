@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook prevents AutoPkg overrides from being added to the repo."""
 
 import argparse

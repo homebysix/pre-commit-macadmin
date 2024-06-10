@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook checks AutoPkg recipe lists (in txt, plist, yaml, or json format)
 for common issues.
 

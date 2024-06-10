@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook checks Apple preference manifest plists for inconsistencies and common issues."""
 
 # References:

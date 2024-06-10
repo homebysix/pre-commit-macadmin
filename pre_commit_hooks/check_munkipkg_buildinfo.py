@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """Check MunkiPkg build-info files to ensure they are valid."""
 
 import argparse

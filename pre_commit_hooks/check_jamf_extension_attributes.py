@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """Check Jamf extension attributes for common issues."""
 
 import argparse

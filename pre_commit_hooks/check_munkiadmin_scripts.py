@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 """This hook ensures MunkiAdmin scripts are executable."""
 
 import argparse
