@@ -61,18 +61,18 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
     This hook checks AutoPkg recipes to ensure they meet various requirements and conventions.
 
     - Optionally specify your preferred AutoPkg recipe and/or override prefix, if you wish to enforce them:
-        `args: ['--override-prefix=com.yourcompany.autopkg.']`  
-        (default: `local.`)  
-        `args: ['--recipe-prefix=com.github.yourusername.']`  
+        `args: ['--override-prefix=com.yourcompany.autopkg.']`
+        (default: `local.`)
+        `args: ['--recipe-prefix=com.github.yourusername.']`
         (default: `com.github.`)
 
     - Optionally specify the version of AutoPkg for which you want to ignore MinimumVersion mismatches with processors.
-        `args: ['--ignore-min-vers-before=0.5.0']`  
-        (default: `1.0.0`)  
+        `args: ['--ignore-min-vers-before=0.5.0']`
+        (default: `1.0.0`)
         Specifying `0.1.0` will not ignore any MinimumVersion mismatches.
 
-    - If you're a purist, you can also enable strict mode. This enforces recipe type conventions, all processor/MinimumVersion mismatches, forbids `<!-- -->` style comments, and ensures all processor input variables (arguments) are valid.  
-        `args: ['--strict']`  
+    - If you're a purist, you can also enable strict mode. This enforces recipe type conventions, all processor/MinimumVersion mismatches, forbids `<!-- -->` style comments, and ensures all processor input variables (arguments) are valid.
+        `args: ['--strict']`
         (default: False)
 
 - __forbid-autopkg-overrides__
@@ -117,8 +117,11 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
         `args: ['--munki-repo', './my_repo_location']`
         (default: ".")
 
-    - Choose to just warn on missing icons with a flag, note if no other issues exist this will allow pre-commit to pass without seeing the warnings:
+    - Choose to just warn if icons referenced in pkginfo files are missing (this will allow pre-commit checks to pass if no other issues exist):
         `args: ['--warn-on-missing-icons]`
+
+    - Choose to just warn if pkg/pkginfo files with __1 (or similar) suffixes are detected (this will allow pre-commit checks to pass if no other issues exist):
+        `args: ['--warn-on-duplicate-imports]`
 
     - Add additional shebangs that are valid for your environment:
         `args: ['--valid-shebangs', '#!/bin/macadmin/python37', '#!/bin/macadmin/python42', '--']`

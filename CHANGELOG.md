@@ -12,7 +12,11 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- New `--warn-on-duplicate-imports` flag for use with Munki pkginfo checks, for Munki administrators who don't care about multiple potential versions of the same pkginfo/pkg in the repository (perhaps because of differing `supported_architectures` or other keys).
+
+    When this is specified, the pre-commit hook will warn when files with `__1` (and similar) suffixes are seen in the pkgsinfo/pkgs folders. This will enbale pre-commit hooks to pass, as long as there are no other errors. Omitting the `--warn-on-duplicate-imports` flag will continue generating an error and failing the hooks, as was the previous behavior.
 
 ## [1.16.2] - 2024-06-10
 
