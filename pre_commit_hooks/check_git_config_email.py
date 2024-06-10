@@ -42,7 +42,7 @@ def main(argv=None):
             print("Git config email does not look like an email address.")
             print("Git config email: " + user_email)
             retval = 1
-        elif not any((user_email.endswith("@" + x) for x in args.domains)):
+        elif not any(user_email.endswith("@" + x) for x in args.domains):
             print("Git config email is from an unexpected domain.")
             print("Git config email: " + user_email)
             print("Expected domains: " + str(args.domains))

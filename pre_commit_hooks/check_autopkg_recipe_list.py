@@ -72,7 +72,7 @@ def main(argv=None):
             print(f"{filename}: invalid recipe list")
             retval = 1
         else:
-            if any((".munki" in recipe for recipe in recipe_list)):
+            if any(".munki" in recipe for recipe in recipe_list):
                 if "MakeCatalogs" not in recipe_list[-1]:
                     print("{}: MakeCatalogs should be the last item in the list")
                     retval = 1
