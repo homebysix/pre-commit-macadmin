@@ -380,10 +380,12 @@ def validate_proc_type_conventions(process, filename):
             "SparkleUpdateInfoProvider",
             "GitHubReleasesInfoProvider",
             "URLDownloader",
+            "URLDownloaderPython",
             "CURLDownloader",
             "EndOfCheckPhase",
         ],
         "munki": [
+            "MunkiInfoCreator",
             "MunkiInstallsItemsCreator",
             "MunkiPkginfoMerger",
             "MunkiCatalogBuilder",
@@ -397,18 +399,35 @@ def validate_proc_type_conventions(process, filename):
         "jss": ["JSSImporter"],
         # https://github.com/grahampugh/jamf-upload
         "jamf": [
+            "com.github.grahampugh.jamf-upload.processors/JamfAccountUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfClassicAPIObjectUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfDockItemUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfIconUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMacAppUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceGroupUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPackageCleaner",
             "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPatchChecker",
+            "com.github.grahampugh.jamf-upload.processors/JamfPatchUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyLogFlusher",
             "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderTeamsNotifier",
         ],
         # https://github.com/autopkg/filewave
-        "filewave": ["FileWaveImporter"],
+        "filewave": [
+            "com.github.autopkg.filewave.FWTool/FileWaveImporter",
+            "com.github.johncclayton.filewave.FWTool/FileWaveImporter",
+            "com.github.autopkg.filewave.FWTool/FWTool",
+        ],
     }
 
     passed = True

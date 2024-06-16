@@ -19,6 +19,11 @@ All notable changes to this project will be documented in this file. This projec
     When this is specified, the pre-commit hook will warn when files with `__1` (and similar) suffixes are seen in the pkgsinfo/pkgs folders. This will enbale pre-commit hooks to pass, as long as there are no other errors. Omitting the `--warn-on-duplicate-imports` flag will continue generating an error and failing the hooks, as was the previous behavior.
 
 - Include `SignToolVerifier` and `URLDownloaderPython` AutoPkg processors when suggesting minimum versions.
+- Updated AutoPkg recipe type convention checking to include new `JamfUpload` processors as well as `URLDownloaderPython` and `MunkiInfoCreator`.
+
+### Fixed
+
+- Fixed FileWaveImporter processor detection.
 
 ## [1.16.2] - 2024-06-10
 
