@@ -176,6 +176,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     proc_min_versions = {
         "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
+        # "ChocolateyPackager": "3.0",  # hasn't been merged yet
         "CodeSignatureVerifier": "0.3.1",
         "CURLDownloader": "0.5.1",
         "CURLTextSearcher": "0.5.1",
@@ -201,10 +202,12 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "PkgPayloadUnpacker": "0.1.0",
         "PlistEditor": "0.1.0",
         "PlistReader": "0.2.5",
+        "SignToolVerifier": "2.3",
         "SparkleUpdateInfoProvider": "0.1.0",
         "StopProcessingIf": "0.1.0",
         "Symlinker": "0.1.0",
         "Unarchiver": "0.1.0",
+        "URLDownloaderPython": "2.4.1",
         "URLTextSearcher": "0.2.9",
         "Versioner": "0.1.0",
     }
