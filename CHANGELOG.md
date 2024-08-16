@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file. This projec
 
 - Include `SignToolVerifier` and `URLDownloaderPython` AutoPkg processors when suggesting minimum versions.
 - Updated AutoPkg recipe type convention checking to include new `JamfUpload` processors as well as `URLDownloaderPython` and `MunkiInfoCreator`.
+- Added a suggestion to use Rich Trouton's [VariablePlaceholder](https://derflounder.wordpress.com/2024/08/16/setting-custom-variables-in-autopkg-using-the-variableplaceholder-processor/) processor for setting arbitrary environment variables instead of supplying unexpected arguments to existing processors.
 
 ### Fixed
 

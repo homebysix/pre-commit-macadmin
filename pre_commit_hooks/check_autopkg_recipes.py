@@ -521,17 +521,23 @@ def validate_proc_args(process, filename):
                 # Skip args in ignored list above.
                 continue
 
+            suggestion = (
+                "Consider using the VariablePlaceholder processor for adding custom environment variables:\n"
+                "https://derflounder.wordpress.com/2024/08/16/setting-custom-variables-in-autopkg-using-the-variableplaceholder-processor/"
+            )
             if not core_procs[proc["Processor"]]:
                 print(
                     f"{filename}: Unknown argument {arg} for processor {proc['Processor']}, "
                     "which does not accept any arguments."
                 )
+                print(suggestion)
                 passed = False
             elif arg not in core_procs[proc["Processor"]]:
                 print(
                     f"{filename}: Unknown argument {arg} for processor {proc['Processor']}. Allowed arguments are: "
                     + ", ".join(core_procs[proc["Processor"]])
                 )
+                print(suggestion)
                 passed = False
 
     return passed
