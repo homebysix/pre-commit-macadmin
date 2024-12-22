@@ -2,7 +2,6 @@
 
 import json
 import plistlib
-import sys
 from datetime import datetime
 
 import ruamel.yaml

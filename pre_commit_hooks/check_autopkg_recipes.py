@@ -6,6 +6,7 @@ import argparse
 import os
 import sys
 from contextlib import contextmanager
+
 from packaging.version import Version
 
 from pre_commit_hooks.util import (
@@ -86,7 +87,11 @@ def validate_recipe_prefix(recipe, filename, prefix):
         print(
             "{}: identifier does not start with {}".format(
                 filename,
-                'one of: "%s"' % '", "'.join(prefix) if len(prefix) > 1 else prefix[0],
+                (
+                    'one of: "%s"' % '", "'.join(prefix)
+                    if len(prefix) > 1
+                    else prefix[0]
+                ),
             )
         )
         passed = False
@@ -174,13 +179,19 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     # Processors for which a minimum version of AutoPkg is required.
     # Note: packaging.version.Version considers this True: "1.0" == "1.0.0"
     proc_min_versions = {
+        "AppDmgVersioner": "0.0",
         "AppPkgCreator": "1.0",
         "BrewCaskInfoProvider": "0.2.5",
+        # "ChocolateyPackager": "3.0",  # hasn't been merged yet
         "CodeSignatureVerifier": "0.3.1",
+        "Copier": "0.0",
         "CURLDownloader": "0.5.1",
         "CURLTextSearcher": "0.5.1",
         "DeprecationWarning": "1.1",
+        "DmgCreator": "0.0",
+        "DmgMounter": "0.0",
         "EndOfCheckPhase": "0.1.0",
+        "FileCreator": "0.0",
         "FileFinder": "0.2.3",
         "FileMover": "0.2.9",
         "FlatPkgPacker": "0.2.4",
@@ -190,6 +201,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "InstallFromDMG": "0.4.0",
         "MunkiCatalogBuilder": "0.1.0",
         "MunkiImporter": "0.1.0",
+        "MunkiInfoCreator": "0.0",
         "MunkiInstallsItemsCreator": "0.1.0",
         "MunkiOptionalReceiptEditor": "2.7",
         "MunkiPkginfoMerger": "0.1.0",
@@ -197,14 +209,20 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "PackageRequired": "0.5.1",
         "PathDeleter": "0.1.0",
         "PkgCopier": "0.1.0",
+        "PkgCreator": "0.0",
         "PkgExtractor": "0.1.0",
+        "PkgInfoCreator": "0.0",
         "PkgPayloadUnpacker": "0.1.0",
+        "PkgRootCreator": "0.0",
         "PlistEditor": "0.1.0",
         "PlistReader": "0.2.5",
+        "SignToolVerifier": "2.3",
         "SparkleUpdateInfoProvider": "0.1.0",
         "StopProcessingIf": "0.1.0",
         "Symlinker": "0.1.0",
         "Unarchiver": "0.1.0",
+        "URLDownloader": "0.0",
+        "URLDownloaderPython": "2.4.1",
         "URLTextSearcher": "0.2.9",
         "Versioner": "0.1.0",
     }
@@ -367,10 +385,12 @@ def validate_proc_type_conventions(process, filename):
             "SparkleUpdateInfoProvider",
             "GitHubReleasesInfoProvider",
             "URLDownloader",
+            "URLDownloaderPython",
             "CURLDownloader",
             "EndOfCheckPhase",
         ],
         "munki": [
+            "MunkiInfoCreator",
             "MunkiInstallsItemsCreator",
             "MunkiPkginfoMerger",
             "MunkiCatalogBuilder",
@@ -384,18 +404,35 @@ def validate_proc_type_conventions(process, filename):
         "jss": ["JSSImporter"],
         # https://github.com/grahampugh/jamf-upload
         "jamf": [
+            "com.github.grahampugh.jamf-upload.processors/JamfAccountUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfClassicAPIObjectUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfDockItemUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfIconUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMacAppUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceGroupUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPackageCleaner",
             "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPatchChecker",
+            "com.github.grahampugh.jamf-upload.processors/JamfPatchUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyLogFlusher",
             "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
             "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderTeamsNotifier",
         ],
         # https://github.com/autopkg/filewave
-        "filewave": ["FileWaveImporter"],
+        "filewave": [
+            "com.github.autopkg.filewave.FWTool/FileWaveImporter",
+            "com.github.johncclayton.filewave.FWTool/FileWaveImporter",
+            "com.github.autopkg.filewave.FWTool/FWTool",
+        ],
     }
 
     passed = True
@@ -489,17 +526,23 @@ def validate_proc_args(process, filename):
                 # Skip args in ignored list above.
                 continue
 
+            suggestion = (
+                "Consider using the VariablePlaceholder processor for adding custom environment variables:\n"
+                "https://derflounder.wordpress.com/2024/08/16/setting-custom-variables-in-autopkg-using-the-variableplaceholder-processor/"
+            )
             if not core_procs[proc["Processor"]]:
                 print(
                     f"{filename}: Unknown argument {arg} for processor {proc['Processor']}, "
                     "which does not accept any arguments."
                 )
+                print(suggestion)
                 passed = False
             elif arg not in core_procs[proc["Processor"]]:
                 print(
                     f"{filename}: Unknown argument {arg} for processor {proc['Processor']}. Allowed arguments are: "
                     + ", ".join(core_procs[proc["Processor"]])
                 )
+                print(suggestion)
                 passed = False
 
     return passed

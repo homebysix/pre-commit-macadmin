@@ -14,6 +14,22 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.17.0] - 2024-12-22
+
+### Added
+
+- New `--warn-on-duplicate-imports` flag for use with Munki pkginfo checks, for Munki administrators who don't care about multiple potential versions of the same pkginfo/pkg in the repository (perhaps because of differing `supported_architectures` or other keys).
+
+    When this is specified, the pre-commit hook will warn when files with `__1` (and similar) suffixes are seen in the pkgsinfo/pkgs folders. This will enbale pre-commit hooks to pass, as long as there are no other errors. Omitting the `--warn-on-duplicate-imports` flag will continue generating an error and failing the hooks, as was the previous behavior.
+
+- Include `SignToolVerifier` and `URLDownloaderPython` AutoPkg processors when suggesting minimum versions.
+- Updated AutoPkg recipe type convention checking to include new `JamfUpload` processors as well as `URLDownloaderPython` and `MunkiInfoCreator`.
+- Added a suggestion to use Rich Trouton's [VariablePlaceholder](https://derflounder.wordpress.com/2024/08/16/setting-custom-variables-in-autopkg-using-the-variableplaceholder-processor/) processor for setting arbitrary environment variables instead of supplying unexpected arguments to existing processors.
+
+### Fixed
+
+- Fixed FileWaveImporter processor detection.
+
 ## [1.16.2] - 2024-06-10
 
 ### Fixed
@@ -367,7 +383,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.2...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.17.0...HEAD
+[1.17.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.2...v1.17.0
 [1.16.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.1...v1.16.2
 [1.16.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.15.0...v1.16.1
 [1.15.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.1...v1.15.0

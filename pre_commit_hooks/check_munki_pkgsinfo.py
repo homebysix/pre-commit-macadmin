@@ -7,7 +7,6 @@ import plistlib
 from pathlib import Path
 from xml.parsers.expat import ExpatError
 
-
 from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
     validate_required_keys,
@@ -46,6 +45,12 @@ def build_argument_parser():
         default=False,
     )
     parser.add_argument(
+        "--warn-on-duplicate-imports",
+        help="If added, this will only warn if pkginfo/pkg files end with a __1 suffix.",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
         "--valid-shebangs",
         nargs="+",
         default=[],
@@ -67,7 +72,7 @@ def _check_case_sensitive_path(path):
         if p == p.parent:
             return True
         # If string representation of path is not in parent directory, return False
-        if str(p) not in map(str, p.parent.iterdir()):
+        if str(p) not in list(map(str, p.parent.iterdir())):
             return False
         p = p.parent
 
@@ -154,10 +159,15 @@ def main(argv=None):
 
         # Check for pkg filenames showing signs of duplicate imports.
         if pkginfo.get("installer_item_location", "").endswith(tuple(dupe_suffixes)):
-            print(
-                f'{filename}: installer item "{pkginfo.get("installer_item_location")}" may be a duplicate import'
+            installer_item_location = pkginfo["installer_item_location"]
+            msg = (
+                f"installer item '{installer_item_location}' may be a duplicate import"
             )
-            retval = 1
+            if args.warn_on_missing_icons:
+                print(f"{filename}: WARNING: {msg}")
+            else:
+                print(f"{filename}: {msg}")
+                retval = 1
 
         # Checking for the absence of blocking_applications for pkg installers.
         # If a pkg doesn't require blocking_applications, use empty "<array/>" in pkginfo.
@@ -184,10 +194,11 @@ def main(argv=None):
                 pkginfo.get("installer_type") == "apple_update_metadata",
             )
         ):
+            msg = "missing icon"
             if args.warn_on_missing_icons:
-                print(f"WARNING: {filename}: missing icon")
+                print(f"{filename}: WARNING: {msg}")
             else:
-                print(f"{filename}: missing icon")
+                print(f"{filename}: {msg}")
                 retval = 1
 
         # Ensure uninstall method is set correctly if uninstall_script exists.

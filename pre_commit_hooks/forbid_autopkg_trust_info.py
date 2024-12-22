@@ -3,6 +3,7 @@
 repo."""
 
 import argparse
+
 from pre_commit_hooks.util import load_autopkg_recipe
 
 
