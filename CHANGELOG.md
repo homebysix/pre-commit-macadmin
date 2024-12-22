@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.17.0] - 2024-12-22
+
 ### Added
 
 - New `--warn-on-duplicate-imports` flag for use with Munki pkginfo checks, for Munki administrators who don't care about multiple potential versions of the same pkginfo/pkg in the repository (perhaps because of differing `supported_architectures` or other keys).
@@ -379,7 +383,8 @@ All notable changes to this project will be documented in this file. This projec
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.2...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.17.0...HEAD
+[1.17.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.2...v1.17.0
 [1.16.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.1...v1.16.2
 [1.16.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.15.0...v1.16.1
 [1.15.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.14.1...v1.15.0
