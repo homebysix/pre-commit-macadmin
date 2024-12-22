@@ -7,7 +7,6 @@ import plistlib
 from pathlib import Path
 from xml.parsers.expat import ExpatError
 
-
 from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
     validate_required_keys,
@@ -73,7 +72,7 @@ def _check_case_sensitive_path(path):
         if p == p.parent:
             return True
         # If string representation of path is not in parent directory, return False
-        if str(p) not in map(str, p.parent.iterdir()):
+        if str(p) not in list(map(str, p.parent.iterdir())):
             return False
         p = p.parent
 
@@ -195,7 +194,7 @@ def main(argv=None):
                 pkginfo.get("installer_type") == "apple_update_metadata",
             )
         ):
-            msg = f"missing icon"
+            msg = "missing icon"
             if args.warn_on_missing_icons:
                 print(f"{filename}: WARNING: {msg}")
             else:
