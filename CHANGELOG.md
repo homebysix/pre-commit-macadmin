@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `check-munki-pkgsinfo` now produces an error if `uninstall_method` is set to `uninstall_script` but no uninstall script is present in the pkginfo.
 
 ## [1.17.0] - 2024-12-22
 

@@ -202,12 +202,19 @@ def main(argv=None):
                 retval = 1
 
         # Ensure uninstall method is set correctly if uninstall_script exists.
-        if "uninstall_script" in pkginfo:
-            if pkginfo.get("uninstall_method") != "uninstall_script":
-                print(
-                    f'{filename}: has uninstall script, but the uninstall method is set to "{pkginfo.get("uninstall_method")}"'
-                )
-                retval = 1
+        uninst_method = pkginfo.get("uninstall_method")
+        if "uninstall_script" in pkginfo and uninst_method != "uninstall_script":
+            print(
+                f"{filename}: has an uninstall script, but the uninstall "
+                f'method is set to "{uninst_method}"'
+            )
+            retval = 1
+        elif "uninstall_script" not in pkginfo and uninst_method == "uninstall_script":
+            print(
+                f"{filename}: uninstall_method is set to uninstall_script, "
+                'but no uninstall script is present"'
+            )
+            retval = 1
 
         # Ensure all pkginfo scripts have a proper shebang.
         script_types = (
