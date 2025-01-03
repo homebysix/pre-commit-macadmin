@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Added
 
 - `check-munki-pkgsinfo` now produces an error if `uninstall_method` is set to `uninstall_script` but no uninstall script is present in the pkginfo.
+- `check-munkiadmin-scripts` now checks whether scripts are named correctly, not just executable.
 
 ## [1.17.0] - 2024-12-22
 

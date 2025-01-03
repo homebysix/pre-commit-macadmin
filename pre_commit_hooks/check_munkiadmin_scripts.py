@@ -27,6 +27,15 @@ def main(argv=None):
     retval = 0
     for filename in args.filenames:
 
+        # Ensure scripts are named properly.
+        # https://github.com/hjuutilainen/munkiadmin/blob/4f4e96da1f1c7a4dfe7da59d88f1ef68ee02b8f2/MunkiAdmin/Singletons/MAMunkiRepositoryManager.m#L23
+        prefixes = ["manifest", "pkginfo", "repository"]
+        actions = ["custom", "postopen", "postsave", "presave"]
+        ma_script_prefixes = [f"{p}-{a}" for p in prefixes for a in actions]
+        if not any(filename.startswith(prefix) for prefix in ma_script_prefixes):
+            print(f"{filename}: does not start with a valid MunkiAdmin script prefix")
+            retval = 1
+
         # Ensure scripts are executable
         if not os.access(filename, os.X_OK):
             print(f"{filename}: not executable")
