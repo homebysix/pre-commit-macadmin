@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- Add jamf-upload as an AutoPkg recipe type, and updated processors included in jamf/jamf-upload recipe convention.
 
 ## [1.18.0] - 2025-01-04
 
