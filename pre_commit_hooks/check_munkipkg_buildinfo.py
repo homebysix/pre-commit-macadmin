@@ -4,7 +4,6 @@
 import argparse
 import json
 import plistlib
-import sys
 from xml.parsers.expat import ExpatError
 
 import ruamel.yaml
@@ -32,25 +31,21 @@ def build_argument_parser():
 def validate_buildinfo_key_types(buildinfo, filename):
     """Ensure build-info files contain the proper types."""
 
-    # Remap string type to support unicode in both Python 2 and 3
-    # DEPRECATED: Python 2 support will be removed in the future
-    string = basestring if sys.version_info.major == 2 else str
-
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
     # Source: https://github.com/munki/munki-pkg
     # Last updated 2019-06-27.
     buildinfo_types = {
         "distribution_style": bool,
-        "identifier": string,
-        "install_location": string,
-        "name": string,
-        "ownership": string,
-        "postinstall_action": string,
+        "identifier": str,
+        "install_location": str,
+        "name": str,
+        "ownership": str,
+        "postinstall_action": str,
         "preserve_xattr": bool,
-        "product id": string,
+        "product id": str,
         "signing_info": dict,
         "suppress_bundle_relocation": bool,
-        "version": string,
+        "version": str,
     }
 
     passed = True

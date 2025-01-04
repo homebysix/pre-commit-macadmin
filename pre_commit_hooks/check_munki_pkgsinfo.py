@@ -8,6 +8,8 @@ from pathlib import Path
 from xml.parsers.expat import ExpatError
 
 from pre_commit_hooks.util import (
+    detect_deprecated_keys,
+    detect_typoed_keys,
     validate_pkginfo_key_types,
     validate_required_keys,
     validate_restart_action_key,
@@ -114,23 +116,13 @@ def main(argv=None):
         if not validate_restart_action_key(pkginfo, filename):
             retval = 1
 
-        # Check for common mistakes in min/max OS version keys.
-        os_vers_corrections = {
-            "min_os": "minimum_os_version",
-            "max_os": "maximum_os_version",
-            "min_os_vers": "minimum_os_version",
-            "max_os_vers": "maximum_os_version",
-            "minimum_os": "minimum_os_version",
-            "maximum_os": "maximum_os_version",
-            "minimum_os_vers": "minimum_os_version",
-            "maximum_os_vers": "maximum_os_version",
-        }
-        for os_vers_key in os_vers_corrections:
-            if os_vers_key in pkginfo:
-                print(
-                    f"{filename}: You used {os_vers_key} when you probably meant {os_vers_corrections[os_vers_key]}."
-                )
-                retval = 1
+        # Check for deprecated pkginfo keys.
+        if not detect_deprecated_keys(pkginfo, filename):
+            retval = 1
+
+        # Check for common mistakes key names.
+        if not detect_typoed_keys(pkginfo, filename):
+            retval = 1
 
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
@@ -202,12 +194,19 @@ def main(argv=None):
                 retval = 1
 
         # Ensure uninstall method is set correctly if uninstall_script exists.
-        if "uninstall_script" in pkginfo:
-            if pkginfo.get("uninstall_method") != "uninstall_script":
-                print(
-                    f'{filename}: has uninstall script, but the uninstall method is set to "{pkginfo.get("uninstall_method")}"'
-                )
-                retval = 1
+        uninst_method = pkginfo.get("uninstall_method")
+        if "uninstall_script" in pkginfo and uninst_method != "uninstall_script":
+            print(
+                f"{filename}: has an uninstall script, but the uninstall "
+                f'method is set to "{uninst_method}"'
+            )
+            retval = 1
+        elif "uninstall_script" not in pkginfo and uninst_method == "uninstall_script":
+            print(
+                f"{filename}: uninstall_method is set to uninstall_script, "
+                'but no uninstall script is present"'
+            )
+            retval = 1
 
         # Ensure all pkginfo scripts have a proper shebang.
         script_types = (

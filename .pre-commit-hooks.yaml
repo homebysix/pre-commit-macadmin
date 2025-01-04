@@ -71,7 +71,7 @@
 
 - id: check-munkiadmin-scripts
   name: Check MunkiAdmin Scripts
-  description: This hook ensures MunkiAdmin scripts are executable.
+  description: This hook ensures MunkiAdmin scripts are named properly and executable.
   entry: check-munkiadmin-scripts
   language: python
   files: "^MunkiAdmin/scripts/"

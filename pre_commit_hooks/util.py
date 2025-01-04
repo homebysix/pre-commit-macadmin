@@ -77,6 +77,69 @@ def validate_required_keys(input_dict, filename, required_keys):
     return passed
 
 
+def detect_deprecated_keys(input_dict, filename):
+    """Verifies that no deprecated keys are present in dictionary."""
+    # List from: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
+    deprecated_keys = (
+        "suppress_bundle_relocation",
+        "forced_install",
+        "forced_uninstall",
+    )
+    passed = True
+    for dep_key in deprecated_keys:
+        if input_dict.get(dep_key):
+            print(f"{filename}: {dep_key} key is deprecated")
+            passed = False
+    return passed
+
+
+def detect_typoed_keys(input_dict, filename):
+    """Verifies that specific key name typos are not present in dictionary."""
+    key_corrections = {
+        "appleitem": "apple_item",
+        "blocking_apps": "blocking_applications",
+        "blockingapplications": "blocking_applications",
+        "choices_xml": "installer_choices_xml",
+        "icon": "icon_name",
+        "install_check_script": "installcheck_script",
+        "installer_choices": "installer_choices_xml",
+        "max_os_vers": "maximum_os_version",
+        "max_os": "maximum_os_version",
+        "maximum_os_vers": "maximum_os_version",
+        "maximum_os": "maximum_os_version",
+        "min_munki_vers": "minimum_munki_version",
+        "min_munki": "minimum_munki_version",
+        "min_os_vers": "minimum_os_version",
+        "min_os": "minimum_os_version",
+        "minimum_munki_vers": "minimum_munki_version",
+        "minimum_munki": "minimum_munki_version",
+        "minimum_os_vers": "minimum_os_version",
+        "minimum_os": "minimum_os_version",
+        "on_demand": "OnDemand",
+        "post_install_script": "postinstall_script",
+        "post_uninstall_script": "postuninstall_script",
+        "pre_cache": "precache",
+        "pre_install_alert": "preinstall_alert",
+        "pre_install_script": "preinstall_script",
+        "pre_uninstall_alert": "preuninstall_alert",
+        "pre_uninstall_script": "preuninstall_script",
+        "pre_upgrade_alert": "preupgrade_alert",
+        "receipt": "receipts",
+        "require": "requires",
+        "supported_architecture": "supported_architectures",
+        "uninstall_check_script": "uninstallcheck_script",
+    }
+    passed = True
+    for found_key, expected_key in key_corrections.items():
+        if found_key in input_dict:
+            print(
+                f"{filename}: You used {found_key} when you "
+                f"probably meant {expected_key}."
+            )
+            passed = False
+    return passed
+
+
 def validate_restart_action_key(pkginfo, filename):
     """Verifies that required_keys are present in pkginfo dictionary."""
     passed = True
@@ -121,35 +184,34 @@ def validate_pkginfo_key_types(pkginfo, filename):
         "forced_uninstall": bool,
         "icon_name": str,
         "installable_condition": str,
+        "installcheck_script": str,
         "installed_size": int,
+        "installer_choices_xml": list,
+        "installer_environment": dict,
         "installer_item_hash": str,
         "installer_item_location": str,
         "installer_item_size": int,
         "installer_type": str,
         "installs": list,
         "items_to_copy": list,
-        "installer_choices_xml": list,
-        "installer_environment": dict,
         "localized_strings": dict,
+        "maximum_os_version": str,
         "minimum_munki_version": str,
         "minimum_os_version": str,
-        "maximum_os_version": str,
         "name": str,
         "notes": str,
+        "OnDemand": bool,
+        "package_path": str,
         "PackageCompleteURL": str,
         "PackageURL": str,
-        "package_path": str,
-        "installcheck_script": str,
-        "uninstallcheck_script": str,
-        "OnDemand": bool,
         "postinstall_script": str,
         "postuninstall_script": str,
         "precache": bool,
         "preinstall_alert": dict,
-        "preuninstall_alert": dict,
-        "preupgrade_alert": dict,
         "preinstall_script": str,
+        "preuninstall_alert": dict,
         "preuninstall_script": str,
+        "preupgrade_alert": dict,
         "receipts": list,
         "requires": list,
         "RestartAction": str,
@@ -159,8 +221,9 @@ def validate_pkginfo_key_types(pkginfo, filename):
         "unattended_uninstall": bool,
         "uninstall_method": str,
         "uninstall_script": str,
-        "uninstaller_item_location": str,
         "uninstallable": bool,
+        "uninstallcheck_script": str,
+        "uninstaller_item_location": str,
         "update_for": list,
         "version": str,
     }

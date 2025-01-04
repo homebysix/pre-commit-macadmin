@@ -14,6 +14,15 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.18.0] - 2025-01-04
+
+### Added
+
+- `check-munki-pkgsinfo` now produces an error if `uninstall_method` is set to `uninstall_script` but no uninstall script is present in the pkginfo.
+- `check-munki-pkgsinfo` now checks for deprecated pkginfo keys.
+- `check-munki-pkgsinfo` now includes checks for many possible pkginfo key typos, not just `minimum_os_version` and `maximum_os_version`. Suggestions welcome if you think of more.
+- `check-munkiadmin-scripts` now checks whether scripts are named correctly, not just executable.
+
 ## [1.17.0] - 2024-12-22
 
 ### Added
@@ -383,7 +392,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.17.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.18.0...HEAD
+[1.18.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.2...v1.17.0
 [1.16.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.1...v1.16.2
 [1.16.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.15.0...v1.16.1
