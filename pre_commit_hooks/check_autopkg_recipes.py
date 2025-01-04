@@ -10,6 +10,8 @@ from contextlib import contextmanager
 from packaging.version import Version
 
 from pre_commit_hooks.util import (
+    detect_deprecated_keys,
+    detect_typoed_keys,
     load_autopkg_recipe,
     validate_pkginfo_key_types,
     validate_required_keys,
@@ -611,24 +613,10 @@ def main(argv=None):
                 retval = 1
             if not validate_restart_action_key(input_key["pkginfo"], filename):
                 retval = 1
-
-            # Check for common mistakes in min/max OS version keys
-            os_vers_corrections = {
-                "min_os": "minimum_os_version",
-                "max_os": "maximum_os_version",
-                "min_os_vers": "minimum_os_version",
-                "max_os_vers": "maximum_os_version",
-                "minimum_os": "minimum_os_version",
-                "maximum_os": "maximum_os_version",
-                "minimum_os_vers": "minimum_os_version",
-                "maximum_os_vers": "maximum_os_version",
-            }
-            for os_vers_key in os_vers_corrections:
-                if os_vers_key in input_key["pkginfo"]:
-                    print(
-                        f"{filename}: You used {os_vers_key} when you probably meant {os_vers_corrections[os_vers_key]}."
-                    )
-                    retval = 1
+            if not detect_deprecated_keys(input_key["pkginfo"], filename):
+                retval = 1
+            if not detect_typoed_keys(input_key["pkginfo"], filename):
+                retval = 1
 
             # TODO: Additional pkginfo checks here.
 
