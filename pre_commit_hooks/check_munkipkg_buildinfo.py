@@ -4,7 +4,6 @@
 import argparse
 import json
 import plistlib
-import sys
 from xml.parsers.expat import ExpatError
 
 import ruamel.yaml
