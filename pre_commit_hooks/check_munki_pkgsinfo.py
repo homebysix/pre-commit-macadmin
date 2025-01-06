@@ -25,11 +25,12 @@ def build_argument_parser():
     )
     parser.add_argument("--categories", nargs="+", help="List of approved categories.")
     parser.add_argument("--catalogs", nargs="+", help="List of approved catalogs.")
+    default_req_keys = ["description", "name", "version"]
     parser.add_argument(
         "--required-keys",
         nargs="+",
-        default=["description", "name"],
-        help="List of required top-level keys.",
+        default=default_req_keys,
+        help=f"List of required top-level keys. Defaults to: {default_req_keys}",
     )
     parser.add_argument(
         "--require-pkg-blocking-apps",
