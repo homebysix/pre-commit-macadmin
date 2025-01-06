@@ -141,7 +141,7 @@ def detect_typoed_keys(input_dict, filename):
 
 
 def validate_restart_action_key(pkginfo, filename):
-    """Verifies that required_keys are present in pkginfo dictionary."""
+    """Verifies that the RestartAction key is set correctly."""
     passed = True
     allowed_values = (
         "RequireShutdown",
@@ -156,6 +156,25 @@ def validate_restart_action_key(pkginfo, filename):
                 f"{filename}: RestartAction key set to unexpected value: {pkginfo['RestartAction']}"
             )
             passed = False
+    return passed
+
+
+def validate_uninstall_method(pkginfo, filename):
+    """Verifies that uninstall_method and uninstall_script is used appropriately."""
+    passed = True
+    uninst_method = pkginfo.get("uninstall_method")
+    if pkginfo.get("uninstall_script") and uninst_method != "uninstall_script":
+        print(
+            f"{filename}: has an uninstall script, but the uninstall "
+            f'method is set to "{uninst_method}"'
+        )
+        passed = False
+    elif not pkginfo.get("uninstall_script") and uninst_method == "uninstall_script":
+        print(
+            f"{filename}: uninstall_method is set to uninstall_script, "
+            'but no uninstall script is present"'
+        )
+        passed = False
     return passed
 
 
