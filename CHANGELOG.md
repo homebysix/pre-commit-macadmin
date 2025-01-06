@@ -12,9 +12,15 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+### Added
+
+- `check-autopkg-recipes` requires Munki recipe `pkginfo` dicts to contain at least `name` and `description`.
+- `check-autopkg-recipes` now validates that `uninstall_method` and `uninstall_script` are set appropriately in Munki recipes.
+
 ### Changed
 
-- Add jamf-upload as an AutoPkg recipe type, and updated processors included in jamf/jamf-upload recipe convention.
+- `check-autopkg-recipes` includes jamf-upload as an AutoPkg recipe type, and updated processors included in jamf/jamf-upload recipe convention.
+- `check-munki-pkgsinfo` requires a `version` key in addition to `name` and `description`.
 
 ## [1.18.0] - 2025-01-04
 
