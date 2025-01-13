@@ -150,7 +150,7 @@ def main(argv=None):
                 args.munki_repo, "pkgs", pkginfo.get("installer_item_location", "")
             )
         ):
-            msg =  "installer item does not exist or path is not case sensitive"
+            msg = "installer item does not exist or path is not case sensitive"
             if args.warn_on_missing_installer_items:
                 print(f"{filename}: WARNING: {msg}")
             else:
