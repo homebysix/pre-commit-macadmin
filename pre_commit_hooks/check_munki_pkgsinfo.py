@@ -47,6 +47,12 @@ def build_argument_parser():
         default=False,
     )
     parser.add_argument(
+        "--warn-on-missing-installer-items",
+        help="If added, this will only warn on missing installer items.",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
         "--warn-on-duplicate-imports",
         help="If added, this will only warn if pkginfo/pkg files end with a __1 suffix.",
         action="store_true",
@@ -144,10 +150,12 @@ def main(argv=None):
                 args.munki_repo, "pkgs", pkginfo.get("installer_item_location", "")
             )
         ):
-            print(
-                f"{filename}: installer item does not exist or path is not case sensitive"
-            )
-            retval = 1
+            msg = "installer item does not exist or path is not case sensitive"
+            if args.warn_on_missing_installer_items:
+                print(f"{filename}: WARNING: {msg}")
+            else:
+                print(f"{filename}: {msg}")
+                retval = 1
 
         # Check for pkg filenames showing signs of duplicate imports.
         if pkginfo.get("installer_item_location", "").endswith(tuple(dupe_suffixes)):
