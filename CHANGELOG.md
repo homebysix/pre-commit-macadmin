@@ -19,6 +19,7 @@ Nothing yet.
 ### Added
 
 - Added `--warn-on-missing-installer-items` flag that makes missing Munki install/uninstall items a warning instead of a failure. (#86, thanks to @haircut)
+- Apply the same checks to `uninstaller_item_location` that were previously applied to `installer_item_location`.
 - `check-autopkg-recipes` requires Munki recipe `pkginfo` dicts to contain at least `name` and `description`.
 - `check-autopkg-recipes` now validates that `uninstall_method` and `uninstall_script` are set appropriately in Munki recipes.
 
@@ -30,6 +31,7 @@ Nothing yet.
 ### Fixed
 
 - Bug fix in `check-munkiadmin-scripts` that prevented script names from processing correctly.
+- Bug fix in `check-munki-pkgsinfo` that prevented `--warn-on-duplicate-imports` flag from working correctly.
 
 ## [1.18.0] - 2025-01-04
 

@@ -120,7 +120,7 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
     - Choose to just warn if icons referenced in pkginfo files are missing (this will allow pre-commit checks to pass if no other issues exist):
         `args: ['--warn-on-missing-icons]`
 
-    - Choose to just warn if installer items (`installer_item_location`) referenced in pkginfo files are missing (this will allow pre-commit checks to pass if no other issues exist):
+    - Choose to just warn if installer/uninstaller items (`installer_item_location` or `uninstaller_item_location`) referenced in pkginfo files are missing (this will allow pre-commit checks to pass if no other issues exist):
         `args: ['--warn-on-missing-installer-items]`
 
     - Choose to just warn if pkg/pkginfo files with __1 (or similar) suffixes are detected (this will allow pre-commit checks to pass if no other issues exist):

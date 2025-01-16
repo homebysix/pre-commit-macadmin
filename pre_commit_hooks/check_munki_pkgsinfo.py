@@ -150,31 +150,6 @@ def main(argv=None):
                     print(f'{filename}: catalog "{catalog}" is not in approved list')
                     retval = 1
 
-        # Check for missing or case-conflicted installer items
-        if not _check_case_sensitive_path(
-            os.path.join(
-                args.munki_repo, "pkgs", pkginfo.get("installer_item_location", "")
-            )
-        ):
-            msg = "installer item does not exist or path is not case sensitive"
-            if args.warn_on_missing_installer_items:
-                print(f"{filename}: WARNING: {msg}")
-            else:
-                print(f"{filename}: {msg}")
-                retval = 1
-
-        # Check for pkg filenames showing signs of duplicate imports.
-        if pkginfo.get("installer_item_location", "").endswith(tuple(dupe_suffixes)):
-            installer_item_location = pkginfo["installer_item_location"]
-            msg = (
-                f"installer item '{installer_item_location}' may be a duplicate import"
-            )
-            if args.warn_on_missing_icons:
-                print(f"{filename}: WARNING: {msg}")
-            else:
-                print(f"{filename}: {msg}")
-                retval = 1
-
         # Checking for the absence of blocking_applications for pkg installers.
         # If a pkg doesn't require blocking_applications, use empty "<array/>" in pkginfo.
         if args.require_pkg_blocking_apps and all(
@@ -189,6 +164,34 @@ def main(argv=None):
                 f"{filename}: contains a pkg installer but missing a blocking applications array"
             )
             retval = 1
+
+        # Begin checks that apply to both installers and uninstallers
+        for i_type in ("installer", "uninstaller"):
+
+            # Check for missing or case-conflicted installer or uninstaller items
+            if not _check_case_sensitive_path(
+                os.path.join(
+                    args.munki_repo, "pkgs", pkginfo.get(f"{i_type}_item_location", "")
+                )
+            ):
+                msg = f"{i_type} item does not exist or path is not case sensitive"
+                if args.warn_on_missing_installer_items:
+                    print(f"{filename}: WARNING: {msg}")
+                else:
+                    print(f"{filename}: {msg}")
+                    retval = 1
+
+            # Check for pkg filenames showing signs of duplicate imports.
+            if pkginfo.get(f"{i_type}_item_location", "").endswith(
+                tuple(dupe_suffixes)
+            ):
+                item_loc = pkginfo[f"{i_type}_item_location"]
+                msg = f"{i_type} item '{item_loc}' may be a duplicate import"
+                if args.warn_on_duplicate_imports:
+                    print(f"{filename}: WARNING: {msg}")
+                else:
+                    print(f"{filename}: {msg}")
+                    retval = 1
 
         # Ensure an icon exists for the item.
         if not any(
