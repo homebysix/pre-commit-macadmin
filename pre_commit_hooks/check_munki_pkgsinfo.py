@@ -14,6 +14,7 @@ from pre_commit_hooks.util import (
     validate_required_keys,
     validate_restart_action_key,
     validate_shebangs,
+    validate_uninstall_method,
 )
 
 
@@ -25,11 +26,12 @@ def build_argument_parser():
     )
     parser.add_argument("--categories", nargs="+", help="List of approved categories.")
     parser.add_argument("--catalogs", nargs="+", help="List of approved catalogs.")
+    default_req_keys = ["description", "name", "version"]
     parser.add_argument(
         "--required-keys",
         nargs="+",
-        default=["description", "name"],
-        help="List of required top-level keys.",
+        default=default_req_keys,
+        help=f"List of required top-level keys. Defaults to: {default_req_keys}",
     )
     parser.add_argument(
         "--require-pkg-blocking-apps",
@@ -38,7 +40,7 @@ def build_argument_parser():
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
     parser.add_argument(
-        "--munki-repo", default=".", help="path to local munki repo defaults to '.'"
+        "--munki-repo", default=".", help="path to local munki repo. Defaults to '.'"
     )
     parser.add_argument(
         "--warn-on-missing-icons",
@@ -122,11 +124,15 @@ def main(argv=None):
         if not validate_restart_action_key(pkginfo, filename):
             retval = 1
 
+        # Validate uninstall method.
+        if not validate_uninstall_method(pkginfo, filename):
+            retval = 1
+
         # Check for deprecated pkginfo keys.
         if not detect_deprecated_keys(pkginfo, filename):
             retval = 1
 
-        # Check for common mistakes key names.
+        # Check for common mistakes in key names.
         if not detect_typoed_keys(pkginfo, filename):
             retval = 1
 
@@ -144,31 +150,6 @@ def main(argv=None):
                     print(f'{filename}: catalog "{catalog}" is not in approved list')
                     retval = 1
 
-        # Check for missing or case-conflicted installer items
-        if not _check_case_sensitive_path(
-            os.path.join(
-                args.munki_repo, "pkgs", pkginfo.get("installer_item_location", "")
-            )
-        ):
-            msg = "installer item does not exist or path is not case sensitive"
-            if args.warn_on_missing_installer_items:
-                print(f"{filename}: WARNING: {msg}")
-            else:
-                print(f"{filename}: {msg}")
-                retval = 1
-
-        # Check for pkg filenames showing signs of duplicate imports.
-        if pkginfo.get("installer_item_location", "").endswith(tuple(dupe_suffixes)):
-            installer_item_location = pkginfo["installer_item_location"]
-            msg = (
-                f"installer item '{installer_item_location}' may be a duplicate import"
-            )
-            if args.warn_on_missing_icons:
-                print(f"{filename}: WARNING: {msg}")
-            else:
-                print(f"{filename}: {msg}")
-                retval = 1
-
         # Checking for the absence of blocking_applications for pkg installers.
         # If a pkg doesn't require blocking_applications, use empty "<array/>" in pkginfo.
         if args.require_pkg_blocking_apps and all(
@@ -183,6 +164,34 @@ def main(argv=None):
                 f"{filename}: contains a pkg installer but missing a blocking applications array"
             )
             retval = 1
+
+        # Begin checks that apply to both installers and uninstallers
+        for i_type in ("installer", "uninstaller"):
+
+            # Check for missing or case-conflicted installer or uninstaller items
+            if not _check_case_sensitive_path(
+                os.path.join(
+                    args.munki_repo, "pkgs", pkginfo.get(f"{i_type}_item_location", "")
+                )
+            ):
+                msg = f"{i_type} item does not exist or path is not case sensitive"
+                if args.warn_on_missing_installer_items:
+                    print(f"{filename}: WARNING: {msg}")
+                else:
+                    print(f"{filename}: {msg}")
+                    retval = 1
+
+            # Check for pkg filenames showing signs of duplicate imports.
+            if pkginfo.get(f"{i_type}_item_location", "").endswith(
+                tuple(dupe_suffixes)
+            ):
+                item_loc = pkginfo[f"{i_type}_item_location"]
+                msg = f"{i_type} item '{item_loc}' may be a duplicate import"
+                if args.warn_on_duplicate_imports:
+                    print(f"{filename}: WARNING: {msg}")
+                else:
+                    print(f"{filename}: {msg}")
+                    retval = 1
 
         # Ensure an icon exists for the item.
         if not any(
@@ -200,21 +209,6 @@ def main(argv=None):
             else:
                 print(f"{filename}: {msg}")
                 retval = 1
-
-        # Ensure uninstall method is set correctly if uninstall_script exists.
-        uninst_method = pkginfo.get("uninstall_method")
-        if "uninstall_script" in pkginfo and uninst_method != "uninstall_script":
-            print(
-                f"{filename}: has an uninstall script, but the uninstall "
-                f'method is set to "{uninst_method}"'
-            )
-            retval = 1
-        elif "uninstall_script" not in pkginfo and uninst_method == "uninstall_script":
-            print(
-                f"{filename}: uninstall_method is set to uninstall_script, "
-                'but no uninstall script is present"'
-            )
-            retval = 1
 
         # Ensure all pkginfo scripts have a proper shebang.
         script_types = (

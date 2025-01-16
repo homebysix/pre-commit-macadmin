@@ -16,6 +16,7 @@ from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
     validate_required_keys,
     validate_restart_action_key,
+    validate_uninstall_method,
 )
 
 
@@ -382,6 +383,34 @@ def validate_proc_type_conventions(process, filename):
 
     # For each processor type, this is the list of processors that
     # we only expect to see in that type. List order is unimportant.
+    # TODO: Simpler to check for `com.github.grahampugh.jamf-upload.processors/` prefix?
+    jamf_upload_procs = [
+        "com.github.grahampugh.jamf-upload.processors/JamfAccountUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfClassicAPIObjectUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupDeleter",
+        "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfDockItemUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfIconUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfMacAppUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceGroupUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceProfileUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfPackageCleaner",
+        "com.github.grahampugh.jamf-upload.processors/JamfPackageRecalculator",
+        "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfPatchChecker",
+        "com.github.grahampugh.jamf-upload.processors/JamfPatchUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfPkgMetadataUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
+        "com.github.grahampugh.jamf-upload.processors/JamfPolicyLogFlusher",
+        "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
+        "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
+        "com.github.grahampugh.jamf-upload.processors/JamfUploaderTeamsNotifier",
+    ]
     proc_type_conventions = {
         "download": [
             "SparkleUpdateInfoProvider",
@@ -405,30 +434,8 @@ def validate_proc_type_conventions(process, filename):
         # https://github.com/jssimporter/JSSImporter
         "jss": ["JSSImporter"],
         # https://github.com/grahampugh/jamf-upload
-        "jamf": [
-            "com.github.grahampugh.jamf-upload.processors/JamfAccountUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfClassicAPIObjectUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfDockItemUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfIconUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfMacAppUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceGroupUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceProfileUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfPackageCleaner",
-            "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfPatchChecker",
-            "com.github.grahampugh.jamf-upload.processors/JamfPatchUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
-            "com.github.grahampugh.jamf-upload.processors/JamfPolicyLogFlusher",
-            "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
-            "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
-            "com.github.grahampugh.jamf-upload.processors/JamfUploaderTeamsNotifier",
-        ],
+        "jamf": jamf_upload_procs,
+        "jamf-upload": jamf_upload_procs,
         # https://github.com/autopkg/filewave
         "filewave": [
             "com.github.autopkg.filewave.FWTool/FileWaveImporter",
@@ -574,6 +581,7 @@ def main(argv=None):
         #     recipe_text = openfile.read()
 
         # Top level keys that all AutoPkg recipes should contain.
+        # TODO: Make required recipe keys configurable.
         required_keys = ["Identifier"]
         if not validate_required_keys(recipe, filename, required_keys):
             retval = 1
@@ -609,12 +617,30 @@ def main(argv=None):
         # If the Input key contains a pkginfo dict, make a best effort to validate its contents.
         input_key = recipe.get("Input", recipe.get("input", recipe.get("INPUT")))
         if input_key and "pkginfo" in input_key:
+
+            # Check for presence of required pkginfo keys.
+            # TODO: Make required pkginfo keys within a recipe configurable.
+            req_keys = ["name", "description"]
+            if not validate_required_keys(input_key["pkginfo"], filename, req_keys):
+                retval = 1
+
+            # Ensure pkginfo keys have expected types.
             if not validate_pkginfo_key_types(input_key["pkginfo"], filename):
                 retval = 1
+
+            # Validate RestartAction key.
             if not validate_restart_action_key(input_key["pkginfo"], filename):
                 retval = 1
+
+            # Validate uninstall method.
+            if not validate_uninstall_method(input_key["pkginfo"], filename):
+                retval = 1
+
+            # Check for deprecated pkginfo keys.
             if not detect_deprecated_keys(input_key["pkginfo"], filename):
                 retval = 1
+
+            # Check for common mistakes in key names.
             if not detect_typoed_keys(input_key["pkginfo"], filename):
                 retval = 1
 
