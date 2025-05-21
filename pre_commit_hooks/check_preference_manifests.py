@@ -282,7 +282,7 @@ def validate_pfm_default(subkey, filename):
                 #         continue
                 # else:
                 desired_type = PLIST_TYPES[subkey["pfm_type"]]
-                if isinstance(subkey[test_key], desired_type):
+                if not isinstance(subkey[test_key], desired_type):
                     print(
                         f"{filename}: {test_key} value for {subkey.get('pfm_name')} should be type "
                         f"{PLIST_TYPES[subkey['pfm_type']]}, not type {type(subkey[test_key])}"
