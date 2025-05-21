@@ -9,7 +9,7 @@ import argparse
 import json
 from datetime import datetime
 
-from pre_commit_hooks.util import PLIST_TYPES, validate_required_keys
+from pre_commit_hooks.util import validate_required_keys
 
 # Types found in the Jamf JSON manifests
 MANIFEST_TYPES = {
