@@ -22,7 +22,7 @@ MANIFEST_TYPES = {
     "number": int,
     "object": dict,
     "real": float,
-    "string": str
+    "string": str,
 }
 
 # List keys and their expected item types

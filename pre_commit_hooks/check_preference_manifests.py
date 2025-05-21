@@ -184,7 +184,9 @@ def validate_pfm_type_strings(subkey, filename):
         print(f'{filename}: WARNING: Subkey type "{subkey["pfm_type"]}" is deprecated')
         # passed = False
     elif subkey["pfm_type"] not in PLIST_TYPES:
-        print(f'{filename}: Unexpected subkey type {subkey["pfm_type"]} for {subkey.get("pfm_name")}')
+        print(
+            f'{filename}: Unexpected subkey type {subkey["pfm_type"]} for {subkey.get("pfm_name")}'
+        )
         passed = False
 
     return passed
@@ -380,10 +382,7 @@ def validate_subkeys(subkeys, filename):
             passed = False
 
         # Check default values to ensure consistent type
-        if (
-            type_passed
-            and not validate_pfm_default(subkey, filename)
-        ):
+        if type_passed and not validate_pfm_default(subkey, filename):
             passed = False
 
         # Validate URLs
