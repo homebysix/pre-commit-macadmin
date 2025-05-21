@@ -12,18 +12,18 @@ from datetime import datetime
 from pre_commit_hooks.util import PLIST_TYPES, validate_required_keys
 
 # Types found in the Jamf JSON manifests
-MANIFEST_TYPES = (
-    "array",
-    "boolean",
-    "data",
-    "date",
-    "float",
-    "integer",
-    "number",
-    "object",
-    "real",
-    "string",
-)
+MANIFEST_TYPES = {
+    "array": list,
+    "boolean": bool,
+    "data": str,
+    "date": datetime,
+    "float": float,
+    "integer": int,
+    "number": int,
+    "object": dict,
+    "real": float,
+    "string": str
+}
 
 # List keys and their expected item types
 MANIFEST_LIST_TYPES = {
@@ -132,9 +132,9 @@ def validate_default(name, prop, type_found, filename):
                 actual_type = str
             else:
                 actual_type = type(prop[test_key])
-            if actual_type != PLIST_TYPES.get(type_found):
+            if actual_type != MANIFEST_TYPES.get(type_found):
                 print(
-                    f"{filename}: {test_key} value for {name} should be {PLIST_TYPES.get(type_found)}, not {type(prop[test_key])}"
+                    f"{filename}: {test_key} value for {name} should be {MANIFEST_TYPES.get(type_found)}, not {type(prop[test_key])}"
                 )
                 passed = False
 
