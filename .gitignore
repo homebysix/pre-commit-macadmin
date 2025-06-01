@@ -1,2 +1,13 @@
+# macOS
 .DS_Store
+
+# Compiled Python
 *.pyc
+
+# Unittest
+__pycache__/
+.coverage
+htmlcov/
+
+# Virtual environment
+venv/
