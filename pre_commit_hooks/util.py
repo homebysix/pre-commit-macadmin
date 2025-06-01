@@ -32,7 +32,7 @@ BUILTIN_SHEBANGS = [
     "#!/usr/bin/python3",
     "#!/usr/bin/python",  # removed since macOS 12.3
     "#!/usr/bin/ruby",
-    "#!/usr/local/munki/munki-python",
+    "#!/usr/local/munki/munki-python",  # removed in Munki 7
     "#!/usr/local/munki/Python.framework/Versions/Current/bin/python3",
 ]
 
