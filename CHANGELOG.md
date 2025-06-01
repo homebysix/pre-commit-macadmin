@@ -12,7 +12,13 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `check-autopkg-recipes` and `check-munki-pkgsinfo` now validates that `supported_architectures` values are set appropriately.
+
+### Changed
+
+- Improvements to `check-preference-manifests` hook. (#91, thanks to @relgit)
 
 ## [1.19.0] - 2025-01-16
 
@@ -22,7 +28,6 @@ Nothing yet.
 - Apply the same checks to `uninstaller_item_location` that were previously applied to `installer_item_location`.
 - `check-autopkg-recipes` requires Munki recipe `pkginfo` dicts to contain at least `name` and `description`.
 - `check-autopkg-recipes` now validates that `uninstall_method` and `uninstall_script` are set appropriately in Munki recipes.
-- `check-autopkg-recipes` and `check-munki-pkgsinfo` now validates that `supported_architectures` values are set appropriately.
 
 ### Changed
 
