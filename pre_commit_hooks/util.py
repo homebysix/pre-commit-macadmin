@@ -178,6 +178,20 @@ def validate_uninstall_method(pkginfo, filename):
     return passed
 
 
+def validate_supported_architectures(pkginfo, filename):
+    """Verifies that supported_architectures values are valid."""
+    passed = True
+    allowed_values = ("arm64", "x86_64")
+    if "supported_architectures" in pkginfo:
+        for arch in pkginfo["supported_architectures"]:
+            if arch not in allowed_values:
+                print(
+                    f"{filename}: supported_architectures contains unexpected value: {arch}"
+                )
+                passed = False
+    return passed
+
+
 def validate_pkginfo_key_types(pkginfo, filename):
     """Validation of pkginfo key types.
 

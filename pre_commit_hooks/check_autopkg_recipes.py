@@ -16,6 +16,7 @@ from pre_commit_hooks.util import (
     validate_pkginfo_key_types,
     validate_required_keys,
     validate_restart_action_key,
+    validate_supported_architectures,
     validate_uninstall_method,
 )
 
@@ -634,6 +635,10 @@ def main(argv=None):
 
             # Validate uninstall method.
             if not validate_uninstall_method(input_key["pkginfo"], filename):
+                retval = 1
+
+            # Validate supported architectures.
+            if not validate_supported_architectures(input_key["pkginfo"], filename):
                 retval = 1
 
             # Check for deprecated pkginfo keys.

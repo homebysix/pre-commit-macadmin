@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file. This projec
 
 - `check-autopkg-recipes` requires Munki recipe `pkginfo` dicts to contain at least `name` and `description`.
 - `check-autopkg-recipes` now validates that `uninstall_method` and `uninstall_script` are set appropriately in Munki recipes.
+- `check-autopkg-recipes` and `check-munki-pkgsinfo` now validates that `supported_architectures` values are set appropriately.
 
 ### Changed
 
