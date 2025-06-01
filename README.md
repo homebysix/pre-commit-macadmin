@@ -15,7 +15,7 @@ For any hook in this repo you wish to use, add the following to your pre-commit 
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.18.0
+    rev: v1.19.0
     hooks:
     -   id: check-plists
     # -   id: ...
@@ -120,6 +120,9 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
     - Choose to just warn if icons referenced in pkginfo files are missing (this will allow pre-commit checks to pass if no other issues exist):
         `args: ['--warn-on-missing-icons]`
 
+    - Choose to just warn if installer/uninstaller items (`installer_item_location` or `uninstaller_item_location`) referenced in pkginfo files are missing (this will allow pre-commit checks to pass if no other issues exist):
+        `args: ['--warn-on-missing-installer-items]`
+
     - Choose to just warn if pkg/pkginfo files with __1 (or similar) suffixes are detected (this will allow pre-commit checks to pass if no other issues exist):
         `args: ['--warn-on-duplicate-imports]`
 
@@ -144,7 +147,7 @@ When combining arguments that take lists (for example: `--required-keys`, `--cat
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.18.0
+    rev: v1.19.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--']
@@ -154,7 +157,7 @@ But if you also use the `--categories` argument, you would move the trailing `--
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.18.0
+    rev: v1.19.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: ['--catalogs', 'testing', 'stable', '--categories', 'Design', 'Engineering', 'Web Browsers', '--']
@@ -166,7 +169,7 @@ If it looks better to your eye, feel free to use a multi-line list for long argu
 
 ```yaml
 -   repo: https://github.com/homebysix/pre-commit-macadmin
-    rev: v1.18.0
+    rev: v1.19.0
     hooks:
     -   id: check-munki-pkgsinfo
         args: [

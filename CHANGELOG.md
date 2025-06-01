@@ -12,8 +12,14 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.19.0] - 2025-01-16
+
 ### Added
 
+- Added `--warn-on-missing-installer-items` flag that makes missing Munki install/uninstall items a warning instead of a failure. (#86, thanks to @haircut)
+- Apply the same checks to `uninstaller_item_location` that were previously applied to `installer_item_location`.
 - `check-autopkg-recipes` requires Munki recipe `pkginfo` dicts to contain at least `name` and `description`.
 - `check-autopkg-recipes` now validates that `uninstall_method` and `uninstall_script` are set appropriately in Munki recipes.
 - `check-autopkg-recipes` and `check-munki-pkgsinfo` now validates that `supported_architectures` values are set appropriately.
@@ -22,6 +28,11 @@ All notable changes to this project will be documented in this file. This projec
 
 - `check-autopkg-recipes` includes jamf-upload as an AutoPkg recipe type, and updated processors included in jamf/jamf-upload recipe convention.
 - `check-munki-pkgsinfo` requires a `version` key in addition to `name` and `description`.
+
+### Fixed
+
+- Bug fix in `check-munkiadmin-scripts` that prevented script names from processing correctly.
+- Bug fix in `check-munki-pkgsinfo` that prevented `--warn-on-duplicate-imports` flag from working correctly.
 
 ## [1.18.0] - 2025-01-04
 

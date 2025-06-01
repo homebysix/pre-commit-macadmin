@@ -32,7 +32,10 @@ def main(argv=None):
         prefixes = ["manifest", "pkginfo", "repository"]
         actions = ["custom", "postopen", "postsave", "presave"]
         ma_script_prefixes = [f"{p}-{a}" for p in prefixes for a in actions]
-        if not any(filename.startswith(prefix) for prefix in ma_script_prefixes):
+        if not any(
+            os.path.basename(filename).startswith(prefix)
+            for prefix in ma_script_prefixes
+        ):
             print(f"{filename}: does not start with a valid MunkiAdmin script prefix")
             retval = 1
 

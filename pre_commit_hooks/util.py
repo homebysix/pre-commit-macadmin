@@ -17,7 +17,6 @@ PLIST_TYPES = {
     "integer": int,
     "array": list,
     "data": None,  # TODO: How to represent this?
-    "float": float,
     "real": float,
     "date": datetime,
 }
