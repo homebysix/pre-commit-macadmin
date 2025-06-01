@@ -141,6 +141,36 @@ def main(argv=None):
         if not detect_typoed_keys(pkginfo, filename):
             retval = 1
 
+        # Check for deprecated installer_type values.
+        depr_installer_types = (
+            "AdobeAcrobatUpdater",
+            "AdobeCCPInstaller",
+            "AdobeCS5AAMEEPackage",
+            "AdobeCS5PatchInstaller",
+            "AdobeSetup",
+            "AdobeUberInstaller",
+            "appdmg",
+            "apple_update_metadata",
+            "profile",
+            "startosinstall",
+        )
+        if pkginfo.get("installer_type") in depr_installer_types:
+            print(
+                f"{filename}: WARNING: installer_type '{pkginfo.get('installer_type')}' is deprecated"
+            )
+
+        # Check for deprecated uninstall_method values.
+        depr_uninstall_methods = (
+            "AdobeCCPUninstaller",
+            "AdobeCS5AAMEEPackage",
+            "AdobeSetup",
+            "AdobeUberUninstaller",
+        )
+        if pkginfo.get("uninstall_method") in depr_uninstall_methods:
+            print(
+                f"{filename}: WARNING: uninstall_method '{pkginfo.get('uninstall_method')}' is deprecated"
+            )
+
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
             print(
