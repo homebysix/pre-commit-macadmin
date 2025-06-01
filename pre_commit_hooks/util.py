@@ -258,6 +258,7 @@ def validate_pkginfo_key_types(pkginfo, filename):
         "uninstaller_item_location": str,
         "update_for": list,
         "version": str,
+        "version_script": str,
     }
 
     passed = True

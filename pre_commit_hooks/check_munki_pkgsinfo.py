@@ -224,6 +224,7 @@ def main(argv=None):
             "preinstall_script",
             "preuninstall_script",
             "uninstall_script",
+            "version_script",
         )
         for s_type in script_types:
             if s_type in pkginfo:

@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Added
 
 - `check-autopkg-recipes` and `check-munki-pkgsinfo` now validates that `supported_architectures` values are set appropriately.
+- In anticipation of Munki 7, `check-munki-pkgsinfo` validates that `version_script` is a string starting with a script shebang.
 
 ### Changed
 
