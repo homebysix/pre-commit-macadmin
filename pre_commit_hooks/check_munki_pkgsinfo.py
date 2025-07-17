@@ -104,6 +104,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
+        pkginfo = {}
         try:
             with open(filename, "rb") as openfile:
                 pkginfo = plistlib.load(openfile)
