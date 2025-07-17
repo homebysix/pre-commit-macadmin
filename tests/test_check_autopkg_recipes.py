@@ -1,4 +1,3 @@
-import io
 import os
 import tempfile
 import unittest
@@ -24,21 +23,23 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
 
     def test_validate_recipe_prefix_fails_with_invalid_prefix(self):
         recipe = {"Identifier": "foo.test.recipe"}
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_recipe_prefix(recipe, "file.recipe", ["local."])
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn("file.recipe: identifier does not start with local.", out)
+        mock_print.assert_called_with(
+            "file.recipe: identifier does not start with local."
+        )
 
     def test_validate_recipe_prefix_multiple_prefixes(self):
         recipe = {"Identifier": "foo.test.recipe"}
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_recipe_prefix(
                 recipe, "file.recipe", ["local.", "bar."]
             )
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn('one of: "local.", "bar."', out)
+        mock_print.assert_called_with(
+            'file.recipe: identifier does not start with one of: "local.", "bar."'
+        )
 
     def test_validate_comments_warns_on_html_comment_non_strict(self):
         with tempfile.NamedTemporaryFile("w+", delete=False, suffix=".recipe") as tf:
@@ -46,12 +47,11 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             tf.flush()
             tf_name = tf.name
         try:
-            with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            with mock.patch("builtins.print") as mock_print:
                 result = target.validate_comments(tf_name, strict=False)
-                out = mock_stdout.getvalue()
             self.assertTrue(result)
-            self.assertIn(
-                "WARNING: Recommend converting from <!-- --> style comments", out
+            mock_print.assert_called_with(
+                f"{tf_name}: WARNING: Recommend converting from <!-- --> style comments to a Comment key."
             )
         finally:
             os.unlink(tf_name)
@@ -62,11 +62,12 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             tf.flush()
             tf_name = tf.name
         try:
-            with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+            with mock.patch("builtins.print") as mock_print:
                 result = target.validate_comments(tf_name, strict=True)
-                out = mock_stdout.getvalue()
             self.assertFalse(result)
-            self.assertIn("Convert from <!-- --> style comments to a Comment key", out)
+            mock_print.assert_called_with(
+                f"{tf_name}: Convert from <!-- --> style comments to a Comment key."
+            )
         finally:
             os.unlink(tf_name)
 
@@ -87,11 +88,12 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
 
     def test_validate_processor_keys_fails(self):
         process = [{"Processor": "TestProc"}, {"Arg": "val"}]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_processor_keys(process, "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn('missing "Processor" key', out)
+        mock_print.assert_called_with(
+            "file.recipe: Item in processor array is missing \"Processor\" key:\n{'Arg': 'val'}"
+        )
 
     def test_validate_endofcheckphase_passes_no_downloader(self):
         process = [{"Processor": "OtherProc"}]
@@ -99,12 +101,11 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
 
     def test_validate_endofcheckphase_fails_missing_endofcheck(self):
         process = [{"Processor": "URLDownloader"}]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_endofcheckphase(process, "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn(
-            "Contains a download processor, but no EndOfCheckPhase processor", out
+        mock_print.assert_called_with(
+            "file.recipe: Contains a download processor, but no EndOfCheckPhase processor."
         )
 
     def test_validate_endofcheckphase_fails_wrong_order(self):
@@ -112,29 +113,30 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             {"Processor": "EndOfCheckPhase"},
             {"Processor": "URLDownloader"},
         ]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_endofcheckphase(process, "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn("EndOfCheckPhase typically goes after a download processor", out)
+        mock_print.assert_called_with(
+            "file.recipe: EndOfCheckPhase typically goes after a download processor, not before."
+        )
 
     def test_validate_minimumversion_non_string(self):
         process = [{"Processor": "AppPkgCreator"}]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_minimumversion(process, 1.0, "1.0", "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn("MinimumVersion should be a string", out)
+        mock_print.assert_called_with("file.recipe: MinimumVersion should be a string.")
 
     def test_validate_minimumversion_too_low(self):
         process = [{"Processor": "AppPkgCreator"}]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_minimumversion(
                 process, "0.5", "1.0", "file.recipe"
             )
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn("AppPkgCreator processor requires minimum AutoPkg version", out)
+        mock_print.assert_called_with(
+            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0"
+        )
 
     def test_validate_minimumversion_passes(self):
         process = [{"Processor": "AppPkgCreator"}]
@@ -143,19 +145,21 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
 
     def test_validate_no_deprecated_procs_warns(self):
         process = [{"Processor": "CURLDownloader"}]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_no_deprecated_procs(process, "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertTrue(result)
-        self.assertIn("WARNING: Deprecated processor CURLDownloader is used", out)
+        mock_print.assert_called_with(
+            "file.recipe: WARNING: Deprecated processor CURLDownloader is used."
+        )
 
     def test_validate_no_superclass_procs_warns(self):
         process = [{"Processor": "URLGetter"}]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_no_superclass_procs(process, "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertTrue(result)
-        self.assertIn("intended to be used by other processors", out)
+        mock_print.assert_called_with(
+            "file.recipe: WARNING: The processor URLGetter is intended to be used by other processors, not used directly in recipes."
+        )
 
     def test_validate_jamf_processor_order_warns(self):
         process = [
@@ -166,11 +170,12 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
                 "Processor": "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader"
             },
         ]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_jamf_processor_order(process, "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertTrue(result)
-        self.assertIn("JamfUploader processors are not in the recommended order", out)
+        mock_print.assert_called_with(
+            "file.recipe: WARNING: JamfUploader processors are not in the recommended order: JamfCategoryUploader, JamfPolicyUploader."
+        )
 
     def test_validate_no_var_in_app_path_fails(self):
         process = [
@@ -179,11 +184,12 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
                 "Arguments": {"input_path": "/Applications/%NAME%.app"},
             }
         ]
-        with mock.patch("sys.stdout", new_callable=io.StringIO) as mock_stdout:
+        with mock.patch("builtins.print") as mock_print:
             result = target.validate_no_var_in_app_path(process, "file.recipe")
-            out = mock_stdout.getvalue()
         self.assertFalse(result)
-        self.assertIn("Use actual app name instead of %NAME%.app", out)
+        mock_print.assert_called_with(
+            "file.recipe: Use actual app name instead of %NAME%.app in CodeSignatureVerifier processor argument."
+        )
 
     def test_validate_no_var_in_app_path_passes(self):
         process = [
