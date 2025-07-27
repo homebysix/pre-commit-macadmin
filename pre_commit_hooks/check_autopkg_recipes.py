@@ -198,6 +198,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "FileCreator": "0.0",
         "FileFinder": "0.2.3",
         "FileMover": "0.2.9",
+        "FindAndReplace": "2.7.6",
         "FlatPkgPacker": "0.2.4",
         "FlatPkgUnpacker": "0.1.0",
         "GitHubReleasesInfoProvider": "0.5.0",
