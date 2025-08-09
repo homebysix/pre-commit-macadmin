@@ -10,5 +10,6 @@ __pycache__/
 coverage.xml
 htmlcov/
 
-# Virtual environment
+# Virtual environments
+.venv/
 venv/

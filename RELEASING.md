@@ -4,7 +4,7 @@
 
 1. Check unit tests:
 
-        venv/bin/python -m coverage run -m unittest discover -vs tests
+        .venv/bin/python -m coverage run -m unittest discover -vs tests
 
 1. Update the change log.
 
