@@ -639,7 +639,9 @@ def main(argv=None):
                 retval = 1
 
             # Validate supported architectures.
-            if not validate_supported_architectures(input_key["pkginfo"], filename):
+            if not validate_supported_architectures(
+                input_key["pkginfo"], filename, recipe_mode=True
+            ):
                 retval = 1
 
             # Check for deprecated pkginfo keys.

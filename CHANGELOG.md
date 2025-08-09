@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Changed
 
 - Improvements to `check-preference-manifests` hook. (#91, thanks to @relgit)
+- `check-autopkg-recipes` ignores `supported_architectures` values within Munki pkginfo dictionaries that appear to be AutoPkg recipe substitution variables (e.g. `%ARCH%`).
 
 ## [1.19.0] - 2025-01-16
 

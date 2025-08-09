@@ -131,7 +131,7 @@ def main(argv=None):
             retval = 1
 
         # Validate supported architectures.
-        if not validate_supported_architectures(pkginfo, filename):
+        if not validate_supported_architectures(pkginfo, filename, recipe_mode=False):
             retval = 1
 
         # Check for deprecated pkginfo keys.

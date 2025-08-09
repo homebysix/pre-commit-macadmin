@@ -177,12 +177,19 @@ def validate_uninstall_method(pkginfo, filename):
     return passed
 
 
-def validate_supported_architectures(pkginfo, filename):
-    """Verifies that supported_architectures values are valid."""
+def validate_supported_architectures(pkginfo, filename, recipe_mode=False):
+    """Verifies that supported_architectures values are valid.
+
+    recipe_mode: Allow values wrapped in '%' which are typically substitution variables
+    in AutoPkg recipes. Defaults to False.
+    """
     passed = True
     allowed_values = ("arm64", "x86_64")
     if "supported_architectures" in pkginfo:
         for arch in pkginfo["supported_architectures"]:
+            if recipe_mode and arch.startswith("%") and arch.endswith("%"):
+                # Skip values that are substituted during AutoPkg recipe runs
+                continue
             if arch not in allowed_values:
                 print(
                     f"{filename}: supported_architectures contains unexpected value: {arch}"
