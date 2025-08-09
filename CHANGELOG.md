@@ -14,6 +14,20 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.20.0] - 2025-08-09
+
+### Added
+
+- `check-autopkg-recipes` and `check-munki-pkgsinfo` now validates that `supported_architectures` values are set appropriately.
+- In anticipation of Munki 7, `check-munki-pkgsinfo` validates that `version_script` is a string starting with a script shebang.
+- `check-munki-pkgsinfo` now checks for specific deprecated `installer_type` and `uninstall_method` values, most of which are detailed [here](https://github.com/munki/munki/wiki/Deprecation-Notes).
+- Added new FindAndReplace core processor version requirements for AutoPkg recipes.
+
+### Changed
+
+- Improvements to `check-preference-manifests` hook. (#91, thanks to @relgit)
+- `check-autopkg-recipes` ignores `supported_architectures` values within Munki pkginfo dictionaries that appear to be AutoPkg recipe substitution variables (e.g. `%ARCH%`).
+
 ## [1.19.0] - 2025-01-16
 
 ### Added

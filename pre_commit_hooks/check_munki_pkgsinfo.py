@@ -14,6 +14,7 @@ from pre_commit_hooks.util import (
     validate_required_keys,
     validate_restart_action_key,
     validate_shebangs,
+    validate_supported_architectures,
     validate_uninstall_method,
 )
 
@@ -103,6 +104,7 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
+        pkginfo = {}
         try:
             with open(filename, "rb") as openfile:
                 pkginfo = plistlib.load(openfile)
@@ -128,6 +130,10 @@ def main(argv=None):
         if not validate_uninstall_method(pkginfo, filename):
             retval = 1
 
+        # Validate supported architectures.
+        if not validate_supported_architectures(pkginfo, filename, recipe_mode=False):
+            retval = 1
+
         # Check for deprecated pkginfo keys.
         if not detect_deprecated_keys(pkginfo, filename):
             retval = 1
@@ -135,6 +141,36 @@ def main(argv=None):
         # Check for common mistakes in key names.
         if not detect_typoed_keys(pkginfo, filename):
             retval = 1
+
+        # Check for deprecated installer_type values.
+        depr_installer_types = (
+            "AdobeAcrobatUpdater",
+            "AdobeCCPInstaller",
+            "AdobeCS5AAMEEPackage",
+            "AdobeCS5PatchInstaller",
+            "AdobeSetup",
+            "AdobeUberInstaller",
+            "appdmg",
+            "apple_update_metadata",
+            "profile",
+            "startosinstall",
+        )
+        if pkginfo.get("installer_type") in depr_installer_types:
+            print(
+                f"{filename}: WARNING: installer_type '{pkginfo.get('installer_type')}' is deprecated"
+            )
+
+        # Check for deprecated uninstall_method values.
+        depr_uninstall_methods = (
+            "AdobeCCPUninstaller",
+            "AdobeCS5AAMEEPackage",
+            "AdobeSetup",
+            "AdobeUberUninstaller",
+        )
+        if pkginfo.get("uninstall_method") in depr_uninstall_methods:
+            print(
+                f"{filename}: WARNING: uninstall_method '{pkginfo.get('uninstall_method')}' is deprecated"
+            )
 
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
@@ -219,6 +255,7 @@ def main(argv=None):
             "preinstall_script",
             "preuninstall_script",
             "uninstall_script",
+            "version_script",
         )
         for s_type in script_types:
             if s_type in pkginfo:
