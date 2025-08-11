@@ -181,7 +181,7 @@ def main(argv=None):
 
         # Check for rogue catalogs.
         if args.catalogs:
-            for catalog in pkginfo.get("catalogs"):
+            for catalog in pkginfo.get("catalogs", []):
                 if catalog not in args.catalogs:
                     print(f'{filename}: catalog "{catalog}" is not in approved list')
                     retval = 1
@@ -269,7 +269,7 @@ def main(argv=None):
         # Credit to @bruienne for this idea.
         # https://gist.github.com/bruienne/9baa958ec6dbe8f09d94#file-munki_fuzzinator-py-L211-L219
         if "items_to_copy" in pkginfo:
-            for item_to_copy in pkginfo.get("items_to_copy"):
+            for item_to_copy in pkginfo.get("items_to_copy", []):
                 if item_to_copy.get("destination_path").endswith("/"):
                     print(
                         f'{filename}: has an items_to_copy with a trailing slash: "{item_to_copy["destination_path"]}"'
