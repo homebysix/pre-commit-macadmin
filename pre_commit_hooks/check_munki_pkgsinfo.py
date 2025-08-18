@@ -5,6 +5,7 @@ import argparse
 import os
 import plistlib
 from pathlib import Path
+from typing import List, Optional
 from xml.parsers.expat import ExpatError
 
 from pre_commit_hooks.util import (
@@ -19,7 +20,7 @@ from pre_commit_hooks.util import (
 )
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -70,7 +71,7 @@ def build_argument_parser():
     return parser
 
 
-def _check_case_sensitive_path(path):
+def _check_case_sensitive_path(path: str) -> bool:
     """Check whether a path exists, and on case-sensitive filesystems check
     that there is no case conflict."""
     # Return immediately if the file does not exist
@@ -88,7 +89,7 @@ def _check_case_sensitive_path(path):
         p = p.parent
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Typical extensions for installer packages.

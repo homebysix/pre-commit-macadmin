@@ -5,9 +5,10 @@ are present and catalogs are up to date."""
 import argparse
 import os
 import subprocess
+from typing import List, Optional
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -20,7 +21,7 @@ def build_argument_parser():
     return parser
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Path to makecatalogs.

@@ -9,6 +9,7 @@
 import argparse
 import plistlib
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 from xml.parsers.expat import ExpatError
 
 from pre_commit_hooks.util import PLIST_TYPES
@@ -28,7 +29,7 @@ PFM_LIST_TYPES = {
 }
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -38,7 +39,12 @@ def build_argument_parser():
     return parser
 
 
-def validate_required_keys(input_dict, required_keys, dict_name, filename):
+def validate_required_keys(
+    input_dict: Dict[str, Any],
+    required_keys: Tuple[str, ...],
+    dict_name: str,
+    filename: str,
+) -> bool:
     """Verifies that required_keys are present in dictionary."""
     passed = True
     for req_key in required_keys:
@@ -48,7 +54,7 @@ def validate_required_keys(input_dict, required_keys, dict_name, filename):
     return passed
 
 
-def validate_manifest_key_types(manifest, filename):
+def validate_manifest_key_types(manifest: Dict[str, Any], filename: str) -> bool:
     """Validation of manifest key types."""
 
     # manifest keys and their known types. Omitted keys are left un-validated.
@@ -127,7 +133,7 @@ def validate_manifest_key_types(manifest, filename):
     passed = True
     for manifest_key, expected_type in key_types.items():
         if manifest_key in manifest:
-            if not isinstance(manifest[manifest_key], expected_type):
+            if not isinstance(manifest[manifest_key], expected_type):  # type: ignore[arg-type]
                 print(
                     f"{filename}: manifest key {manifest_key} should be type "
                     f"{expected_type}, not type {type(manifest[manifest_key])}"
@@ -404,7 +410,7 @@ def validate_subkeys(subkeys, filename):
     return passed
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Parse command line arguments.

@@ -2,11 +2,12 @@
 """Check Jamf scripts for common issues."""
 
 import argparse
+from typing import List, Optional
 
 from pre_commit_hooks.util import validate_shebangs
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -22,7 +23,7 @@ def build_argument_parser():
     return parser
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Parse command line arguments.
