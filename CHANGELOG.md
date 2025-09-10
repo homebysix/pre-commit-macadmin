@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `check-munki-pkgsinfo` now detects the incorrect key `condition` and suggests using `installable_condition` instead.
 
 ## [1.20.0] - 2025-08-09
 

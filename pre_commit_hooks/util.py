@@ -102,6 +102,7 @@ def detect_typoed_keys(input_dict: Dict[str, Any], filename: str) -> bool:
         "blocking_apps": "blocking_applications",
         "blockingapplications": "blocking_applications",
         "choices_xml": "installer_choices_xml",
+        "condition": "installable_condition",
         "icon": "icon_name",
         "install_check_script": "installcheck_script",
         "installer_choices": "installer_choices_xml",

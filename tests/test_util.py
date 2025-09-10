@@ -106,6 +106,8 @@ class TestUtil(unittest.TestCase):
     def test_detect_typoed_keys(self):
         d = {"blocking_apps": 1}
         self.assertFalse(detect_typoed_keys(d, "file"))
+        d = {"condition": "some_condition"}
+        self.assertFalse(detect_typoed_keys(d, "file"))
         d = {"foo": 1}
         self.assertTrue(detect_typoed_keys(d, "file"))
 
