@@ -16,6 +16,10 @@ All notable changes to this project will be documented in this file. This projec
 
 - `check-munki-pkgsinfo` now detects the incorrect key `condition` and suggests using `installable_condition` instead.
 
+### Changed
+
+- Renamed internal package from `pre_commit_hooks` to `pre_commit_macadmin_hooks` to resolve namespace collision with the official `pre-commit-hooks` package. (#78)
+
 ## [1.20.0] - 2025-08-09
 
 ### Added
