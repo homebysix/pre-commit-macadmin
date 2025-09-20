@@ -1,15 +1,15 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-ast
-      - id: check-byte-order-marker
       - id: check-case-conflict
       - id: check-docstring-first
       - id: check-executables-have-shebangs
       - id: check-merge-conflict
       - id: check-yaml
       - id: end-of-file-fixer
+      - id: fix-byte-order-marker
       - id: mixed-line-ending
       - id: no-commit-to-branch
         args: [--branch, main]
@@ -29,6 +29,6 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 25.1.0
+    rev: 25.9.0
     hooks:
       - id: black
