@@ -10,6 +10,11 @@ __pycache__/
 coverage.xml
 htmlcov/
 
+# Package development
+*.egg-info/
+build/
+dist/
+
 # Virtual environments
 .venv/
 venv/
