@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.forbid_autopkg_overrides as target
+import pre_commit_macadmin_hooks.forbid_autopkg_overrides as target
 
 
 class TestForbidAutoPkgOverrides(unittest.TestCase):

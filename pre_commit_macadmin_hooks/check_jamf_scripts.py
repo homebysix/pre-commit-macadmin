@@ -4,7 +4,7 @@
 import argparse
 from typing import List, Optional
 
-from pre_commit_hooks.util import validate_shebangs
+from pre_commit_macadmin_hooks.util import validate_shebangs
 
 
 def build_argument_parser() -> argparse.ArgumentParser:

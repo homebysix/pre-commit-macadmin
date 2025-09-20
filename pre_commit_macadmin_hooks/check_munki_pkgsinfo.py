@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List, Optional
 from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import (
+from pre_commit_macadmin_hooks.util import (
     detect_deprecated_keys,
     detect_typoed_keys,
     validate_pkginfo_key_types,

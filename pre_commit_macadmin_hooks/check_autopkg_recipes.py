@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 
 from packaging.version import Version
 
-from pre_commit_hooks.util import (
+from pre_commit_macadmin_hooks.util import (
     detect_deprecated_keys,
     detect_typoed_keys,
     load_autopkg_recipe,

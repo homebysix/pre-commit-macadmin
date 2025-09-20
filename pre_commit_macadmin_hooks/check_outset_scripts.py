@@ -1,10 +1,11 @@
 #!/usr/bin/python
-"""This hook prevents AutoPkg overrides from being added to the repo."""
+"""Check Outset scripts to ensure they are executable."""
 
 import argparse
+import os
 from typing import List, Optional
 
-from pre_commit_hooks.util import load_autopkg_recipe
+from pre_commit_macadmin_hooks.util import validate_shebangs
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -20,23 +21,22 @@ def build_argument_parser() -> argparse.ArgumentParser:
 def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
-    # Overrides should not contain top-level Process arrays.
-    required_keys = ("Process",)
-
     # Parse command line arguments.
     argparser = build_argument_parser()
     args = argparser.parse_args(argv)
 
     retval = 0
     for filename in args.filenames:
-        recipe = load_autopkg_recipe(filename)
-        if not recipe:
+        if not os.access(filename, os.X_OK):
+            print(f"{filename}: not executable")
             retval = 1
-            break  # No need to continue checking this file.
-        for req_key in required_keys:
-            if req_key not in recipe:
-                print(f"{filename}: possible AutoPkg recipe override")
-                retval = 1
+
+        # Ensure scripts have a proper shebang
+        with open(filename, encoding="utf-8") as openfile:
+            script_content = openfile.read()
+        if not validate_shebangs(script_content, filename):
+            print(f"{filename}: does not start with a valid shebang")
+            retval = 1
 
     return retval
 

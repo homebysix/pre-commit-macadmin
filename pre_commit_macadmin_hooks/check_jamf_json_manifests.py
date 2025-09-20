@@ -10,7 +10,7 @@ import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
-from pre_commit_hooks.util import validate_required_keys
+from pre_commit_macadmin_hooks.util import validate_required_keys
 
 # Types found in the Jamf JSON manifests
 MANIFEST_TYPES = {

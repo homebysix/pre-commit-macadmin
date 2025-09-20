@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import PLIST_TYPES
+from pre_commit_macadmin_hooks.util import PLIST_TYPES
 
 # List keys and their expected item types
 PFM_LIST_TYPES = {

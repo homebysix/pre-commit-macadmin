@@ -7,7 +7,7 @@ from unittest import mock
 
 import ruamel.yaml
 
-import pre_commit_hooks.check_munkipkg_buildinfo as target
+import pre_commit_macadmin_hooks.check_munkipkg_buildinfo as target
 
 
 class TestCheckMunkiPkgBuildinfo(unittest.TestCase):

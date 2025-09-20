@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.forbid_autopkg_trust_info as target
+import pre_commit_macadmin_hooks.forbid_autopkg_trust_info as target
 
 
 class TestForbidAutoPkgTrustInfo(unittest.TestCase):

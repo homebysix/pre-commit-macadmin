@@ -1,11 +1,10 @@
 #!/usr/bin/python
-"""This hook prevents AutoPkg recipes with trust info from being added to the
-repo."""
+"""This hook prevents AutoPkg overrides from being added to the repo."""
 
 import argparse
 from typing import List, Optional
 
-from pre_commit_hooks.util import load_autopkg_recipe
+from pre_commit_macadmin_hooks.util import load_autopkg_recipe
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -21,6 +20,9 @@ def build_argument_parser() -> argparse.ArgumentParser:
 def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
+    # Overrides should not contain top-level Process arrays.
+    required_keys = ("Process",)
+
     # Parse command line arguments.
     argparser = build_argument_parser()
     args = argparser.parse_args(argv)
@@ -30,9 +32,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         recipe = load_autopkg_recipe(filename)
         if not recipe:
             retval = 1
-        elif "ParentRecipeTrustInfo" in recipe:
-            print(f"{filename}: trust info in recipe")
-            retval = 1
+            break  # No need to continue checking this file.
+        for req_key in required_keys:
+            if req_key not in recipe:
+                print(f"{filename}: possible AutoPkg recipe override")
+                retval = 1
 
     return retval
 

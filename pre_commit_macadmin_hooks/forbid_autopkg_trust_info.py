@@ -1,11 +1,11 @@
 #!/usr/bin/python
-"""Check Outset scripts to ensure they are executable."""
+"""This hook prevents AutoPkg recipes with trust info from being added to the
+repo."""
 
 import argparse
-import os
 from typing import List, Optional
 
-from pre_commit_hooks.util import validate_shebangs
+from pre_commit_macadmin_hooks.util import load_autopkg_recipe
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -27,15 +27,11 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     retval = 0
     for filename in args.filenames:
-        if not os.access(filename, os.X_OK):
-            print(f"{filename}: not executable")
+        recipe = load_autopkg_recipe(filename)
+        if not recipe:
             retval = 1
-
-        # Ensure scripts have a proper shebang
-        with open(filename, encoding="utf-8") as openfile:
-            script_content = openfile.read()
-        if not validate_shebangs(script_content, filename):
-            print(f"{filename}: does not start with a valid shebang")
+        elif "ParentRecipeTrustInfo" in recipe:
+            print(f"{filename}: trust info in recipe")
             retval = 1
 
     return retval
