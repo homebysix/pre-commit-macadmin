@@ -22,7 +22,7 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
         ]
         self.patchers = []
         for func in patcher_list:
-            p = mock.patch(f"pre_commit_hooks.util.{func}", return_value=True)
+            p = mock.patch(f"pre_commit_macadmin_hooks.util.{func}", return_value=True)
             self.patchers.append(p)
             p.start()
         self.addCleanup(lambda: [p.stop() for p in self.patchers])
@@ -72,7 +72,7 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
     # def test_missing_required_key_returns_one(self):
     #     # Patch validate_required_keys to return False
     #     with mock.patch(
-    #         "pre_commit_hooks.util.validate_required_keys", return_value=False
+    #         "pre_commit_macadmin_hooks.util.validate_required_keys", return_value=False
     #     ):
     #         pkginfo = {
     #             "name": "foo",
@@ -264,7 +264,9 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
 
     def test_script_with_invalid_shebang_returns_one(self):
         # Patch validate_shebangs to return False
-        with mock.patch("pre_commit_hooks.util.validate_shebangs", return_value=False):
+        with mock.patch(
+            "pre_commit_macadmin_hooks.util.validate_shebangs", return_value=False
+        ):
             pkginfo = {
                 "description": "desc",
                 "name": "foo",

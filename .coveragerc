@@ -1,5 +1,5 @@
 [run]
-include = pre_commit_hooks/*
+include = pre_commit_macadmin_hooks/*
 
 [report]
 exclude_lines =

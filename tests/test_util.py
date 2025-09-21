@@ -1,6 +1,6 @@
 """test_util.py
 
-Unit tests for the shared/utility functions in pre_commit_hooks.util module.
+Unit tests for the shared/utility functions in pre_commit_macadmin_hooks.util module.
 """
 
 import json

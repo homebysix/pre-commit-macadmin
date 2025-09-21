@@ -15,7 +15,8 @@ class TestCheckOutsetScripts(unittest.TestCase):
         self.assertEqual(args.filenames, ["file1", "file2"])
 
     @mock.patch(
-        "pre_commit_hooks.check_outset_scripts.validate_shebangs", return_value=True
+        "pre_commit_macadmin_hooks.check_outset_scripts.validate_shebangs",
+        return_value=True,
     )
     def test_main_executable_and_valid_shebang(self, mock_validate):
         with tempfile.NamedTemporaryFile(delete=False) as tf:
@@ -33,7 +34,8 @@ class TestCheckOutsetScripts(unittest.TestCase):
             os.unlink(filename)
 
     @mock.patch(
-        "pre_commit_hooks.check_outset_scripts.validate_shebangs", return_value=False
+        "pre_commit_macadmin_hooks.check_outset_scripts.validate_shebangs",
+        return_value=False,
     )
     def test_main_invalid_shebang(self, mock_validate):
         with tempfile.NamedTemporaryFile(delete=False) as tf:
@@ -53,7 +55,8 @@ class TestCheckOutsetScripts(unittest.TestCase):
             os.unlink(filename)
 
     @mock.patch(
-        "pre_commit_hooks.check_outset_scripts.validate_shebangs", return_value=True
+        "pre_commit_macadmin_hooks.check_outset_scripts.validate_shebangs",
+        return_value=True,
     )
     def test_main_not_executable(self, mock_validate):
         with tempfile.NamedTemporaryFile(delete=False) as tf:
@@ -72,7 +75,8 @@ class TestCheckOutsetScripts(unittest.TestCase):
             os.unlink(filename)
 
     @mock.patch(
-        "pre_commit_hooks.check_outset_scripts.validate_shebangs", return_value=False
+        "pre_commit_macadmin_hooks.check_outset_scripts.validate_shebangs",
+        return_value=False,
     )
     def test_main_not_executable_and_invalid_shebang(self, mock_validate):
         with tempfile.NamedTemporaryFile(delete=False) as tf:

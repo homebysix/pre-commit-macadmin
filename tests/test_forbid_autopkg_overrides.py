@@ -25,7 +25,9 @@ class TestForbidAutoPkgOverrides(unittest.TestCase):
         self.assertIn("Filenames to check.", help_text)
         self.assertIn("usage:", help_text)
 
-    @mock.patch("pre_commit_hooks.forbid_autopkg_overrides.load_autopkg_recipe")
+    @mock.patch(
+        "pre_commit_macadmin_hooks.forbid_autopkg_overrides.load_autopkg_recipe"
+    )
     def test_main_recipe_missing_required_key(self, mock_load):
         # Simulate a recipe missing the "Process" key
         mock_load.return_value = {"Input": "value"}
@@ -37,7 +39,9 @@ class TestForbidAutoPkgOverrides(unittest.TestCase):
         finally:
             os.unlink(filename)
 
-    @mock.patch("pre_commit_hooks.forbid_autopkg_overrides.load_autopkg_recipe")
+    @mock.patch(
+        "pre_commit_macadmin_hooks.forbid_autopkg_overrides.load_autopkg_recipe"
+    )
     def test_main_recipe_with_required_key(self, mock_load):
         # Simulate a recipe with the "Process" key
         mock_load.return_value = {"Process": [], "Input": "value"}
@@ -49,7 +53,9 @@ class TestForbidAutoPkgOverrides(unittest.TestCase):
         finally:
             os.unlink(filename)
 
-    @mock.patch("pre_commit_hooks.forbid_autopkg_overrides.load_autopkg_recipe")
+    @mock.patch(
+        "pre_commit_macadmin_hooks.forbid_autopkg_overrides.load_autopkg_recipe"
+    )
     def test_main_recipe_load_returns_none(self, mock_load):
         # Simulate load_autopkg_recipe returning None (invalid file)
         mock_load.return_value = None
@@ -66,7 +72,9 @@ class TestForbidAutoPkgOverrides(unittest.TestCase):
         args = parser.parse_args(["file1", "file2"])
         self.assertEqual(args.filenames, ["file1", "file2"])
 
-    @mock.patch("pre_commit_hooks.forbid_autopkg_overrides.load_autopkg_recipe")
+    @mock.patch(
+        "pre_commit_macadmin_hooks.forbid_autopkg_overrides.load_autopkg_recipe"
+    )
     def test_main_multiple_files(self, mock_load):
         # First file is valid, second is missing required key
         mock_load.side_effect = [{"Process": []}, {"Input": "value"}]
@@ -81,7 +89,9 @@ class TestForbidAutoPkgOverrides(unittest.TestCase):
             os.unlink(filenames[0])
             os.unlink(filenames[1])
 
-    @mock.patch("pre_commit_hooks.forbid_autopkg_overrides.load_autopkg_recipe")
+    @mock.patch(
+        "pre_commit_macadmin_hooks.forbid_autopkg_overrides.load_autopkg_recipe"
+    )
     def test_main_no_filenames(self, mock_load):
         # No files to check, should return 0
         result = target.main([])
