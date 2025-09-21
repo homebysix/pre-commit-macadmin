@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.check_jamf_extension_attributes as target
+import pre_commit_macadmin_hooks.check_jamf_extension_attributes as target
 
 
 class TestCheckJamfExtensionAttributes(unittest.TestCase):
@@ -20,7 +20,7 @@ class TestCheckJamfExtensionAttributes(unittest.TestCase):
         self.assertEqual(args.valid_shebangs, ["#!/bin/bash"])
 
     @mock.patch(
-        "pre_commit_hooks.check_jamf_extension_attributes.validate_shebangs",
+        "pre_commit_macadmin_hooks.check_jamf_extension_attributes.validate_shebangs",
         return_value=True,
     )
     def test_valid_file(self, mock_validate):
@@ -32,7 +32,7 @@ class TestCheckJamfExtensionAttributes(unittest.TestCase):
         self.assertEqual(retval, 0)
 
     @mock.patch(
-        "pre_commit_hooks.check_jamf_extension_attributes.validate_shebangs",
+        "pre_commit_macadmin_hooks.check_jamf_extension_attributes.validate_shebangs",
         return_value=True,
     )
     def test_missing_result_tags(self, mock_validate):
@@ -46,7 +46,7 @@ class TestCheckJamfExtensionAttributes(unittest.TestCase):
         mock_print.assert_any_call(f"{tf.name}: missing <result> and/or </result> tags")
 
     @mock.patch(
-        "pre_commit_hooks.check_jamf_extension_attributes.validate_shebangs",
+        "pre_commit_macadmin_hooks.check_jamf_extension_attributes.validate_shebangs",
         return_value=False,
     )
     def test_invalid_shebang(self, mock_validate):
@@ -60,7 +60,7 @@ class TestCheckJamfExtensionAttributes(unittest.TestCase):
         mock_print.assert_any_call(f"{tf.name}: does not start with a valid shebang")
 
     @mock.patch(
-        "pre_commit_hooks.check_jamf_extension_attributes.validate_shebangs",
+        "pre_commit_macadmin_hooks.check_jamf_extension_attributes.validate_shebangs",
         return_value=True,
     )
     def test_multiple_files_mixed_results(self, mock_validate):
@@ -81,7 +81,7 @@ class TestCheckJamfExtensionAttributes(unittest.TestCase):
         )
 
     @mock.patch(
-        "pre_commit_hooks.check_jamf_extension_attributes.validate_shebangs",
+        "pre_commit_macadmin_hooks.check_jamf_extension_attributes.validate_shebangs",
         return_value=True,
     )
     def test_no_filenames(self, mock_validate):

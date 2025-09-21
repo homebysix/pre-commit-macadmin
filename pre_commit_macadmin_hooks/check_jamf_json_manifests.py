@@ -8,8 +8,9 @@
 import argparse
 import json
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 
-from pre_commit_hooks.util import validate_required_keys
+from pre_commit_macadmin_hooks.util import validate_required_keys
 
 # Types found in the Jamf JSON manifests
 MANIFEST_TYPES = {
@@ -34,7 +35,7 @@ MANIFEST_LIST_TYPES = {
 }
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -44,7 +45,7 @@ def build_argument_parser():
     return parser
 
 
-def validate_key_types(name, manifest, filename):
+def validate_key_types(name: str, manifest: Dict[str, Any], filename: str) -> bool:
     """Validation of manifest key types."""
 
     # Manifest keys and their known types. Omitted keys are left unvalidated.
@@ -78,7 +79,9 @@ def validate_key_types(name, manifest, filename):
     return passed
 
 
-def validate_type(name, property, filename):
+def validate_type(
+    name: str, property: Dict[str, Any], filename: str
+) -> Tuple[bool, Optional[str]]:  # noqa: A002
     """Ensure property type keu is present and among expected values."""
     passed = True
     type_found = None
@@ -98,7 +101,9 @@ def validate_type(name, property, filename):
     return passed, type_found
 
 
-def validate_list_item_types(name, manifest, filename):
+def validate_list_item_types(
+    name: str, manifest: Dict[str, Any], filename: str
+) -> bool:
     """Validation of list member items."""
 
     passed = True
@@ -109,10 +114,13 @@ def validate_list_item_types(name, manifest, filename):
             except IndexError:
                 # Probably an empty array; no way to validate items
                 continue
-            if isinstance(MANIFEST_LIST_TYPES[name], tuple):
-                desired_types = MANIFEST_LIST_TYPES[name]
+            manifest_list_type = MANIFEST_LIST_TYPES[name]
+            if isinstance(manifest_list_type, tuple):
+                # MANIFEST_LIST_TYPES[name] is a tuple of types
+                desired_types = list(manifest_list_type)
             else:
-                desired_types = [MANIFEST_LIST_TYPES[name]]
+                # MANIFEST_LIST_TYPES[name] is a single type
+                desired_types = [manifest_list_type]
             if actual_type not in desired_types:
                 print(
                     f'{filename}: "{name}" items should be {MANIFEST_LIST_TYPES[name]}, not {actual_type}'
@@ -122,7 +130,9 @@ def validate_list_item_types(name, manifest, filename):
     return passed
 
 
-def validate_default(name, prop, type_found, filename):
+def validate_default(
+    name: str, prop: Dict[str, Any], type_found: Optional[str], filename: str
+) -> bool:
     """Ensure that default values have the expected type."""
     passed = True
 
@@ -132,16 +142,16 @@ def validate_default(name, prop, type_found, filename):
                 actual_type = str
             else:
                 actual_type = type(prop[test_key])
-            if actual_type != MANIFEST_TYPES.get(type_found):
+            if actual_type != MANIFEST_TYPES.get(type_found) if type_found else None:
                 print(
-                    f"{filename}: {test_key} value for {name} should be {MANIFEST_TYPES.get(type_found)}, not {type(prop[test_key])}"
+                    f"{filename}: {test_key} value for {name} should be {MANIFEST_TYPES.get(type_found) if type_found else 'Unknown'}, not {type(prop[test_key])}"
                 )
                 passed = False
 
     return passed
 
 
-def validate_urls(name, prop, filename):
+def validate_urls(name: str, prop: Dict[str, Any], filename: str) -> bool:
     """Ensure that URL values are actual URLs."""
     passed = True
 
@@ -157,7 +167,7 @@ def validate_urls(name, prop, filename):
     return passed
 
 
-def validate_properties(properties, filename):
+def validate_properties(properties: Dict[str, Any], filename: str) -> bool:
     """Given a list of properties, run validation on their contents."""
     passed = True
 
@@ -196,7 +206,7 @@ def validate_properties(properties, filename):
     return passed
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Parse command line arguments.
@@ -214,7 +224,7 @@ def main(argv=None):
             break  # No need to continue checking this file
 
         # Check for presence of required keys.
-        required_keys = ("title", "properties", "description")
+        required_keys = ["title", "properties", "description"]
         if not validate_required_keys(manifest, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file

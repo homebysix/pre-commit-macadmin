@@ -3,14 +3,15 @@ import tempfile
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.check_jamf_scripts as target
+import pre_commit_macadmin_hooks.check_jamf_scripts as target
 
 
 class TestCheckJamfScripts(unittest.TestCase):
     def setUp(self):
         # Patch validate_shebangs for controlled behavior
         patcher = mock.patch(
-            "pre_commit_hooks.check_jamf_scripts.validate_shebangs", return_value=True
+            "pre_commit_macadmin_hooks.check_jamf_scripts.validate_shebangs",
+            return_value=True,
         )
         self.mock_validate = patcher.start()
         self.addCleanup(patcher.stop)

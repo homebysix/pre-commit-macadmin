@@ -3,11 +3,12 @@
 repo."""
 
 import argparse
+from typing import List, Optional
 
-from pre_commit_hooks.util import load_autopkg_recipe
+from pre_commit_macadmin_hooks.util import load_autopkg_recipe
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -17,7 +18,7 @@ def build_argument_parser():
     return parser
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Parse command line arguments.

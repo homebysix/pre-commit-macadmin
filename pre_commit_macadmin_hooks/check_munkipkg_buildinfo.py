@@ -4,16 +4,17 @@
 import argparse
 import json
 import plistlib
+from typing import Any, Dict, List, Optional
 from xml.parsers.expat import ExpatError
 
 import ruamel.yaml
 
-from pre_commit_hooks.util import validate_required_keys
+from pre_commit_macadmin_hooks.util import validate_required_keys
 
 yaml = ruamel.yaml.YAML(typ="safe")
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -28,7 +29,7 @@ def build_argument_parser():
     return parser
 
 
-def validate_buildinfo_key_types(buildinfo, filename):
+def validate_buildinfo_key_types(buildinfo: Dict[str, Any], filename: str) -> bool:
     """Ensure build-info files contain the proper types."""
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
@@ -61,7 +62,7 @@ def validate_buildinfo_key_types(buildinfo, filename):
     return passed
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Parse command line arguments.
@@ -104,7 +105,7 @@ def main(argv=None):
         # Top level keys that all build-info files should contain.
         # NOTE: Even though other keys are listed as non-"optional" in the documentation,
         # name and version appear to be the only ones that are actually required.
-        required_keys = ("name", "version")
+        required_keys = ["name", "version"]
         if not validate_required_keys(buildinfo, filename, required_keys):
             retval = 1
             break  # No need to continue checking this file

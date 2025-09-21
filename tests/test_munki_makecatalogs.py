@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.munki_makecatalogs as target
+import pre_commit_macadmin_hooks.munki_makecatalogs as target
 
 
 class TestMunkiMakecatalogs(unittest.TestCase):

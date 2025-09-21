@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.check_git_config_email as target
+import pre_commit_macadmin_hooks.check_git_config_email as target
 
 
 class TestCheckGitConfigEmail(unittest.TestCase):

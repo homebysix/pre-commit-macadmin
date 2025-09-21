@@ -9,7 +9,7 @@ import sys
 import tempfile
 import unittest
 
-import pre_commit_hooks.check_autopkg_recipe_list as target
+import pre_commit_macadmin_hooks.check_autopkg_recipe_list as target
 
 
 class TestCheckAutopkgRecipeList(unittest.TestCase):

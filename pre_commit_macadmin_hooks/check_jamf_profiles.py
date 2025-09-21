@@ -1,13 +1,13 @@
 #!/usr/bin/python
-"""Check Outset scripts to ensure they are executable."""
+"""Check Jamf scripts for common issues."""
 
 import argparse
-import os
+import plistlib
+from typing import List, Optional
+from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import validate_shebangs
 
-
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -17,7 +17,7 @@ def build_argument_parser():
     return parser
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Parse command line arguments.
@@ -26,15 +26,11 @@ def main(argv=None):
 
     retval = 0
     for filename in args.filenames:
-        if not os.access(filename, os.X_OK):
-            print(f"{filename}: not executable")
-            retval = 1
-
-        # Ensure scripts have a proper shebang
-        with open(filename, encoding="utf-8") as openfile:
-            script_content = openfile.read()
-        if not validate_shebangs(script_content, filename):
-            print(f"{filename}: does not start with a valid shebang")
+        try:
+            with open(filename, "rb") as openfile:
+                _ = plistlib.load(openfile)
+        except (ExpatError, ValueError) as err:
+            print(f"{filename}: plist parsing error: {err}")
             retval = 1
 
     return retval

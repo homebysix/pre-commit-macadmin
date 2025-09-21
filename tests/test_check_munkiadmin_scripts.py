@@ -3,14 +3,14 @@ import tempfile
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.check_munkiadmin_scripts as target
+import pre_commit_macadmin_hooks.check_munkiadmin_scripts as target
 
 
 class TestCheckMunkiadminScripts(unittest.TestCase):
     def setUp(self):
         # Patch validate_shebangs for all tests
         patcher = mock.patch(
-            "pre_commit_hooks.check_munkiadmin_scripts.validate_shebangs",
+            "pre_commit_macadmin_hooks.check_munkiadmin_scripts.validate_shebangs",
             return_value=True,
         )
         self.mock_validate_shebangs = patcher.start()

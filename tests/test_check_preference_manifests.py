@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.check_preference_manifests as target
+import pre_commit_macadmin_hooks.check_preference_manifests as target
 
 
 class TestCheckPreferenceManifests(unittest.TestCase):

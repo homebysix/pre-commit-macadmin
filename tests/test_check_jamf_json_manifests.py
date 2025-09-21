@@ -1,6 +1,6 @@
 import unittest
 
-# import pre_commit_hooks.check_jamf_json_manifests as target
+# import pre_commit_macadmin_hooks.check_jamf_json_manifests as target
 
 
 class TestCheckJamfJsonManifests(unittest.TestCase):

@@ -5,9 +5,10 @@ import argparse
 import os
 import plistlib
 from pathlib import Path
+from typing import List, Optional
 from xml.parsers.expat import ExpatError
 
-from pre_commit_hooks.util import (
+from pre_commit_macadmin_hooks.util import (
     detect_deprecated_keys,
     detect_typoed_keys,
     validate_pkginfo_key_types,
@@ -19,7 +20,7 @@ from pre_commit_hooks.util import (
 )
 
 
-def build_argument_parser():
+def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
 
     parser = argparse.ArgumentParser(
@@ -70,7 +71,7 @@ def build_argument_parser():
     return parser
 
 
-def _check_case_sensitive_path(path):
+def _check_case_sensitive_path(path: str) -> bool:
     """Check whether a path exists, and on case-sensitive filesystems check
     that there is no case conflict."""
     # Return immediately if the file does not exist
@@ -88,7 +89,7 @@ def _check_case_sensitive_path(path):
         p = p.parent
 
 
-def main(argv=None):
+def main(argv: Optional[List[str]] = None) -> int:
     """Main process."""
 
     # Typical extensions for installer packages.
@@ -181,7 +182,7 @@ def main(argv=None):
 
         # Check for rogue catalogs.
         if args.catalogs:
-            for catalog in pkginfo.get("catalogs"):
+            for catalog in pkginfo.get("catalogs", []):
                 if catalog not in args.catalogs:
                     print(f'{filename}: catalog "{catalog}" is not in approved list')
                     retval = 1
@@ -269,7 +270,7 @@ def main(argv=None):
         # Credit to @bruienne for this idea.
         # https://gist.github.com/bruienne/9baa958ec6dbe8f09d94#file-munki_fuzzinator-py-L211-L219
         if "items_to_copy" in pkginfo:
-            for item_to_copy in pkginfo.get("items_to_copy"):
+            for item_to_copy in pkginfo.get("items_to_copy", []):
                 if item_to_copy.get("destination_path").endswith("/"):
                     print(
                         f'{filename}: has an items_to_copy with a trailing slash: "{item_to_copy["destination_path"]}"'

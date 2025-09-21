@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from unittest import mock
 
-import pre_commit_hooks.check_autopkg_recipes as target
+import pre_commit_macadmin_hooks.check_autopkg_recipes as target
 
 
 class TestCheckAutopkgRecipes(unittest.TestCase):
