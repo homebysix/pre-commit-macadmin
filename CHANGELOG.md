@@ -12,13 +12,17 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.21.0] - 2025-09-21
+
 ### Added
 
 - `check-munki-pkgsinfo` now detects the incorrect key `condition` and suggests using `installable_condition` instead.
 
 ### Changed
 
-- Renamed internal package from `pre_commit_hooks` to `pre_commit_macadmin_hooks` to resolve namespace collision with the official `pre-commit-hooks` package. (#78)
+- Renamed internal package from `pre_commit_hooks` to `pre_commit_macadmin_hooks` to resolve namespace collision with the official `pre_commit_hooks` [package](https://github.com/pre-commit/pre-commit-hooks). (#78)
 
 ## [1.20.0] - 2025-08-09
 
@@ -431,7 +435,10 @@ All notable changes to this project will be documented in this file. This projec
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.21.0...HEAD
+[1.21.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.20.0...v1.21.0
+[1.20.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.19.0...v1.20.0
+[1.19.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.2...v1.17.0
 [1.16.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.16.1...v1.16.2
