@@ -391,36 +391,9 @@ def validate_proc_type_conventions(process, filename):
 
     # For each processor type, this is the list of processors that
     # we only expect to see in that type. List order is unimportant.
-    # TODO: Simpler to check for `com.github.grahampugh.jamf-upload.processors/` prefix?
-    jamf_upload_procs = [
-        "com.github.grahampugh.jamf-upload.processors/JamfAccountUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfClassicAPIObjectUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupDeleter",
-        "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfDockItemUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfIconUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfMacAppUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceGroupUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceProfileUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfPackageCleaner",
-        "com.github.grahampugh.jamf-upload.processors/JamfPackageRecalculator",
-        "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfPatchChecker",
-        "com.github.grahampugh.jamf-upload.processors/JamfPatchUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfPkgMetadataUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
-        "com.github.grahampugh.jamf-upload.processors/JamfPolicyLogFlusher",
-        "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
-        "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
-        "com.github.grahampugh.jamf-upload.processors/JamfUploaderTeamsNotifier",
-    ]
     proc_type_conventions = {
-        "download": [
+        # Tuple contains all recipe types that share these conventions.
+        ("download",): [
             "SparkleUpdateInfoProvider",
             "GitHubReleasesInfoProvider",
             "URLDownloader",
@@ -428,7 +401,7 @@ def validate_proc_type_conventions(process, filename):
             "CURLDownloader",
             "EndOfCheckPhase",
         ],
-        "munki": [
+        ("munki",): [
             "MunkiInfoCreator",
             "MunkiInstallsItemsCreator",
             "MunkiPkginfoMerger",
@@ -437,15 +410,40 @@ def validate_proc_type_conventions(process, filename):
             "MunkiOptionalReceiptEditor",
             "MunkiImporter",
         ],
-        "pkg": ["AppPkgCreator", "PkgCreator"],
-        "install": ["InstallFromDMG", "Installer"],
+        ("pkg",): ["AppPkgCreator", "PkgCreator"],
+        ("install",): ["InstallFromDMG", "Installer"],
         # https://github.com/jssimporter/JSSImporter
-        "jss": ["JSSImporter"],
+        ("jss",): ["JSSImporter"],
         # https://github.com/grahampugh/jamf-upload
-        "jamf": jamf_upload_procs,
-        "jamf-upload": jamf_upload_procs,
+        ("jamf", "jamf-upload"): [
+            "com.github.grahampugh.jamf-upload.processors/JamfAccountUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfClassicAPIObjectUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupDeleter",
+            "com.github.grahampugh.jamf-upload.processors/JamfComputerGroupUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfComputerProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfDockItemUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfExtensionAttributeUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfIconUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMacAppUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceGroupUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfMobileDeviceProfileUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPackageCleaner",
+            "com.github.grahampugh.jamf-upload.processors/JamfPackageRecalculator",
+            "com.github.grahampugh.jamf-upload.processors/JamfPackageUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPatchChecker",
+            "com.github.grahampugh.jamf-upload.processors/JamfPatchUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPkgMetadataUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyDeleter",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyLogFlusher",
+            "com.github.grahampugh.jamf-upload.processors/JamfPolicyUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfScriptUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
+            "com.github.grahampugh.jamf-upload.processors/JamfUploaderTeamsNotifier",
+        ],
         # https://github.com/autopkg/filewave
-        "filewave": [
+        ("filewave",): [
             "com.github.autopkg.filewave.FWTool/FileWaveImporter",
             "com.github.johncclayton.filewave.FWTool/FileWaveImporter",
             "com.github.autopkg.filewave.FWTool/FWTool",
@@ -454,11 +452,11 @@ def validate_proc_type_conventions(process, filename):
 
     passed = True
     processors = [x.get("Processor") for x in process]
-    for recipe_type in proc_type_conventions:
-        type_hint = f".{recipe_type}."
-        if type_hint not in filename:
+    for recipe_group in proc_type_conventions:
+        type_hints = [f".{recipe_type}." for recipe_type in recipe_group]
+        if not any(th in filename for th in type_hints):
             for processor in processors:
-                if processor in proc_type_conventions[recipe_type]:
+                if processor in proc_type_conventions[recipe_group]:
                     print(
                         f"{filename}: Processor {processor} is not conventional for this "
                         "recipe type."
