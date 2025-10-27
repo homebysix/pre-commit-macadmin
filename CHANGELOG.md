@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.21.1] - 2025-10-26
+
 ### Fixed
 
 - Fixed bug in `check-autopkg-recipes` that would flag processors as "not conventional" for recipe types that have multiple filename hints. Realistically, this only affected `.jamf` or `.jamf-upload` recipe types.
