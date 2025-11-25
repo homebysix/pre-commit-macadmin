@@ -14,6 +14,12 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.22.0] - 2025-11-25
+
+### Changed
+
+- `format-xml-plist` hook now uses Python's plistlib instead of macOS's plutil. This enables compatibility with a wider selection of CI/CD runners, including pre-commit.ci.
+
 ## [1.21.1] - 2025-10-26
 
 ### Fixed
