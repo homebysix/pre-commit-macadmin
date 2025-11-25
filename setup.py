@@ -6,7 +6,7 @@ setup(
     name="pre-commit-macadmin",
     description="Pre-commit hooks for Mac admins, client engineers, and IT consultants.",
     url="https://github.com/homebysix/pre-commit-macadmin",
-    version="1.21.1",
+    version="1.22.0",
     author="Elliot Jordan",
     author_email="elliot@elliotjordan.com",
     packages=["pre_commit_macadmin_hooks"],
@@ -28,6 +28,7 @@ setup(
             "check-preference-manifests = pre_commit_macadmin_hooks.check_preference_manifests:main",
             "forbid-autopkg-overrides = pre_commit_macadmin_hooks.forbid_autopkg_overrides:main",
             "forbid-autopkg-trust-info = pre_commit_macadmin_hooks.forbid_autopkg_trust_info:main",
+            "format-xml-plist = pre_commit_macadmin_hooks.format_xml_plist:main",
             "munki-makecatalogs = pre_commit_macadmin_hooks.munki_makecatalogs:main",
         ]
     },

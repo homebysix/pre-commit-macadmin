@@ -14,6 +14,12 @@ All notable changes to this project will be documented in this file. This projec
 
 Nothing yet.
 
+## [1.22.0] - 2025-11-25
+
+### Changed
+
+- `format-xml-plist` hook now uses Python's plistlib instead of macOS's plutil. This enables compatibility with a wider selection of CI/CD runners, including pre-commit.ci.
+
 ## [1.21.1] - 2025-10-26
 
 ### Fixed
@@ -441,7 +447,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.21.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.22.0...HEAD
+[1.22.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.18.0...v1.19.0

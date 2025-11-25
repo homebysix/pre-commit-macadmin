@@ -128,8 +128,8 @@
 - id: format-xml-plist
   name: Auto-format plist [XML]
   description: Auto-format a Property List (plist) as XML.
-  entry: plutil -convert xml1
-  language: system
+  entry: format-xml-plist
+  language: python
   files: '\.(mobileconfig|pkginfo|plist|recipe)$'
   types: [text]
 
