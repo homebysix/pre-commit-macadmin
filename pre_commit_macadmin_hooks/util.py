@@ -74,7 +74,7 @@ def validate_required_keys(
     passed = True
     for req_key in required_keys:
         if not input_dict.get(req_key):
-            print(f"{filename}: missing required key {req_key}")
+            print(f"{filename}: missing required key '{req_key}'")
             passed = False
     return passed
 
