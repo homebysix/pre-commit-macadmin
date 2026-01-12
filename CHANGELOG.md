@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- `check-munki-pkgsinfo` now skips warning about missing packages if a `PackageCompleteURL` key is set in the pkginfo.
 
 ## [1.22.0] - 2025-11-25
 

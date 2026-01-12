@@ -176,7 +176,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         # Check for rogue categories.
         if args.categories and pkginfo.get("category") not in args.categories:
             print(
-                f"{filename}: category \"{pkginfo.get('category')}\" is not in list of approved categories"
+                f'{filename}: category "{pkginfo.get("category")}" is not in list of approved categories'
             )
             retval = 1
 
@@ -204,13 +204,17 @@ def main(argv: Optional[List[str]] = None) -> int:
 
         # Begin checks that apply to both installers and uninstallers
         for i_type in ("installer", "uninstaller"):
-
             # Check for missing or case-conflicted installer or uninstaller items
             if not _check_case_sensitive_path(
                 os.path.join(
                     args.munki_repo, "pkgs", pkginfo.get(f"{i_type}_item_location", "")
                 )
             ):
+                if i_type == "installer" and "PackageCompleteURL" in pkginfo:
+                    # PackageCompleteURL allows download from a URL outside of the Munki repo,
+                    # so the installer need not exist in the repo.
+                    continue
+
                 msg = f"{i_type} item does not exist or path is not case sensitive"
                 if args.warn_on_missing_installer_items:
                     print(f"{filename}: WARNING: {msg}")
