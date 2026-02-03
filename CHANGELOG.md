@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+### Added
+
+- Added support for minimum AutoPkg version validation for new [VariableSetter](https://github.com/autopkg/autopkg/wiki/Processor-VariableSetter) processor.
+
 ### Changed
 
 - `check-munki-pkgsinfo` now skips warning about missing packages if a `PackageCompleteURL` key is set in the pkginfo.

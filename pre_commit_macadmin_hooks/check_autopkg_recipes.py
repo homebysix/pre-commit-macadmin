@@ -235,6 +235,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         "URLDownloader": "0.0",
         "URLDownloaderPython": "2.4.1",
         "URLTextSearcher": "0.2.9",
+        "VariableSetter": "2.9.0",
         "Versioner": "0.1.0",
     }
 
