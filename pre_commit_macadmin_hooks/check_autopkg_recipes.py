@@ -501,6 +501,9 @@ def validate_required_proc_for_types(process, filename):
                 # their parent is a download recipe that produces a pkg.
                 # TODO: Validate parent is a download recipe.
                 break
+            if recipe_type == "munki" and "DeprecationWarning" in processors:
+                # DeprecationWarning is ok being the only processor in a munki recipe or in it at all
+                break
             if not any([x in processors for x in req_procs]):
                 if len(req_procs) == 1:
                     print(
