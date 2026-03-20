@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Added
 
 - Added support for minimum AutoPkg version validation for new [VariableSetter](https://github.com/autopkg/autopkg/wiki/Processor-VariableSetter) processor.
+- `check-munkiadmin-scripts` and `check-outset-scripts` now support the `--valid-shebangs` argument for specifying additional valid interpreter paths.
 
 ### Changed
 
