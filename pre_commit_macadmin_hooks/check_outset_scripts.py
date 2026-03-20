@@ -15,6 +15,12 @@ def build_argument_parser() -> argparse.ArgumentParser:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to check.")
+    parser.add_argument(
+        "--valid-shebangs",
+        nargs="+",
+        default=[],
+        help="Add other valid shebangs for your environment",
+    )
     return parser
 
 
@@ -34,7 +40,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         # Ensure scripts have a proper shebang
         with open(filename, encoding="utf-8") as openfile:
             script_content = openfile.read()
-        if not validate_shebangs(script_content, filename):
+        if not validate_shebangs(script_content, filename, args.valid_shebangs):
             print(f"{filename}: does not start with a valid shebang")
             retval = 1
 
