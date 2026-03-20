@@ -165,7 +165,7 @@ class TestCheckAutopkgRecipeList(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             yaml_file = os.path.join(tmpdir, "bad.yaml")
             with open(yaml_file, "w", encoding="utf-8") as f:
-                f.write(":\n-")
+                f.write(":\n  :\n-\n :")
             retval, output = self.run_main_with_files([yaml_file])
             self.assertEqual(retval, 1)
             self.assertIn("yaml parsing error", output)
