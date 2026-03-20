@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.23.0] - 2026-03-19
+
 ### Added
 
 - Added support for minimum AutoPkg version validation for new [VariableSetter](https://github.com/autopkg/autopkg/wiki/Processor-VariableSetter) processor.
@@ -454,7 +458,8 @@ All notable changes to this project will be documented in this file. This projec
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.22.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.23.0...HEAD
+[1.23.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.21.0...v1.22.0
 [1.21.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.19.0...v1.20.0
