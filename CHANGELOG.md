@@ -10,7 +10,9 @@ All notable changes to this project will be documented in this file. This projec
 }
 -->
 
-## [Unreleased]
+
+
+## [1.23.3] - 2026-04-12
 
 Nothing yet.
 
@@ -464,7 +466,8 @@ Nothing yet.
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.23.2...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.23.3...HEAD
+[1.23.3]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.23.2...v1.23.3
 [1.23.2]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.23.0...v1.23.2
 [1.23.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.21.0...v1.22.0
