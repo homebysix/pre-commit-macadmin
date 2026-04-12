@@ -131,7 +131,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add setup.py README.md CHANGELOG.md
-          git commit -m "Bump version to ${{ steps.nextversion.outputs.next }}"
+          git commit -m "Bump to ${{ steps.nextversion.outputs.next }} [skip ci]"
 
       - name: Push changes
         if: steps.tagcheck.outputs.should_release == 'true'
