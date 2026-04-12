@@ -1,0 +1,94 @@
+---
+name: Test Release to TestPyPI
+
+on:
+  push:
+    branches:
+      - release-dev
+    paths:
+      - "setup.py"
+      - ".github/workflows/test-release.yml"
+
+jobs:
+  test-release:
+    name: Build and Publish to TestPyPI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Read version from setup.py
+        id: getversion
+        run: |
+          echo "version=$(python ./setup.py --version)" >> $GITHUB_OUTPUT
+          echo "Version detected: $(python ./setup.py --version)"
+
+      # Fetch tags to check if version tag already exists
+      - name: Fetch tags
+        run: git fetch --tags origin
+
+      - name: Check if tag already exists
+        id: tagcheck
+        run: |
+          if git rev-parse "v${{ steps.getversion.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag v${{ steps.getversion.outputs.version }} already exists"
+            echo "should_release=false" >> $GITHUB_OUTPUT
+          else
+            echo "Tag v${{ steps.getversion.outputs.version }} does not exist - will proceed with release"
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install build dependencies
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Install package dependencies
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Build package
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: python -m build
+
+      - name: Check package with twine
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: twine check dist/*
+
+      - name: Publish to TestPyPI
+        if: steps.tagcheck.outputs.should_release == 'true'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          skip-existing: true
+
+      - name: Get wheel filename
+        if: steps.tagcheck.outputs.should_release == 'true'
+        id: getwheelfile
+        run: |
+          echo "wheelfile=$(find dist -type f -name '*.whl')" >> $GITHUB_OUTPUT
+          echo "tarfile=$(find dist -type f -name '*.tar.gz')" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: steps.tagcheck.outputs.should_release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.getversion.outputs.version }}
+          name: Release v${{ steps.getversion.outputs.version }} (Test)
+          draft: false
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            ${{ steps.getwheelfile.outputs.wheelfile }}
+            ${{ steps.getwheelfile.outputs.tarfile }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
