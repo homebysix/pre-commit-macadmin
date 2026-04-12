@@ -43,6 +43,22 @@ jobs:
             echo "should_release=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Extract changelog for version
+        if: steps.tagcheck.outputs.should_release == 'true'
+        id: changelog
+        run: |
+          VERSION="${{ steps.getversion.outputs.version }}"
+          # Extract content between ## [VERSION] and the next ## [
+          CHANGELOG=$(sed -n "/## \[$VERSION\]/,/## \[/p" CHANGELOG.md | sed '$d' | tail -n +2)
+          if [ -z "$CHANGELOG" ]; then
+            echo "No changelog entry found for version $VERSION"
+            CHANGELOG="No changelog entry found. Please update CHANGELOG.md."
+          fi
+          # Use EOF delimiter for multi-line output
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
         if: steps.tagcheck.outputs.should_release == 'true'
         uses: softprops/action-gh-release@v2
@@ -51,6 +67,6 @@ jobs:
           name: Release v${{ steps.getversion.outputs.version }} (Test)
           draft: false
           prerelease: true
-          generate_release_notes: true
+          body: ${{ steps.changelog.outputs.notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
