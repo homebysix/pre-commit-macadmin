@@ -1,5 +1,5 @@
 ---
-name: Test Release to TestPyPI
+name: Test Release
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   test-release:
-    name: Build and Publish to TestPyPI
+    name: Create GitHub Release
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +29,6 @@ jobs:
           echo "version=$(python ./setup.py --version)" >> $GITHUB_OUTPUT
           echo "Version detected: $(python ./setup.py --version)"
 
-      # Fetch tags to check if version tag already exists
       - name: Fetch tags
         run: git fetch --tags origin
 
@@ -44,40 +43,6 @@ jobs:
             echo "should_release=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Install build dependencies
-        if: steps.tagcheck.outputs.should_release == 'true'
-        run: |
-          python -m pip install --upgrade pip
-          pip install build twine
-
-      - name: Install package dependencies
-        if: steps.tagcheck.outputs.should_release == 'true'
-        run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Build package
-        if: steps.tagcheck.outputs.should_release == 'true'
-        run: python -m build
-
-      - name: Check package with twine
-        if: steps.tagcheck.outputs.should_release == 'true'
-        run: twine check dist/*
-
-      - name: Publish to TestPyPI
-        if: steps.tagcheck.outputs.should_release == 'true'
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-          skip-existing: true
-
-      - name: Get wheel filename
-        if: steps.tagcheck.outputs.should_release == 'true'
-        id: getwheelfile
-        run: |
-          echo "wheelfile=$(find dist -type f -name '*.whl')" >> $GITHUB_OUTPUT
-          echo "tarfile=$(find dist -type f -name '*.tar.gz')" >> $GITHUB_OUTPUT
-
       - name: Create GitHub Release
         if: steps.tagcheck.outputs.should_release == 'true'
         uses: softprops/action-gh-release@v2
@@ -87,8 +52,5 @@ jobs:
           draft: false
           prerelease: true
           generate_release_notes: true
-          files: |
-            ${{ steps.getwheelfile.outputs.wheelfile }}
-            ${{ steps.getwheelfile.outputs.tarfile }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
