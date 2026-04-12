@@ -70,3 +70,70 @@ jobs:
           body: ${{ steps.changelog.outputs.notes }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Calculate next version
+        if: steps.tagcheck.outputs.should_release == 'true'
+        id: nextversion
+        run: |
+          CURRENT="${{ steps.getversion.outputs.version }}"
+          # Split version into parts (assumes X.Y.Z format)
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          # Bump patch version
+          NEXT_PATCH=$((PATCH + 1))
+          NEXT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}"
+          echo "next=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "Next version will be: $NEXT_VERSION"
+
+      - name: Update setup.py version
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: |
+          sed -i 's/version="${{ steps.getversion.outputs.version }}"/version="${{ steps.nextversion.outputs.next }}"/' setup.py
+
+      - name: Update README.md version
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: |
+          sed -i 's/rev: v${{ steps.getversion.outputs.version }}/rev: v${{ steps.nextversion.outputs.next }}/g' README.md
+
+      - name: Update CHANGELOG.md
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: |
+          CURRENT="${{ steps.getversion.outputs.version }}"
+          NEXT="${{ steps.nextversion.outputs.next }}"
+          TODAY=$(date +%Y-%m-%d)
+
+          # Create temp file with new changelog section
+          cat > /tmp/changelog_update.txt << 'ENDOFCHANGELOG'
+          ## [Unreleased]
+
+          Nothing yet.
+
+          ## [NEXT_VERSION] - TODAY_PLACEHOLDER
+          ENDOFCHANGELOG
+
+          # Replace placeholders
+          sed -i "s/NEXT_VERSION/$NEXT/g" /tmp/changelog_update.txt
+          sed -i "s/TODAY_PLACEHOLDER/$TODAY/g" /tmp/changelog_update.txt
+
+          # Insert new section after the first "## [Unreleased]" line
+          sed -i "/## \[Unreleased\]/r /tmp/changelog_update.txt" CHANGELOG.md
+          # Remove the old "## [Unreleased]" and "Nothing yet." lines
+          sed -i '1,/Nothing yet\./ { /## \[Unreleased\]/d; /Nothing yet\./d }' CHANGELOG.md
+
+          # Update version comparison links at bottom
+          # Update [Unreleased] link
+          sed -i "s|\[Unreleased\]:.*|[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v$NEXT...HEAD|" CHANGELOG.md
+          # Add new version link after [Unreleased]
+          sed -i "/\[Unreleased\]:/a [$NEXT]: https://github.com/homebysix/pre-commit-macadmin/compare/v$CURRENT...v$NEXT" CHANGELOG.md
+
+      - name: Commit version bump
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add setup.py README.md CHANGELOG.md
+          git commit -m "Bump version to ${{ steps.nextversion.outputs.next }}"
+
+      - name: Push changes
+        if: steps.tagcheck.outputs.should_release == 'true'
+        run: |
+          git push origin ${{ github.ref_name }}
