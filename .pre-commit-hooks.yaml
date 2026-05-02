@@ -125,6 +125,14 @@
   files: '\.recipe(\.plist|\.yaml|\.json)?$'
   types: [text]
 
+- id: format-autopkg-yaml-recipes
+  name: Auto-format AutoPkg recipes [YAML]
+  description: Auto-format AutoPkg YAML recipes — reorder keys and normalize spacing.
+  entry: format-autopkg-yaml-recipes
+  language: python
+  files: '\.recipe\.yaml$'
+  types: [text]
+
 - id: format-xml-plist
   name: Auto-format plist [XML]
   description: Auto-format a Property List (plist) as XML.
