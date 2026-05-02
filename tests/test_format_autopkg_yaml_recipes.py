@@ -28,7 +28,7 @@ class TestFormatAutopkgYamlRecipes(unittest.TestCase):
             return tmp.name
 
     def _read(self, path: str) -> str:
-        with open(path, "r") as f:
+        with open(path) as f:
             return f.read()
 
     def test_idempotent(self):
@@ -152,9 +152,7 @@ class TestFormatAutopkgYamlRecipes(unittest.TestCase):
 
     def test_already_formatted_does_not_rewrite(self):
         path = self._write(
-            "Identifier: com.example.test\n"
-            "Input:\n"
-            "  NAME: TestApp\n"
+            "Identifier: com.example.test\n" "Input:\n" "  NAME: TestApp\n"
         )
         self.assertEqual(format_autopkg_yaml_recipes.main([path]), 0)
         mtime_after_first = Path(path).stat().st_mtime_ns

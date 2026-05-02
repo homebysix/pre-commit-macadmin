@@ -9,7 +9,6 @@ from typing import List, Optional
 import ruamel.yaml
 from ruamel.yaml.constructor import DuplicateKeyError
 
-
 # YAML 1.1 boolean tokens that AutoPkg uses as strings (e.g. 'YES'/'NO').
 # Force single quotes so a later load doesn't coerce them to booleans.
 _YAML_11_BOOL_RE = re.compile(
@@ -98,7 +97,7 @@ def _insert_section_blank_lines(output: str) -> str:
 
 def tidy_recipe(path: str, yaml: ruamel.yaml.YAML) -> None:
     """Tidy a single AutoPkg YAML recipe in place."""
-    with open(path, "r") as in_file:
+    with open(path) as in_file:
         original = in_file.read()
 
     recipe = yaml.load(original)
