@@ -83,6 +83,10 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
     This hook prevents AutoPkg recipes with trust info from being added to the repo.
 
+- __format-autopkg-yaml-recipes__
+
+    This hook auto-formats AutoPkg YAML recipes (`*.recipe.yaml`): reorders top-level keys, moves `NAME` to the top of `Input`, places `Arguments` last in each processor, and inserts a blank line before each top-level section. Comments and quoted strings (including YAML 1.1 boolean literals like `'YES'` and `'NO'`) are preserved.
+
 ### [Jamf](https://www.jamf.com/)
 
 - __check-jamf-extension-attributes__

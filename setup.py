@@ -28,6 +28,7 @@ setup(
             "check-preference-manifests = pre_commit_macadmin_hooks.check_preference_manifests:main",
             "forbid-autopkg-overrides = pre_commit_macadmin_hooks.forbid_autopkg_overrides:main",
             "forbid-autopkg-trust-info = pre_commit_macadmin_hooks.forbid_autopkg_trust_info:main",
+            "format-autopkg-yaml-recipes = pre_commit_macadmin_hooks.format_autopkg_yaml_recipes:main",
             "format-xml-plist = pre_commit_macadmin_hooks.format_xml_plist:main",
             "munki-makecatalogs = pre_commit_macadmin_hooks.munki_makecatalogs:main",
         ]

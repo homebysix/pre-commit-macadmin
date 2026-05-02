@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- New `format-autopkg-yaml-recipes` hook that tidies AutoPkg YAML recipes by reordering keys and normalizing spacing. Adapted from @grahampugh's [plist-yaml-plist](https://github.com/grahampugh/plist-yaml-plist).
 
 ## [1.24.1] - 2026-04-12
 
