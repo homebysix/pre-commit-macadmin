@@ -449,6 +449,7 @@ def validate_proc_type_conventions(process, filename):
             "com.github.johncclayton.filewave.FWTool/FileWaveImporter",
             "com.github.autopkg.filewave.FWTool/FWTool",
         ],
+        ("verify",): ["com.github.n8felton.shared/GPGSignatureVerifier"],
     }
 
     # Extract all known recipe types from conventions
@@ -498,9 +499,7 @@ def validate_required_proc_for_types(process, filename):
         "filewave": ["com.github.autopkg.filewave.FWTool/FileWaveImporter"],
         # https://derflounder.wordpress.com/2021/07/30/signing-autopkg-built-packages-using-a-sign-recipe/
         "sign": ["com.github.rtrouton.SharedProcessors/PkgSigner"],
-        "verify": [
-            "com.github.autopkg.gerardkok-recipes.SharedProcessors/GPGSignatureVerifier"
-        ],
+        "verify": ["com.github.n8felton.shared/GPGSignatureVerifier"],
     }
 
     passed = True
