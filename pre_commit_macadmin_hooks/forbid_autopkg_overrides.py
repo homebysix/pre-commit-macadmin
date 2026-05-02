@@ -2,7 +2,6 @@
 """This hook prevents AutoPkg overrides from being added to the repo."""
 
 import argparse
-from typing import List, Optional
 
 from pre_commit_macadmin_hooks.util import load_autopkg_recipe
 
@@ -17,7 +16,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Overrides should not contain top-level Process arrays.

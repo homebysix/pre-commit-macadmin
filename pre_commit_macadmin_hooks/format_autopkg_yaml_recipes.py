@@ -4,7 +4,6 @@
 import argparse
 import io
 import re
-from typing import List, Optional
 
 import ruamel.yaml
 from ruamel.yaml.constructor import DuplicateKeyError
@@ -74,7 +73,7 @@ def _reorder_recipe(recipe) -> None:
 
 def _insert_section_blank_lines(output: str) -> str:
     """Ensure a single blank line precedes each top-level recipe section."""
-    result: List[str] = []
+    result: list[str] = []
     for line in output.split("\n"):
         if not line.startswith(_TOP_LEVEL_TRIGGERS):
             result.append(line)
@@ -127,7 +126,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
     argparser = build_argument_parser()
     args = argparser.parse_args(argv)

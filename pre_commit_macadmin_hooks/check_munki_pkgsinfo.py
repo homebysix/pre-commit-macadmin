@@ -5,7 +5,6 @@ import argparse
 import os
 import plistlib
 from pathlib import Path
-from typing import List, Optional
 from xml.parsers.expat import ExpatError
 
 from pre_commit_macadmin_hooks.util import (
@@ -89,7 +88,7 @@ def _check_case_sensitive_path(path: str) -> bool:
         p = p.parent
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Typical extensions for installer packages.

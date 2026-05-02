@@ -3,7 +3,7 @@
 import json
 import plistlib
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import ruamel.yaml
 
@@ -38,7 +38,7 @@ BUILTIN_SHEBANGS = [
 ]
 
 
-def load_autopkg_recipe(path: str) -> Optional[Dict[str, Any]]:
+def load_autopkg_recipe(path: str) -> dict[str, Any] | None:
     """Loads an AutoPkg recipe in plist, yaml, or json format."""
     recipe = None
 
@@ -68,7 +68,7 @@ def load_autopkg_recipe(path: str) -> Optional[Dict[str, Any]]:
 
 
 def validate_required_keys(
-    input_dict: Dict[str, Any], filename: str, required_keys: List[str]
+    input_dict: dict[str, Any], filename: str, required_keys: list[str]
 ) -> bool:
     """Verifies that required_keys are present in dictionary."""
     passed = True
@@ -79,7 +79,7 @@ def validate_required_keys(
     return passed
 
 
-def detect_deprecated_keys(input_dict: Dict[str, Any], filename: str) -> bool:
+def detect_deprecated_keys(input_dict: dict[str, Any], filename: str) -> bool:
     """Verifies that no deprecated keys are present in dictionary."""
     # List from: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
     deprecated_keys = (
@@ -95,7 +95,7 @@ def detect_deprecated_keys(input_dict: Dict[str, Any], filename: str) -> bool:
     return passed
 
 
-def detect_typoed_keys(input_dict: Dict[str, Any], filename: str) -> bool:
+def detect_typoed_keys(input_dict: dict[str, Any], filename: str) -> bool:
     """Verifies that specific key name typos are not present in dictionary."""
     key_corrections = {
         "appleitem": "apple_item",
@@ -143,7 +143,7 @@ def detect_typoed_keys(input_dict: Dict[str, Any], filename: str) -> bool:
     return passed
 
 
-def validate_restart_action_key(pkginfo: Dict[str, Any], filename: str) -> bool:
+def validate_restart_action_key(pkginfo: dict[str, Any], filename: str) -> bool:
     """Verifies that the RestartAction key is set correctly."""
     passed = True
     allowed_values = (
@@ -162,7 +162,7 @@ def validate_restart_action_key(pkginfo: Dict[str, Any], filename: str) -> bool:
     return passed
 
 
-def validate_uninstall_method(pkginfo: Dict[str, Any], filename: str) -> bool:
+def validate_uninstall_method(pkginfo: dict[str, Any], filename: str) -> bool:
     """Verifies that uninstall_method and uninstall_script is used appropriately."""
     passed = True
     uninst_method = pkginfo.get("uninstall_method")
@@ -182,7 +182,7 @@ def validate_uninstall_method(pkginfo: Dict[str, Any], filename: str) -> bool:
 
 
 def validate_supported_architectures(
-    pkginfo: Dict[str, Any], filename: str, recipe_mode: bool = False
+    pkginfo: dict[str, Any], filename: str, recipe_mode: bool = False
 ) -> bool:
     """Verifies that supported_architectures values are valid.
 
@@ -204,7 +204,7 @@ def validate_supported_architectures(
     return passed
 
 
-def validate_pkginfo_key_types(pkginfo: Dict[str, Any], filename: str) -> bool:
+def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
     """Validation of pkginfo key types.
 
     Used for AutoPkg- and Munki-related hooks.
@@ -288,7 +288,7 @@ def validate_pkginfo_key_types(pkginfo: Dict[str, Any], filename: str) -> bool:
 
 
 def validate_shebangs(
-    script_content: str, filename: str, addl_shebangs: Optional[List[str]] = None
+    script_content: str, filename: str, addl_shebangs: list[str] | None = None
 ) -> bool:
     """Verifies that scripts begin with a valid shebang."""
     if addl_shebangs is None:

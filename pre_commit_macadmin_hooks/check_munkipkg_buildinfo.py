@@ -4,7 +4,7 @@
 import argparse
 import json
 import plistlib
-from typing import Any, Dict, List, Optional
+from typing import Any
 from xml.parsers.expat import ExpatError
 
 import ruamel.yaml
@@ -29,7 +29,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def validate_buildinfo_key_types(buildinfo: Dict[str, Any], filename: str) -> bool:
+def validate_buildinfo_key_types(buildinfo: dict[str, Any], filename: str) -> bool:
     """Ensure build-info files contain the proper types."""
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
@@ -62,7 +62,7 @@ def validate_buildinfo_key_types(buildinfo: Dict[str, Any], filename: str) -> bo
     return passed
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Parse command line arguments.
