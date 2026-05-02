@@ -3,7 +3,6 @@
 
 import argparse
 import subprocess
-from typing import List, Optional
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -20,7 +19,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Parse command line arguments.

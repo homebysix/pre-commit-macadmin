@@ -9,7 +9,7 @@
 import argparse
 import plistlib
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 from xml.parsers.expat import ExpatError
 
 from pre_commit_macadmin_hooks.util import PLIST_TYPES
@@ -40,8 +40,8 @@ def build_argument_parser() -> argparse.ArgumentParser:
 
 
 def validate_required_keys(
-    input_dict: Dict[str, Any],
-    required_keys: Tuple[str, ...],
+    input_dict: dict[str, Any],
+    required_keys: tuple[str, ...],
     dict_name: str,
     filename: str,
 ) -> bool:
@@ -54,7 +54,7 @@ def validate_required_keys(
     return passed
 
 
-def validate_manifest_key_types(manifest: Dict[str, Any], filename: str) -> bool:
+def validate_manifest_key_types(manifest: dict[str, Any], filename: str) -> bool:
     """Validation of manifest key types."""
 
     # manifest keys and their known types. Omitted keys are left un-validated.
@@ -410,7 +410,7 @@ def validate_subkeys(subkeys, filename):
     return passed
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Parse command line arguments.

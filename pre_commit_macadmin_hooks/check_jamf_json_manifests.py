@@ -8,7 +8,7 @@
 import argparse
 import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 from pre_commit_macadmin_hooks.util import validate_required_keys
 
@@ -45,7 +45,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def validate_key_types(name: str, manifest: Dict[str, Any], filename: str) -> bool:
+def validate_key_types(name: str, manifest: dict[str, Any], filename: str) -> bool:
     """Validation of manifest key types."""
 
     # Manifest keys and their known types. Omitted keys are left unvalidated.
@@ -80,8 +80,8 @@ def validate_key_types(name: str, manifest: Dict[str, Any], filename: str) -> bo
 
 
 def validate_type(
-    name: str, property: Dict[str, Any], filename: str
-) -> Tuple[bool, Optional[str]]:  # noqa: A002
+    name: str, property: dict[str, Any], filename: str
+) -> tuple[bool, str | None]:  # noqa: A002
     """Ensure property type keu is present and among expected values."""
     passed = True
     type_found = None
@@ -102,7 +102,7 @@ def validate_type(
 
 
 def validate_list_item_types(
-    name: str, manifest: Dict[str, Any], filename: str
+    name: str, manifest: dict[str, Any], filename: str
 ) -> bool:
     """Validation of list member items."""
 
@@ -131,7 +131,7 @@ def validate_list_item_types(
 
 
 def validate_default(
-    name: str, prop: Dict[str, Any], type_found: Optional[str], filename: str
+    name: str, prop: dict[str, Any], type_found: str | None, filename: str
 ) -> bool:
     """Ensure that default values have the expected type."""
     passed = True
@@ -151,7 +151,7 @@ def validate_default(
     return passed
 
 
-def validate_urls(name: str, prop: Dict[str, Any], filename: str) -> bool:
+def validate_urls(name: str, prop: dict[str, Any], filename: str) -> bool:
     """Ensure that URL values are actual URLs."""
     passed = True
 
@@ -167,7 +167,7 @@ def validate_urls(name: str, prop: Dict[str, Any], filename: str) -> bool:
     return passed
 
 
-def validate_properties(properties: Dict[str, Any], filename: str) -> bool:
+def validate_properties(properties: dict[str, Any], filename: str) -> bool:
     """Given a list of properties, run validation on their contents."""
     passed = True
 
@@ -206,7 +206,7 @@ def validate_properties(properties: Dict[str, Any], filename: str) -> bool:
     return passed
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Parse command line arguments.

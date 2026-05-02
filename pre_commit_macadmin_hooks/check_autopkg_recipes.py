@@ -6,7 +6,7 @@ import argparse
 import os
 import sys
 from contextlib import contextmanager
-from typing import Any, Dict, List
+from typing import Any
 
 from packaging.version import Version
 
@@ -88,7 +88,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
 
 
 def validate_recipe_prefix(
-    recipe: Dict[str, Any], filename: str, prefix: List[str]
+    recipe: dict[str, Any], filename: str, prefix: list[str]
 ) -> bool:
     """Verify that the recipe identifier starts with the expected prefix."""
 

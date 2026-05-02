@@ -3,7 +3,6 @@
 
 import argparse
 import re
-from typing import List, Optional
 
 from pre_commit_macadmin_hooks.util import validate_shebangs
 
@@ -24,7 +23,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Parse command line arguments.

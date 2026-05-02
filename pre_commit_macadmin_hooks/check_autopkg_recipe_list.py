@@ -8,7 +8,6 @@ Category: AutoPkg
 import argparse
 import json
 import plistlib
-from typing import List, Optional
 from xml.parsers.expat import ExpatError
 
 import ruamel.yaml
@@ -26,7 +25,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
     # Parse command line arguments.
