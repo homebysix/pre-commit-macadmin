@@ -142,6 +142,15 @@ def main(argv: list[str] | None = None) -> int:
         if not detect_typoed_keys(pkginfo, filename):
             retval = 1
 
+        # Warn on pkginfo keys removed in Munki 7.
+        removed_munki7_keys = (
+            "additional_startosinstall_options",
+            "copy_local",
+        )
+        for removed_key in removed_munki7_keys:
+            if removed_key in pkginfo:
+                print(f"{filename}: WARNING: {removed_key} key is removed in Munki 7")
+
         # Check for deprecated installer_type values.
         depr_installer_types = (
             "AdobeAcrobatUpdater",

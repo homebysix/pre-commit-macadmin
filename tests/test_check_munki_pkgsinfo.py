@@ -151,6 +151,32 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
         finally:
             os.unlink(filename)
 
+    def test_removed_munki7_key_warns(self):
+        pkginfo = {
+            "description": "desc",
+            "name": "foo",
+            "version": "1.0",
+            "category": "Utilities",
+            "catalogs": ["testing"],
+            "installer_item_location": "foo.pkg",
+            "uninstaller_item_location": "foo_un.pkg",
+            "copy_local": True,
+        }
+        filename = self.make_pkginfo_file(pkginfo)
+        try:
+            argv = [filename]
+            with mock.patch("builtins.print") as mprint:
+                ret = target.main(argv)
+                self.assertEqual(ret, 0)
+                self.assertTrue(
+                    any(
+                        "copy_local key is removed in Munki 7" in str(c)
+                        for c in mprint.call_args_list
+                    )
+                )
+        finally:
+            os.unlink(filename)
+
     # def test_rogue_category_returns_one(self):
     #     pkginfo = {
     #         "description": "desc",
