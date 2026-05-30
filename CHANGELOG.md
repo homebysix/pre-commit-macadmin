@@ -19,6 +19,10 @@ All notable changes to this project will be documented in this file. This projec
 - `check-munki-pkgsinfo` now validates the shebang of `blocking_applications_quit_script`, consistent with other pkginfo script fields.
 - `check-munki-pkgsinfo` now warns when pkginfo keys removed in Munki 7 are present (`additional_startosinstall_options`, `copy_local`).
 
+### Changed
+
+- `check-munki-pkgsinfo` warning messages for removed `installer_type` and `uninstall_method` values now say "removed in Munki 7" instead of "deprecated".
+
 ## [1.24.1] - 2026-04-12
 
 ### Changed

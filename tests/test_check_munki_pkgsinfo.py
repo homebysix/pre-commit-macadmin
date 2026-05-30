@@ -107,7 +107,7 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
         finally:
             os.unlink(tmp_filename)
 
-    def test_deprecated_installer_type_warns(self):
+    def test_removed_munki7_installer_type_warns(self):
         pkginfo = {
             "description": "desc",
             "name": "foo",
@@ -122,14 +122,18 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
         try:
             argv = [filename]
             with mock.patch("builtins.print") as mprint:
-                target.main(argv)
+                ret = target.main(argv)
+                self.assertEqual(ret, 0)
                 self.assertTrue(
-                    any("installer_type" in str(c) for c in mprint.call_args_list)
+                    any(
+                        "installer_type 'AdobeSetup' is removed in Munki 7" in str(c)
+                        for c in mprint.call_args_list
+                    )
                 )
         finally:
             os.unlink(filename)
 
-    def test_deprecated_uninstall_method_warns(self):
+    def test_removed_munki7_uninstall_method_warns(self):
         pkginfo = {
             "description": "desc",
             "name": "foo",
@@ -144,9 +148,13 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
         try:
             argv = [filename]
             with mock.patch("builtins.print") as mprint:
-                target.main(argv)
+                ret = target.main(argv)
+                self.assertEqual(ret, 0)
                 self.assertTrue(
-                    any("uninstall_method" in str(c) for c in mprint.call_args_list)
+                    any(
+                        "uninstall_method 'AdobeSetup' is removed in Munki 7" in str(c)
+                        for c in mprint.call_args_list
+                    )
                 )
         finally:
             os.unlink(filename)

@@ -151,8 +151,8 @@ def main(argv: list[str] | None = None) -> int:
             if removed_key in pkginfo:
                 print(f"{filename}: WARNING: {removed_key} key is removed in Munki 7")
 
-        # Check for deprecated installer_type values.
-        depr_installer_types = (
+        # Warn on installer_type values removed in Munki 7.
+        removed_munki7_installer_types = (
             "AdobeAcrobatUpdater",
             "AdobeCCPInstaller",
             "AdobeCS5AAMEEPackage",
@@ -164,21 +164,21 @@ def main(argv: list[str] | None = None) -> int:
             "profile",
             "startosinstall",
         )
-        if pkginfo.get("installer_type") in depr_installer_types:
+        if pkginfo.get("installer_type") in removed_munki7_installer_types:
             print(
-                f"{filename}: WARNING: installer_type '{pkginfo.get('installer_type')}' is deprecated"
+                f"{filename}: WARNING: installer_type '{pkginfo.get('installer_type')}' is removed in Munki 7"
             )
 
-        # Check for deprecated uninstall_method values.
-        depr_uninstall_methods = (
+        # Warn on uninstall_method values removed in Munki 7.
+        removed_munki7_uninstall_methods = (
             "AdobeCCPUninstaller",
             "AdobeCS5AAMEEPackage",
             "AdobeSetup",
             "AdobeUberUninstaller",
         )
-        if pkginfo.get("uninstall_method") in depr_uninstall_methods:
+        if pkginfo.get("uninstall_method") in removed_munki7_uninstall_methods:
             print(
-                f"{filename}: WARNING: uninstall_method '{pkginfo.get('uninstall_method')}' is deprecated"
+                f"{filename}: WARNING: uninstall_method '{pkginfo.get('uninstall_method')}' is removed in Munki 7"
             )
 
         # Check for rogue categories.
