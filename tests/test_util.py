@@ -143,10 +143,14 @@ class TestUtil(unittest.TestCase):
             "blocking_applications": ["bar"],
             "blocking_applications_manual_quit_only": True,
             "blocking_applications_quit_script": "#!/bin/sh\nexit 0",
+            "description_staged": "Ready to install",
+            "display_name_staged": "Example Installer",
             "minimum_os_version": "10.15.0",
             "OnDemand": True,
         }
         self.assertTrue(validate_pkginfo_key_types(d, "file"))
+        d = {"description_staged": ["Ready to install"]}
+        self.assertFalse(validate_pkginfo_key_types(d, "file"))
         d = {"blocking_applications_manual_quit_only": "true"}
         self.assertFalse(validate_pkginfo_key_types(d, "file"))
         d = {

@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file. This projec
 
 - New `format-autopkg-yaml-recipes` hook that tidies AutoPkg YAML recipes by reordering keys and normalizing spacing. Adapted from @grahampugh's [plist-yaml-plist](https://github.com/grahampugh/plist-yaml-plist).
 - `check-munki-pkgsinfo` now validates the Munki 7.1 pkginfo keys `blocking_applications_manual_quit_only` (boolean) and `blocking_applications_quit_script` (string).
+- `check-munki-pkgsinfo` now validates the type of `description_staged` and `display_name_staged` pkginfo keys.
 - `check-munki-pkgsinfo` now validates the shebang of `blocking_applications_quit_script`, consistent with other pkginfo script fields.
 - `check-munki-pkgsinfo` now warns when pkginfo keys removed in Munki 7 are present (`additional_startosinstall_options`, `copy_local`).
 
