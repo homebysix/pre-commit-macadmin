@@ -218,6 +218,8 @@ def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
         "apple_item": bool,
         "autoremove": bool,
         "blocking_applications": list,
+        "blocking_applications_manual_quit_only": bool,
+        "blocking_applications_quit_script": str,
         "catalogs": list,
         "category": str,
         "copy_local": bool,
