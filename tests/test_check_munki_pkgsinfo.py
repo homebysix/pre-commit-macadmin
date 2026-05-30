@@ -284,3 +284,22 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
                 self.assertEqual(ret, 1)
             finally:
                 os.unlink(filename)
+
+    def test_blocking_applications_quit_script_with_invalid_shebang_returns_one(self):
+        pkginfo = {
+            "description": "desc",
+            "name": "foo",
+            "version": "1.0",
+            "category": "Utilities",
+            "catalogs": ["testing"],
+            "installer_item_location": "foo.pkg",
+            "uninstaller_item_location": "foo_un.pkg",
+            "blocking_applications_quit_script": "echo hi",
+        }
+        filename = self.make_pkginfo_file(pkginfo)
+        try:
+            argv = [filename]
+            ret = target.main(argv)
+            self.assertEqual(ret, 1)
+        finally:
+            os.unlink(filename)

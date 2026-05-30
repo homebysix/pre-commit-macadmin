@@ -253,6 +253,7 @@ def main(argv: list[str] | None = None) -> int:
         # Ensure all pkginfo scripts have a proper shebang.
         script_types = (
             "installcheck_script",
+            "blocking_applications_quit_script",
             "uninstallcheck_script",
             "postinstall_script",
             "postuninstall_script",
