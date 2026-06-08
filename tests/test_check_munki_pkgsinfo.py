@@ -260,24 +260,6 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
         finally:
             os.unlink(filename)
 
-    def test_duplicate_import_returns_one(self):
-        pkginfo = {
-            "description": "desc",
-            "name": "foo",
-            "version": "1.0",
-            "category": "Utilities",
-            "catalogs": ["testing"],
-            "installer_item_location": "foo__1.pkg",
-            "uninstaller_item_location": "foo_un__1.pkg",
-        }
-        filename = self.make_pkginfo_file(pkginfo)
-        try:
-            argv = [filename]
-            ret = target.main(argv)
-            self.assertEqual(ret, 1)
-        finally:
-            os.unlink(filename)
-
     def test_require_pkg_blocking_apps_missing_returns_one(self):
         pkginfo = {
             "description": "desc",

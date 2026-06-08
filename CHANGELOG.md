@@ -24,6 +24,10 @@ All notable changes to this project will be documented in this file. This projec
 
 - `check-munki-pkgsinfo` warning messages for removed `installer_type` and `uninstall_method` values now say "removed in Munki 7" instead of "deprecated".
 
+### Removed
+
+- Removed the "may be a duplicate import" check from `check-munki-pkgsinfo`, along with its `--warn-on-duplicate-imports` flag.
+
 ## [1.24.1] - 2026-04-12
 
 ### Changed

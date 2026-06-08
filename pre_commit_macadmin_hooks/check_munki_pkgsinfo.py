@@ -56,12 +56,6 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default=False,
     )
     parser.add_argument(
-        "--warn-on-duplicate-imports",
-        help="If added, this will only warn if pkginfo/pkg files end with a __1 suffix.",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
         "--valid-shebangs",
         nargs="+",
         default=[],
@@ -90,10 +84,6 @@ def _check_case_sensitive_path(path: str) -> bool:
 
 def main(argv: list[str] | None = None) -> int:
     """Main process."""
-
-    # Typical extensions for installer packages.
-    pkg_exts = ("pkg", "dmg")
-    dupe_suffixes = [f"__{i}.{ext}" for ext in pkg_exts for i in range(1, 9)]
 
     # RestartAction values that obviate the need to check blocking applications.
     blocking_actions = ("RequireRestart", "RequireShutdown", "RequireLogout")
@@ -225,18 +215,6 @@ def main(argv: list[str] | None = None) -> int:
 
                 msg = f"{i_type} item does not exist or path is not case sensitive"
                 if args.warn_on_missing_installer_items:
-                    print(f"{filename}: WARNING: {msg}")
-                else:
-                    print(f"{filename}: {msg}")
-                    retval = 1
-
-            # Check for pkg filenames showing signs of duplicate imports.
-            if pkginfo.get(f"{i_type}_item_location", "").endswith(
-                tuple(dupe_suffixes)
-            ):
-                item_loc = pkginfo[f"{i_type}_item_location"]
-                msg = f"{i_type} item '{item_loc}' may be a duplicate import"
-                if args.warn_on_duplicate_imports:
                     print(f"{filename}: WARNING: {msg}")
                 else:
                     print(f"{filename}: {msg}")
