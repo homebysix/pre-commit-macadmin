@@ -19,9 +19,11 @@ All notable changes to this project will be documented in this file. This projec
 - `check-munki-pkgsinfo` now validates the type of `description_staged` and `display_name_staged` pkginfo keys.
 - `check-munki-pkgsinfo` now validates the shebang of `blocking_applications_quit_script`, consistent with other pkginfo script fields.
 - `check-munki-pkgsinfo` now warns when pkginfo keys removed in Munki 7 are present (`additional_startosinstall_options`, `copy_local`).
+- `check-autopkg-recipes` includes URLDownloaderPython among the list of downloader processors.
 
 ### Changed
 
+- `check-autopkg-recipes` now errors when encountering removed AutoPkg processors, and warns on deprecated processors. As of AutoPkg 3.0.0, CURLDownloader and CURLTextSearcher are removed.
 - `check-munki-pkgsinfo` warning messages for removed `installer_type` and `uninstall_method` values now say "removed in Munki 7" instead of "deprecated".
 
 ### Removed

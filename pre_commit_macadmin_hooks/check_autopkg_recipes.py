@@ -154,7 +154,7 @@ def validate_endofcheckphase(process, filename):
         (
             idx
             for (idx, x) in enumerate(process)
-            if x.get("Processor") in ("URLDownloader", "CURLDownloader")
+            if x.get("Processor") in ("URLDownloader", "URLDownloaderPython")
         ),
         None,
     )
@@ -191,12 +191,9 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     proc_min_versions = {
         "AppDmgVersioner": "0.0",
         "AppPkgCreator": "1.0",
-        "BrewCaskInfoProvider": "0.2.5",
-        # "ChocolateyPackager": "3.0",  # hasn't been merged yet
+        "ChocolateyPackager": "3.0",
         "CodeSignatureVerifier": "0.3.1",
         "Copier": "0.0",
-        "CURLDownloader": "0.5.1",
-        "CURLTextSearcher": "0.5.1",
         "DeprecationWarning": "1.1",
         "DmgCreator": "0.0",
         "DmgMounter": "0.0",
@@ -263,17 +260,28 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
 
 
 def validate_no_deprecated_procs(process, filename):
-    """Warn if any deprecated processors are used."""
+    """Error on removed processors; warn on deprecated ones."""
 
-    # Processors that have been deprecated.
-    deprecated_procs = ("CURLDownloader", "BrewCaskInfoProvider")
+    # Processors removed from AutoPkg core (recipes using them will break).
+    removed_procs = {
+        "BrewCaskInfoProvider": "2.9.0",
+        "CURLDownloader": "3.0.0",
+        "CURLTextSearcher": "3.0.0",
+    }
+
+    # Processors deprecated but not yet removed.
+    deprecated_procs: tuple[str, ...] = ()
 
     passed = True
     for proc in process:
-        if proc.get("Processor") in deprecated_procs:
+        name = proc.get("Processor")
+        if name in removed_procs:
             print(
-                f'{filename}: WARNING: Deprecated processor {proc.get("Processor")} is used.'
+                f"{filename}: Processor {name} was removed in AutoPkg {removed_procs[name]}."
             )
+            passed = False
+        elif name in deprecated_procs:
+            print(f"{filename}: WARNING: Deprecated processor {name} is used.")
 
     return passed
 
@@ -399,7 +407,6 @@ def validate_proc_type_conventions(process, filename):
             "GitHubReleasesInfoProvider",
             "URLDownloader",
             "URLDownloaderPython",
-            "CURLDownloader",
             "EndOfCheckPhase",
         ],
         ("munki",): [
@@ -555,8 +562,8 @@ def validate_proc_args(process, filename):
                 continue
 
             suggestion = (
-                "Consider using the VariablePlaceholder processor for adding custom environment variables:\n"
-                "https://derflounder.wordpress.com/2024/08/16/setting-custom-variables-in-autopkg-using-the-variableplaceholder-processor/"
+                "Consider using the VariableSetter processor (AutoPkg 2.9.0+) to set "
+                "custom environment variables."
             )
             if not core_procs[proc["Processor"]]:
                 print(
