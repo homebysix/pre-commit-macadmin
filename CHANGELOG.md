@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.25.0] - 2026-06-08
+
 ### Added
 
 - New `format-autopkg-yaml-recipes` hook that tidies AutoPkg YAML recipes by reordering keys and normalizing spacing. Adapted from @grahampugh's [plist-yaml-plist](https://github.com/grahampugh/plist-yaml-plist).
@@ -492,7 +496,8 @@ All notable changes to this project will be documented in this file. This projec
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.24.1...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.25.0...HEAD
+[1.25.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.24.1...v1.25.0
 [1.24.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.23.0...v1.24.0
 [1.23.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.22.0...v1.23.0
