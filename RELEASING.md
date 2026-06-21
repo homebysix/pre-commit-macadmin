@@ -8,6 +8,13 @@ Releases are largely automated via GitHub Actions. The workflow triggers when `s
 
         .venv/bin/python -m coverage run -m unittest discover -vs tests
 
+1. Update the generated AutoPkg processor version table from a local AutoPkg checkout:
+
+        .venv/bin/python scripts/generate_autopkg_processor_versions.py --autopkg-repo ../autopkg
+        .venv/bin/python -m coverage run -m unittest discover -vs tests
+
+   Use `--full` when the generator logic changes, historical AutoPkg tags are added or corrected, or you need to rebuild from AutoPkg `0.1.0`. The default mode appends stable releases newer than the checked-in `last_walked_version`.
+
 1. Prepare CHANGELOG.md for release by moving `[Unreleased]` changes to a new version section:
 
         ## [Unreleased]

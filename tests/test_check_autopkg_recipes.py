@@ -135,7 +135,7 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             )
         self.assertFalse(result)
         mock_print.assert_called_with(
-            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0"
+            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0.0"
         )
 
     def test_validate_minimumversion_passes(self):
@@ -143,13 +143,67 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
         result = target.validate_minimumversion(process, "1.0", "1.0", "file.recipe")
         self.assertTrue(result)
 
-    def test_validate_no_deprecated_procs_warns(self):
+    def test_validate_minimumversion_checks_processor_arguments(self):
+        process = [
+            {
+                "Processor": "SparkleUpdateInfoProvider",
+                "Arguments": {"urlencode_path_component": True},
+            }
+        ]
+        with mock.patch("builtins.print") as mock_print:
+            result = target.validate_minimumversion(
+                process, "1.0", "1.0", "file.recipe"
+            )
+        self.assertFalse(result)
+        mock_print.assert_called_with(
+            "file.recipe: SparkleUpdateInfoProvider processor requires minimum AutoPkg version 1.1"
+        )
+
+    def test_validate_minimumversion_unknown_argument_falls_back_to_processor(self):
+        process = [
+            {
+                "Processor": "AppPkgCreator",
+                "Arguments": {"unknown_future_argument": True},
+            }
+        ]
+        with mock.patch("builtins.print") as mock_print:
+            result = target.validate_minimumversion(
+                process, "0.9", "1.0", "file.recipe"
+            )
+        self.assertFalse(result)
+        mock_print.assert_called_with(
+            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0.0"
+        )
+
+    def test_validate_minimumversion_unknown_processor_is_skipped(self):
+        process = [
+            {
+                "Processor": "com.github.example.processors/CustomProcessor",
+                "Arguments": {"urlencode_path_component": True},
+            }
+        ]
+        result = target.validate_minimumversion(
+            process, "0.1.0", "0.1.0", "file.recipe"
+        )
+        self.assertTrue(result)
+
+    def test_validate_minimumversion_ignore_floor_suppresses_argument_requirement(self):
+        process = [
+            {
+                "Processor": "SparkleUpdateInfoProvider",
+                "Arguments": {"urlencode_path_component": True},
+            }
+        ]
+        result = target.validate_minimumversion(process, "1.0", "2.0", "file.recipe")
+        self.assertTrue(result)
+
+    def test_validate_no_deprecated_procs_fails_removed_processor(self):
         process = [{"Processor": "CURLDownloader"}]
         with mock.patch("builtins.print") as mock_print:
             result = target.validate_no_deprecated_procs(process, "file.recipe")
-        self.assertTrue(result)
+        self.assertFalse(result)
         mock_print.assert_called_with(
-            "file.recipe: WARNING: Deprecated processor CURLDownloader is used."
+            "file.recipe: Processor CURLDownloader was removed in AutoPkg 3.0.0."
         )
 
     def test_validate_no_superclass_procs_warns(self):

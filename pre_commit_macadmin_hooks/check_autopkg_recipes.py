@@ -10,6 +10,7 @@ from typing import Any
 
 from packaging.version import Version
 
+from pre_commit_macadmin_hooks.autopkg_processor_versions import PROC_VERSIONS
 from pre_commit_macadmin_hooks.util import (
     detect_deprecated_keys,
     detect_typoed_keys,
@@ -186,56 +187,6 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     """Ensure MinimumVersion is a string and is set appropriately for the
     processors used."""
 
-    # Processors for which a minimum version of AutoPkg is required.
-    # Note: packaging.version.Version considers this True: "1.0" == "1.0.0"
-    proc_min_versions = {
-        "AppDmgVersioner": "0.0",
-        "AppPkgCreator": "1.0",
-        "ChocolateyPackager": "3.0",
-        "CodeSignatureVerifier": "0.3.1",
-        "Copier": "0.0",
-        "DeprecationWarning": "1.1",
-        "DmgCreator": "0.0",
-        "DmgMounter": "0.0",
-        "EndOfCheckPhase": "0.1.0",
-        "FileCreator": "0.0",
-        "FileFinder": "0.2.3",
-        "FileMover": "0.2.9",
-        "FindAndReplace": "2.7.6",
-        "FlatPkgPacker": "0.2.4",
-        "FlatPkgUnpacker": "0.1.0",
-        "GitHubReleasesInfoProvider": "0.5.0",
-        "Installer": "0.4.0",
-        "InstallFromDMG": "0.4.0",
-        "MunkiCatalogBuilder": "0.1.0",
-        "MunkiImporter": "0.1.0",
-        "MunkiInfoCreator": "0.0",
-        "MunkiInstallsItemsCreator": "0.1.0",
-        "MunkiOptionalReceiptEditor": "2.7",
-        "MunkiPkginfoMerger": "0.1.0",
-        "MunkiSetDefaultCatalog": "0.4.2",
-        "PackageRequired": "0.5.1",
-        "PathDeleter": "0.1.0",
-        "PkgCopier": "0.1.0",
-        "PkgCreator": "0.0",
-        "PkgExtractor": "0.1.0",
-        "PkgInfoCreator": "0.0",
-        "PkgPayloadUnpacker": "0.1.0",
-        "PkgRootCreator": "0.0",
-        "PlistEditor": "0.1.0",
-        "PlistReader": "0.2.5",
-        "SignToolVerifier": "2.3",
-        "SparkleUpdateInfoProvider": "0.1.0",
-        "StopProcessingIf": "0.1.0",
-        "Symlinker": "0.1.0",
-        "Unarchiver": "0.1.0",
-        "URLDownloader": "0.0",
-        "URLDownloaderPython": "2.4.1",
-        "URLTextSearcher": "0.2.9",
-        "VariableSetter": "2.9.0",
-        "Versioner": "0.1.0",
-    }
-
     passed = True
 
     # Validate that the MinimumVersion value is a string
@@ -243,18 +194,33 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         print(f"{filename}: MinimumVersion should be a string.")
         passed = False
 
-    # Validate that the MinimumVersion value fits the processors used
-    for proc in [
-        x
-        for x in proc_min_versions
-        if Version(proc_min_versions[x]) >= Version(ignore_min_vers_before)
-    ]:
-        if proc in [x.get("Processor") for x in process]:
-            if Version(str(min_vers)) < Version(proc_min_versions[proc]):
-                print(
-                    f"{filename}: {proc} processor requires minimum AutoPkg version {proc_min_versions[proc]}"
-                )
-                passed = False
+    # Validate that the MinimumVersion value fits the processors and processor
+    # arguments used. Unknown processors and unknown arguments fail open.
+    for proc in process:
+        proc_name = proc.get("Processor")
+        proc_versions = PROC_VERSIONS.get(proc_name)
+        if proc_versions is None:
+            continue
+
+        proc_min_version = proc_versions.get("_introduced_")
+        if proc_min_version is None:
+            continue
+
+        required_version = proc_min_version
+        for arg in proc.get("Arguments", {}):
+            arg_min_version = proc_versions.get(arg)
+            if arg_min_version and Version(arg_min_version) > Version(required_version):
+                required_version = arg_min_version
+
+        if Version(required_version) < Version(ignore_min_vers_before):
+            continue
+
+        if Version(str(min_vers)) < Version(required_version):
+            print(
+                f"{filename}: {proc_name} processor requires minimum AutoPkg "
+                f"version {required_version}"
+            )
+            passed = False
 
     return passed
 

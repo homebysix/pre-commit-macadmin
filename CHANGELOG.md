@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Added
+
+- `check-autopkg-recipes` now validates `MinimumVersion` requirements for core AutoPkg processor arguments using a generated table from AutoPkg release history.
 
 ## [1.25.0] - 2026-06-08
 
