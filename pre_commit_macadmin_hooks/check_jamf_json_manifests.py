@@ -141,7 +141,7 @@ def validate_default(
             actual_type = str
         else:
             actual_type = type(prop["default"])
-        if actual_type != MANIFEST_TYPES.get(type_found) if type_found else None:
+        if type_found and actual_type != MANIFEST_TYPES.get(type_found):
             print(
                 f"{filename}: default value for {name} should be {MANIFEST_TYPES.get(type_found) if type_found else 'Unknown'}, not {type(prop['default'])}"
             )
