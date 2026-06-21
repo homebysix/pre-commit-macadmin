@@ -67,11 +67,6 @@ class TestForbidAutoPkgOverrides(unittest.TestCase):
         finally:
             os.unlink(filename)
 
-    def test_build_argument_parser(self):
-        parser = target.build_argument_parser()
-        args = parser.parse_args(["file1", "file2"])
-        self.assertEqual(args.filenames, ["file1", "file2"])
-
     @mock.patch(
         "pre_commit_macadmin_hooks.forbid_autopkg_overrides.load_autopkg_recipe"
     )

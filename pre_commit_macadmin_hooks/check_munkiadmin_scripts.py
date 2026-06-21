@@ -6,6 +6,12 @@ import os
 
 from pre_commit_macadmin_hooks.util import validate_shebangs
 
+_MA_SCRIPT_PREFIXES = [
+    f"{p}-{a}"
+    for p in ("manifest", "pkginfo", "repository")
+    for a in ("custom", "postopen", "postsave", "presave")
+]
+
 
 def build_argument_parser() -> argparse.ArgumentParser:
     """Build and return the argument parser."""
@@ -35,12 +41,9 @@ def main(argv: list[str] | None = None) -> int:
 
         # Ensure scripts are named properly.
         # https://github.com/hjuutilainen/munkiadmin/blob/4f4e96da1f1c7a4dfe7da59d88f1ef68ee02b8f2/MunkiAdmin/Singletons/MAMunkiRepositoryManager.m#L23
-        prefixes = ["manifest", "pkginfo", "repository"]
-        actions = ["custom", "postopen", "postsave", "presave"]
-        ma_script_prefixes = [f"{p}-{a}" for p in prefixes for a in actions]
         if not any(
             os.path.basename(filename).startswith(prefix)
-            for prefix in ma_script_prefixes
+            for prefix in _MA_SCRIPT_PREFIXES
         ):
             print(f"{filename}: does not start with a valid MunkiAdmin script prefix")
             retval = 1

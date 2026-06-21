@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import itertools
 import json
 import plistlib
 from datetime import datetime
@@ -295,10 +296,8 @@ def validate_shebangs(
     script_content: str, filename: str, addl_shebangs: list[str] | None = None
 ) -> bool:
     """Verifies that scripts begin with a valid shebang."""
-    if addl_shebangs is None:
-        addl_shebangs = []
     passed = True
-    shebangs = BUILTIN_SHEBANGS + addl_shebangs
+    shebangs = itertools.chain(BUILTIN_SHEBANGS, addl_shebangs or [])
     if not any(script_content.startswith(x + "\n") for x in shebangs):
         print(f"{filename}: does not start with a valid shebang")
         passed = False

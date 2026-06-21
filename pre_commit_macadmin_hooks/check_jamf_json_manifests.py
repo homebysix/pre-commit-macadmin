@@ -136,17 +136,16 @@ def validate_default(
     """Ensure that default values have the expected type."""
     passed = True
 
-    for test_key in ("default",):
-        if test_key in prop:
-            if isinstance(prop[test_key], datetime):
-                actual_type = str
-            else:
-                actual_type = type(prop[test_key])
-            if actual_type != MANIFEST_TYPES.get(type_found) if type_found else None:
-                print(
-                    f"{filename}: {test_key} value for {name} should be {MANIFEST_TYPES.get(type_found) if type_found else 'Unknown'}, not {type(prop[test_key])}"
-                )
-                passed = False
+    if "default" in prop:
+        if isinstance(prop["default"], datetime):
+            actual_type = str
+        else:
+            actual_type = type(prop["default"])
+        if actual_type != MANIFEST_TYPES.get(type_found) if type_found else None:
+            print(
+                f"{filename}: default value for {name} should be {MANIFEST_TYPES.get(type_found) if type_found else 'Unknown'}, not {type(prop['default'])}"
+            )
+            passed = False
 
     return passed
 

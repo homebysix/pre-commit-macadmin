@@ -7,6 +7,8 @@ import plistlib
 from pathlib import Path
 from xml.parsers.expat import ExpatError
 
+_BLOCKING_ACTIONS = ("RequireRestart", "RequireShutdown", "RequireLogout")
+
 from pre_commit_macadmin_hooks.util import (
     detect_deprecated_keys,
     detect_typoed_keys,
@@ -77,16 +79,13 @@ def _check_case_sensitive_path(path: str) -> bool:
         if p == p.parent:
             return True
         # If string representation of path is not in parent directory, return False
-        if str(p) not in list(map(str, p.parent.iterdir())):
+        if str(p) not in map(str, p.parent.iterdir()):
             return False
         p = p.parent
 
 
 def main(argv: list[str] | None = None) -> int:
     """Main process."""
-
-    # RestartAction values that obviate the need to check blocking applications.
-    blocking_actions = ("RequireRestart", "RequireShutdown", "RequireLogout")
 
     # Parse command line arguments.
     argparser = build_argument_parser()
@@ -103,10 +102,9 @@ def main(argv: list[str] | None = None) -> int:
             retval = 1
 
         # Check for presence of required pkginfo keys.
-        if args.required_keys:
-            if not validate_required_keys(pkginfo, filename, args.required_keys):
-                retval = 1
-                break  # No need to continue checking this file
+        if not validate_required_keys(pkginfo, filename, args.required_keys):
+            retval = 1
+            break  # No need to continue checking this file
 
         # Ensure pkginfo keys have expected types.
         if not validate_pkginfo_key_types(pkginfo, filename):
@@ -187,13 +185,12 @@ def main(argv: list[str] | None = None) -> int:
 
         # Checking for the absence of blocking_applications for pkg installers.
         # If a pkg doesn't require blocking_applications, use empty "<array/>" in pkginfo.
-        if args.require_pkg_blocking_apps and all(
-            (
-                "blocking_applications" not in pkginfo,
-                pkginfo.get("installer_item_location", "").endswith(".pkg"),
-                pkginfo.get("RestartAction") not in blocking_actions,
-                not pkginfo["name"].startswith("munkitools"),
-            )
+        if (
+            args.require_pkg_blocking_apps
+            and "blocking_applications" not in pkginfo
+            and pkginfo.get("installer_item_location", "").endswith(".pkg")
+            and pkginfo.get("RestartAction") not in _BLOCKING_ACTIONS
+            and not pkginfo["name"].startswith("munkitools")
         ):
             print(
                 f"{filename}: contains a pkg installer but missing a blocking applications array"

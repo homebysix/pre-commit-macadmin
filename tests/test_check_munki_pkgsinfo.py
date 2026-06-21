@@ -69,33 +69,6 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
         finally:
             os.unlink(filename)
 
-    # def test_missing_required_key_returns_one(self):
-    #     # Patch validate_required_keys to return False
-    #     with mock.patch(
-    #         "pre_commit_macadmin_hooks.util.validate_required_keys", return_value=False
-    #     ):
-    #         pkginfo = {
-    #             "name": "foo",
-    #             "version": "1.0",
-    #             "category": "Utilities",
-    #             "catalogs": ["testing"],
-    #             "installer_item_location": "foo.pkg",
-    #             "uninstaller_item_location": "foo_un.pkg",
-    #         }
-    #         filename = self.make_pkginfo_file(pkginfo)
-    #         try:
-    #             argv = [
-    #                 "--categories",
-    #                 "Utilities",
-    #                 "--catalogs",
-    #                 "testing",
-    #                 filename,
-    #             ]
-    #             ret = target.main(argv)
-    #             self.assertEqual(ret, 1)
-    #         finally:
-    #             os.unlink(filename)
-
     def test_plist_parse_error_returns_one(self):
         with tempfile.NamedTemporaryFile("w", delete=False) as tmp:
             tmp.write("not a plist")
@@ -184,42 +157,6 @@ class TestCheckMunkiPkgsinfo(unittest.TestCase):
                 )
         finally:
             os.unlink(filename)
-
-    # def test_rogue_category_returns_one(self):
-    #     pkginfo = {
-    #         "description": "desc",
-    #         "name": "foo",
-    #         "version": "1.0",
-    #         "category": "BadCategory",
-    #         "catalogs": ["testing"],
-    #         "installer_item_location": "foo.pkg",
-    #         "uninstaller_item_location": "foo_un.pkg",
-    #     }
-    #     filename = self.make_pkginfo_file(pkginfo)
-    #     try:
-    #         argv = ["--categories", "Utilities", filename]
-    #         ret = target.main(argv)
-    #         self.assertEqual(ret, 1)
-    #     finally:
-    #         os.unlink(filename)
-
-    # def test_rogue_catalog_returns_one(self):
-    #     pkginfo = {
-    #         "description": "desc",
-    #         "name": "foo",
-    #         "version": "1.0",
-    #         "category": "Utilities",
-    #         "catalogs": ["notapproved"],
-    #         "installer_item_location": "foo.pkg",
-    #         "uninstaller_item_location": "foo_un.pkg",
-    #     }
-    #     filename = self.make_pkginfo_file(pkginfo)
-    #     try:
-    #         argv = ["--catalogs", "testing", filename]
-    #         ret = target.main(argv)
-    #         self.assertEqual(ret, 1)
-    #     finally:
-    #         os.unlink(filename)
 
     def test_missing_icon_returns_one(self):
         # Patch os.path.isfile to return False

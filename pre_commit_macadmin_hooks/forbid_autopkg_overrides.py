@@ -19,9 +19,6 @@ def build_argument_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     """Main process."""
 
-    # Overrides should not contain top-level Process arrays.
-    required_keys = ("Process",)
-
     # Parse command line arguments.
     argparser = build_argument_parser()
     args = argparser.parse_args(argv)
@@ -32,10 +29,10 @@ def main(argv: list[str] | None = None) -> int:
         if not recipe:
             retval = 1
             break  # No need to continue checking this file.
-        for req_key in required_keys:
-            if req_key not in recipe:
-                print(f"{filename}: possible AutoPkg recipe override")
-                retval = 1
+        # Overrides should not contain a top-level Process array.
+        if "Process" not in recipe:
+            print(f"{filename}: possible AutoPkg recipe override")
+            retval = 1
 
     return retval
 

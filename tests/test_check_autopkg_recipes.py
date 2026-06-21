@@ -382,18 +382,9 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
         self.assertTrue(result)
 
     def test_validate_proc_args_valid_arguments_passes(self):
-        # Valid arguments for a core processor should pass
-        # Skip if autopkglib is not available
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        # Mock the AutoPkg library functions
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {"url": {}, "filename": {}}
-
         with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(target, "get_processor", return_value=mock_proc):
+            target, "_CORE_PROCS", {"URLDownloader": {"url": {}, "filename": {}}}
+        ):
             process = [
                 {
                     "Processor": "URLDownloader",
@@ -404,20 +395,9 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             self.assertTrue(result)
 
     def test_validate_proc_args_invalid_argument_fails(self):
-        # Invalid argument for a core processor should fail
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {"url": {}, "filename": {}}
-
         with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(
-            target, "get_processor", return_value=mock_proc
-        ), mock.patch(
-            "builtins.print"
-        ) as mock_print:
+            target, "_CORE_PROCS", {"URLDownloader": {"url": {}, "filename": {}}}
+        ), mock.patch("builtins.print") as mock_print:
             process = [
                 {
                     "Processor": "URLDownloader",
@@ -426,22 +406,14 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             ]
             result = target.validate_proc_args(process, "App.download.recipe")
             self.assertFalse(result)
-            # Check that the error message contains the key info
             calls = mock_print.call_args_list
             self.assertEqual(len(calls), 2)  # Error message + suggestion
             self.assertIn("Unknown argument invalid_arg", str(calls[0]))
 
     def test_validate_proc_args_ignored_arguments_passes(self):
-        # Ignored arguments like "note" should pass
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {"url": {}, "filename": {}}
-
         with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(target, "get_processor", return_value=mock_proc):
+            target, "_CORE_PROCS", {"URLDownloader": {"url": {}, "filename": {}}}
+        ):
             process = [
                 {
                     "Processor": "URLDownloader",
@@ -455,13 +427,7 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             self.assertTrue(result)
 
     def test_validate_proc_args_non_core_processor_passes(self):
-        # Non-core processors should be skipped
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(target, "get_processor", return_value=mock.Mock()):
+        with mock.patch.object(target, "_CORE_PROCS", {"URLDownloader": {}}):
             process = [
                 {
                     "Processor": "com.github.custom.CustomProcessor",
@@ -472,20 +438,9 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             self.assertTrue(result)
 
     def test_validate_proc_args_processor_with_no_args_fails(self):
-        # Processor that doesn't accept arguments but receives one should fail
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {}  # No input variables
-
         with mock.patch.object(
-            target, "processor_names", return_value=["StopProcessingIf"]
-        ), mock.patch.object(
-            target, "get_processor", return_value=mock_proc
-        ), mock.patch(
-            "builtins.print"
-        ) as mock_print:
+            target, "_CORE_PROCS", {"StopProcessingIf": {}}
+        ), mock.patch("builtins.print") as mock_print:
             process = [
                 {
                     "Processor": "StopProcessingIf",
