@@ -356,9 +356,9 @@ _PROC_TYPE_CONVENTIONS = {
     ("pkg",): ["AppPkgCreator", "PkgCreator"],
     ("install",): ["InstallFromDMG", "Installer"],
     # https://github.com/jssimporter/JSSImporter
-    ("jss",): ["JSSImporter"],
+    ("jss", "jss-upload"): ["JSSImporter"],
     # https://github.com/grahampugh/jamf-upload
-    ("jamf", "jamf-upload"): [
+    ("jamf", "jamf-upload", "jamfclirunner"): [
         "com.github.grahampugh.jamf-upload.processors/JamfAccountUploader",
         "com.github.grahampugh.jamf-upload.processors/JamfCategoryUploader",
         "com.github.grahampugh.jamf-upload.processors/JamfClassicAPIObjectUploader",
@@ -384,6 +384,8 @@ _PROC_TYPE_CONVENTIONS = {
         "com.github.grahampugh.jamf-upload.processors/JamfSoftwareRestrictionUploader",
         "com.github.grahampugh.jamf-upload.processors/JamfUploaderSlacker",
         "com.github.grahampugh.jamf-upload.processors/JamfUploaderTeamsNotifier",
+        # https://github.com/grahampugh/recipes (JamfCLIRunner)
+        "com.github.grahampugh.recipes.JamfCLIRunner",
     ],
     # https://github.com/autopkg/filewave
     ("filewave",): [
@@ -392,6 +394,17 @@ _PROC_TYPE_CONVENTIONS = {
         "com.github.autopkg.filewave.FWTool/FWTool",
     ],
     ("verify",): ["com.github.n8felton.shared/GPGSignatureVerifier"],
+    # https://github.com/almenscorner/intune-upload
+    ("intune",): [
+        "com.github.almenscorner.intune-upload.processors/IntuneAppUploader",
+        "com.github.almenscorner.intune-upload.processors/IntuneAppIconGetter",
+    ],
+    # https://github.com/fleetdm/fleet
+    ("fleet",): ["com.github.fleet.FleetImporter/FleetImporter"],
+    # https://github.com/codeskipper/WorkSpaceOneImporter
+    ("ws1",): [
+        "com.github.codeskipper.VMWARE-WorkSpaceOneImporter/WorkSpaceOneImporter"
+    ],
 }
 
 _ALL_KNOWN_RECIPE_TYPES = [

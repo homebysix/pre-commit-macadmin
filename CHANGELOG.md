@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file. This projec
 
 - `check-autopkg-recipes` now validates `MinimumVersion` requirements for core AutoPkg processor arguments using a generated table from AutoPkg release history.
 - `check-autopkg-recipes` now also validates deprecated and removed core processors dynamically from the generated table.
+- `check-autopkg-recipes` now recognizes `intune`, `fleet`, `ws1`, and `jamfclirunner` as known recipe types in processor convention checks (strict mode), and groups `jss-upload` with `jss`.
 
 ### Changed
 
