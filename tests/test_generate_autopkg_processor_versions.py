@@ -33,6 +33,7 @@ class TestGenerateAutoPkgProcessorVersions(unittest.TestCase):
         class_name,
         args,
         introduced=None,
+        deprecated=None,
     ):
         path = repo / relative_path
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -40,8 +41,13 @@ class TestGenerateAutoPkgProcessorVersions(unittest.TestCase):
             f'        "{arg}": {{"required": False}},' for arg in args
         )
         lifecycle_line = []
+        lifecycle_items = []
         if introduced:
-            lifecycle_line = [f'    lifecycle = {{"introduced": "{introduced}"}}']
+            lifecycle_items.append(f'"introduced": "{introduced}"')
+        if deprecated:
+            lifecycle_items.append(f'"deprecated": "{deprecated}"')
+        if lifecycle_items:
+            lifecycle_line = [f"    lifecycle = {{{', '.join(lifecycle_items)}}}"]
         path.write_text(
             "\n".join(
                 [
@@ -146,8 +152,147 @@ class TestGenerateAutoPkgProcessorVersions(unittest.TestCase):
         self.assertEqual(
             warnings,
             [
-                "ExampleProcessor: overriding git first-seen 0.1.0 "
+                "ExampleProcessor: overriding _introduced_ 0.1.0 "
                 "with lifecycle introduced 1.0.0"
+            ],
+        )
+
+    def test_lifecycle_deprecated_is_extracted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            repo = self.init_repo(tmp_path)
+            output_path = tmp_path / "autopkg_processor_versions.py"
+
+            self.write_processor(
+                repo,
+                "Code/autopkglib/ExampleProcessor.py",
+                "ExampleProcessor",
+                ["url"],
+                introduced="0.1.0",
+                deprecated="1.0.0",
+            )
+            self.commit(repo, "Add deprecated processor")
+            self.run_git(repo, "tag", "v0.1.0")
+
+            generated = self.generate_text(repo, output_path)
+
+        self.assertIn('"_introduced_": "0.1.0"', generated)
+        self.assertIn('"_deprecated_": "1.0.0"', generated)
+
+    def test_processor_disappearance_creates_removed_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            repo = self.init_repo(tmp_path)
+            output_path = tmp_path / "autopkg_processor_versions.py"
+
+            processor_path = "Code/autopkglib/ExampleProcessor.py"
+            self.write_processor(
+                repo,
+                processor_path,
+                "ExampleProcessor",
+                ["url"],
+            )
+            self.commit(repo, "Add processor")
+            self.run_git(repo, "tag", "v0.1.0")
+
+            (repo / processor_path).unlink()
+            self.commit(repo, "Remove processor")
+            self.run_git(repo, "tag", "v1.0.0")
+
+            generated = self.generate_text(repo, output_path)
+
+        self.assertIn('"ExampleProcessor": {', generated)
+        self.assertIn('"_removed_": "1.0.0"', generated)
+
+    def test_exported_alias_counts_as_processor_presence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            repo = self.init_repo(tmp_path)
+            output_path = tmp_path / "autopkg_processor_versions.py"
+
+            self.write_processor(
+                repo,
+                "Code/autopkglib/TargetProcessor.py",
+                "TargetProcessor",
+                ["url"],
+            )
+            self.write_processor(
+                repo,
+                "Code/autopkglib/LegacyProcessor.py",
+                "LegacyProcessor",
+                ["url"],
+            )
+            self.commit(repo, "Add processors")
+            self.run_git(repo, "tag", "v0.1.0")
+
+            alias_path = repo / "Code/autopkglib/LegacyProcessor.py"
+            alias_path.write_text(
+                "\n".join(
+                    [
+                        "from autopkglib.TargetProcessor import TargetProcessor",
+                        "",
+                        '__all__ = ["LegacyProcessor"]',
+                        "LegacyProcessor = TargetProcessor",
+                        "",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            self.commit(repo, "Replace processor with compatibility alias")
+            self.run_git(repo, "tag", "v1.0.0")
+
+            generated = self.generate_text(repo, output_path)
+
+        self.assertIn('"LegacyProcessor": {', generated)
+        self.assertNotIn('"_removed_"', generated)
+
+    def test_processor_reappearance_warns_and_clears_removed_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            repo = self.init_repo(tmp_path)
+            output_path = tmp_path / "autopkg_processor_versions.py"
+
+            processor_path = "Code/autopkglib/ExampleProcessor.py"
+            self.write_processor(
+                repo,
+                processor_path,
+                "ExampleProcessor",
+                ["url"],
+            )
+            self.commit(repo, "Add processor")
+            self.run_git(repo, "tag", "v0.1.0")
+
+            (repo / processor_path).unlink()
+            self.commit(repo, "Remove processor")
+            self.run_git(repo, "tag", "v1.0.0")
+
+            self.write_processor(
+                repo,
+                processor_path,
+                "ExampleProcessor",
+                ["url"],
+            )
+            self.commit(repo, "Re-add processor")
+            self.run_git(repo, "tag", "v1.1.0")
+
+            args = argparse.Namespace(
+                autopkg_repo=str(repo),
+                output=str(output_path),
+                baseline_ref=None,
+                include_prereleases=False,
+                full=True,
+                incremental=False,
+                check=False,
+            )
+            generated, warnings = generator.generate(args)
+
+        self.assertIn('"ExampleProcessor": {', generated)
+        self.assertNotIn('"_removed_"', generated)
+        self.assertEqual(
+            warnings,
+            [
+                "ExampleProcessor: processor reappeared in 1.1.0 "
+                "after being absent since 1.0.0"
             ],
         )
 
@@ -216,7 +361,24 @@ class TestGenerateAutoPkgProcessorVersions(unittest.TestCase):
         self.assertEqual(list(PROC_VERSIONS), sorted(PROC_VERSIONS))
         for versions in PROC_VERSIONS.values():
             self.assertEqual(next(iter(versions)), "_introduced_")
-            argument_keys = [key for key in versions if key != "_introduced_"]
+            metadata_keys = [
+                key
+                for key in versions
+                if key in {"_introduced_", "_deprecated_", "_removed_"}
+            ]
+            self.assertEqual(
+                metadata_keys,
+                [
+                    key
+                    for key in ("_introduced_", "_deprecated_", "_removed_")
+                    if key in versions
+                ],
+            )
+            argument_keys = [
+                key
+                for key in versions
+                if key not in {"_introduced_", "_deprecated_", "_removed_"}
+            ]
             self.assertEqual(argument_keys, sorted(argument_keys))
 
 

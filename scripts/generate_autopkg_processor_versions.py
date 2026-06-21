@@ -17,9 +17,20 @@ from typing import Any
 
 from packaging.version import InvalidVersion, Version
 
-GENERATOR_VERSION = 1
+GENERATOR_VERSION = 2
 SOURCE_URL = "https://github.com/autopkg/autopkg"
 INTRODUCED_KEY = "_introduced_"
+DEPRECATED_KEY = "_deprecated_"
+REMOVED_KEY = "_removed_"
+METADATA_KEYS = {INTRODUCED_KEY, DEPRECATED_KEY, REMOVED_KEY}
+MANUAL_VERSION_OVERRIDES = {
+    # The local AutoPkg history available to this generator may not include a
+    # stable v3.0.0 tag, but this repo already treated these compatibility
+    # wrappers as removed in AutoPkg 3.0.0. Keep the correction in generated
+    # data instead of a separate runtime table.
+    "CURLDownloader": {REMOVED_KEY: "3.0.0"},
+    "CURLTextSearcher": {REMOVED_KEY: "3.0.0"},
+}
 DEFAULT_OUTPUT = (
     Path(__file__).resolve().parents[1]
     / "pre_commit_macadmin_hooks"
@@ -39,6 +50,7 @@ class ProcessorInfo:
     bases: set[str]
     defines_input_variables: bool = False
     lifecycle_introduced: str | None = None
+    lifecycle_deprecated: str | None = None
 
 
 def git(repo: Path, *args: str, check: bool = True) -> str:
@@ -131,6 +143,23 @@ def ast_processor_info(source: str) -> dict[str, ProcessorInfo]:
 
     tree = ast.parse(source)
     processors: dict[str, ProcessorInfo] = {}
+    exported_names: set[str] = set()
+    aliases: dict[str, str] = {}
+
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name) and target.id == "__all__":
+                if isinstance(node.value, (ast.List, ast.Tuple)):
+                    exported_names.update(
+                        name
+                        for item in node.value.elts
+                        if (name := literal_string(item)) is not None
+                    )
+            elif isinstance(target, ast.Name) and (value_name := ast_name(node.value)):
+                aliases[target.id] = value_name
+
     for node in tree.body:
         if not isinstance(node, ast.ClassDef) or node.name == "Processor":
             continue
@@ -139,6 +168,7 @@ def ast_processor_info(source: str) -> dict[str, ProcessorInfo]:
         args: set[str] = set()
         bases = {base_name for base in node.bases if (base_name := ast_name(base))}
         lifecycle_introduced: str | None = None
+        lifecycle_deprecated: str | None = None
 
         for item in node.body:
             target_name = None
@@ -164,13 +194,23 @@ def ast_processor_info(source: str) -> dict[str, ProcessorInfo]:
                 for key, lifecycle_value in zip(value.keys, value.values):
                     if literal_string(key) == "introduced":
                         lifecycle_introduced = literal_string(lifecycle_value)
+                    elif literal_string(key) == "deprecated":
+                        lifecycle_deprecated = literal_string(lifecycle_value)
 
         processors[node.name] = ProcessorInfo(
             args,
             bases,
             input_variables_seen,
             lifecycle_introduced,
+            lifecycle_deprecated,
         )
+
+    for alias_name, target_name in aliases.items():
+        if alias_name in processors:
+            continue
+        if exported_names and alias_name not in exported_names:
+            continue
+        processors[alias_name] = ProcessorInfo(set(), {target_name})
 
     return processors
 
@@ -271,16 +311,22 @@ def string_keys_at_top_dict_level(dict_source: str) -> set[str]:
     return keys
 
 
-def introduced_version_from_lifecycle(dict_source: str) -> str | None:
-    """Return lifecycle['introduced'] from a literal dict, if present."""
+def versions_from_lifecycle(dict_source: str) -> tuple[str | None, str | None]:
+    """Return lifecycle introduced/deprecated versions from a literal dict."""
 
     try:
         value = ast.literal_eval(dict_source)
     except (SyntaxError, ValueError):
-        return None
-    if isinstance(value, dict) and isinstance(value.get("introduced"), str):
-        return value["introduced"]
-    return None
+        return None, None
+    if not isinstance(value, dict):
+        return None, None
+
+    introduced = value.get("introduced")
+    deprecated = value.get("deprecated")
+    return (
+        introduced if isinstance(introduced, str) else None,
+        deprecated if isinstance(deprecated, str) else None,
+    )
 
 
 def fallback_processor_info(source: str) -> dict[str, ProcessorInfo]:
@@ -313,14 +359,15 @@ def fallback_processor_info(source: str) -> dict[str, ProcessorInfo]:
         args = (
             string_keys_at_top_dict_level(input_variables) if input_variables else set()
         )
-        lifecycle_introduced = (
-            introduced_version_from_lifecycle(lifecycle) if lifecycle else None
+        lifecycle_introduced, lifecycle_deprecated = (
+            versions_from_lifecycle(lifecycle) if lifecycle else (None, None)
         )
         processors[class_name] = ProcessorInfo(
             args,
             bases,
             input_variables is not None,
             lifecycle_introduced,
+            lifecycle_deprecated,
         )
 
     return processors
@@ -393,91 +440,175 @@ def scan_release(autopkg_repo: Path, release: Release) -> dict[str, ProcessorInf
 
 
 def compact_argument_versions(
-    proc_min_versions: dict[str, str], proc_arg_min_versions: dict[str, dict[str, str]]
+    processor_versions: dict[str, dict[str, str]],
 ) -> dict[str, dict[str, str]]:
     compacted: dict[str, dict[str, str]] = {}
-    for proc_name, arg_versions in proc_arg_min_versions.items():
-        proc_version = proc_min_versions.get(proc_name)
-        if proc_version is None:
+    for proc_name, versions in processor_versions.items():
+        introduced_version = versions.get(INTRODUCED_KEY)
+        if introduced_version is None:
             continue
-        newer_args = {
-            arg: version
-            for arg, version in arg_versions.items()
-            if Version(version) > Version(proc_version)
+
+        compacted_versions = {
+            key: value for key, value in versions.items() if key in METADATA_KEYS
         }
-        if newer_args:
-            compacted[proc_name] = newer_args
+        for arg, version in versions.items():
+            if arg in METADATA_KEYS:
+                continue
+            if Version(version) > Version(introduced_version):
+                compacted_versions[arg] = version
+
+        compacted[proc_name] = compacted_versions
     return compacted
+
+
+def lifecycle_version_is_valid(
+    proc_name: str,
+    lifecycle_key: str,
+    version: str,
+    release: Release,
+    warnings: list[str],
+) -> bool:
+    try:
+        Version(version)
+    except InvalidVersion:
+        warnings.append(
+            f"{proc_name}: lifecycle {lifecycle_key} version {version!r} "
+            f"from {release.ref} is invalid"
+        )
+        return False
+    return True
+
+
+def apply_lifecycle_version(
+    versions: dict[str, str],
+    proc_name: str,
+    metadata_key: str,
+    lifecycle_key: str,
+    lifecycle_version: str,
+    release: Release,
+    warnings: list[str],
+    warnings_seen: set[tuple[str, str, str, str]],
+) -> None:
+    if not lifecycle_version_is_valid(
+        proc_name, lifecycle_key, lifecycle_version, release, warnings
+    ):
+        return
+
+    existing_version = versions.get(metadata_key)
+    if existing_version is not None and Version(existing_version) != Version(
+        lifecycle_version
+    ):
+        warning_key = (
+            proc_name,
+            lifecycle_key,
+            existing_version,
+            lifecycle_version,
+        )
+        if warning_key not in warnings_seen:
+            warnings_seen.add(warning_key)
+            warnings.append(
+                f"{proc_name}: overriding {metadata_key} {existing_version} "
+                f"with lifecycle {lifecycle_key} {lifecycle_version}"
+            )
+
+    versions[metadata_key] = lifecycle_version
+
+
+def apply_manual_overrides(
+    processor_versions: dict[str, dict[str, str]],
+    warnings: list[str],
+) -> None:
+    for proc_name, overrides in MANUAL_VERSION_OVERRIDES.items():
+        versions = processor_versions.get(proc_name)
+        if versions is None:
+            continue
+        for key, version in overrides.items():
+            existing_version = versions.get(key)
+            if existing_version is not None and Version(existing_version) != Version(
+                version
+            ):
+                warnings.append(
+                    f"{proc_name}: overriding {key} {existing_version} "
+                    f"with manual override {version}"
+                )
+            versions[key] = version
 
 
 def scan_releases(
     autopkg_repo: Path,
     releases: list[Release],
-    proc_min_versions: dict[str, str] | None = None,
-    proc_arg_min_versions: dict[str, dict[str, str]] | None = None,
-) -> tuple[dict[str, str], dict[str, dict[str, str]], list[str]]:
-    """Scan releases and return processor versions, argument versions, warnings."""
+    processor_versions: dict[str, dict[str, str]] | None = None,
+) -> tuple[dict[str, dict[str, str]], list[str]]:
+    """Scan releases and return processor version metadata and warnings."""
 
-    proc_min_versions = dict(proc_min_versions or {})
-    proc_arg_min_versions = {
-        proc: dict(arg_versions)
-        for proc, arg_versions in (proc_arg_min_versions or {}).items()
+    processor_versions = {
+        proc: dict(versions) for proc, versions in (processor_versions or {}).items()
     }
     warnings: list[str] = []
-    lifecycle_warnings_seen: set[tuple[str, str, str]] = set()
+    lifecycle_warnings_seen: set[tuple[str, str, str, str]] = set()
+    reappearance_warnings_seen: set[tuple[str, str, str]] = set()
+    active_processors = {
+        proc_name
+        for proc_name, versions in processor_versions.items()
+        if INTRODUCED_KEY in versions and REMOVED_KEY not in versions
+    }
 
     for release in releases:
         release_processors = scan_release(autopkg_repo, release)
+        release_processor_names = set(release_processors)
+
+        for proc_name in sorted(active_processors - release_processor_names):
+            processor_versions[proc_name][REMOVED_KEY] = release.version
+            active_processors.remove(proc_name)
+
         for proc_name, info in sorted(release_processors.items()):
-            proc_min_versions.setdefault(proc_name, release.version)
-            if info.lifecycle_introduced:
-                first_seen = proc_min_versions[proc_name]
-                if Version(info.lifecycle_introduced) != Version(first_seen):
-                    warning_key = (proc_name, first_seen, info.lifecycle_introduced)
-                    if warning_key not in lifecycle_warnings_seen:
-                        lifecycle_warnings_seen.add(warning_key)
-                        warnings.append(
-                            f"{proc_name}: overriding git first-seen {first_seen} "
-                            f"with lifecycle introduced {info.lifecycle_introduced}"
-                        )
-                    proc_min_versions[proc_name] = str(
-                        Version(info.lifecycle_introduced)
+            versions = processor_versions.setdefault(proc_name, {})
+            if REMOVED_KEY in versions:
+                warning_key = (proc_name, versions[REMOVED_KEY], release.version)
+                if warning_key not in reappearance_warnings_seen:
+                    reappearance_warnings_seen.add(warning_key)
+                    warnings.append(
+                        f"{proc_name}: processor reappeared in {release.version} "
+                        f"after being absent since {versions[REMOVED_KEY]}"
                     )
+                versions.pop(REMOVED_KEY, None)
 
-            arg_versions = proc_arg_min_versions.setdefault(proc_name, {})
+            versions.setdefault(INTRODUCED_KEY, release.version)
+            if info.lifecycle_introduced:
+                apply_lifecycle_version(
+                    versions,
+                    proc_name,
+                    INTRODUCED_KEY,
+                    "introduced",
+                    info.lifecycle_introduced,
+                    release,
+                    warnings,
+                    lifecycle_warnings_seen,
+                )
+            if info.lifecycle_deprecated:
+                apply_lifecycle_version(
+                    versions,
+                    proc_name,
+                    DEPRECATED_KEY,
+                    "deprecated",
+                    info.lifecycle_deprecated,
+                    release,
+                    warnings,
+                    lifecycle_warnings_seen,
+                )
+
             for arg in sorted(info.args):
-                arg_versions.setdefault(arg, release.version)
+                versions.setdefault(arg, release.version)
+            active_processors.add(proc_name)
 
-    return (
-        proc_min_versions,
-        compact_argument_versions(proc_min_versions, proc_arg_min_versions),
-        warnings,
-    )
-
-
-def split_processor_versions(
-    processor_versions: dict[str, dict[str, str]],
-) -> tuple[dict[str, str], dict[str, dict[str, str]]]:
-    proc_min_versions: dict[str, str] = {}
-    proc_arg_min_versions: dict[str, dict[str, str]] = {}
-    for proc_name, versions in processor_versions.items():
-        introduced_version = versions.get(INTRODUCED_KEY)
-        if introduced_version is None:
-            continue
-        proc_min_versions[proc_name] = introduced_version
-        arg_versions = {
-            key: version for key, version in versions.items() if key != INTRODUCED_KEY
-        }
-        if arg_versions:
-            proc_arg_min_versions[proc_name] = arg_versions
-    return proc_min_versions, proc_arg_min_versions
+    return compact_argument_versions(processor_versions), warnings
 
 
 def load_existing_data(
     output_path: Path,
-) -> tuple[dict[str, str], dict[str, dict[str, str]], dict[str, Any]]:
+) -> tuple[dict[str, dict[str, str]], dict[str, Any]]:
     if not output_path.exists():
-        return {}, {}, {}
+        return {}, {}
 
     spec = importlib.util.spec_from_file_location(
         "_autopkg_processor_versions", output_path
@@ -487,31 +618,27 @@ def load_existing_data(
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
 
-    proc_min_versions, proc_arg_min_versions = split_processor_versions(
+    return (
         {
             proc: dict(versions)
             for proc, versions in getattr(module, "PROC_VERSIONS", {}).items()
-        }
-    )
-
-    return (
-        proc_min_versions,
-        proc_arg_min_versions,
+        },
         dict(getattr(module, "GENERATION_METADATA", {})),
     )
 
 
 def format_processor_versions(
-    proc_min_versions: dict[str, str],
-    proc_arg_min_versions: dict[str, dict[str, str]],
+    processor_versions: dict[str, dict[str, str]],
 ) -> list[str]:
     lines = ["PROC_VERSIONS = {"]
-    for proc_name in sorted(proc_min_versions):
+    for proc_name in sorted(processor_versions):
         lines.append(f'    "{proc_name}": {{')
-        introduced_version = proc_min_versions[proc_name]
-        lines.append(f'        "{INTRODUCED_KEY}": "{introduced_version}",')
-        for key in sorted(proc_arg_min_versions.get(proc_name, {})):
-            lines.append(f'        "{key}": "{proc_arg_min_versions[proc_name][key]}",')
+        versions = processor_versions[proc_name]
+        for key in (INTRODUCED_KEY, DEPRECATED_KEY, REMOVED_KEY):
+            if key in versions:
+                lines.append(f'        "{key}": "{versions[key]}",')
+        for key in sorted(key for key in versions if key not in METADATA_KEYS):
+            lines.append(f'        "{key}": "{versions[key]}",')
         lines.append("    },")
     lines.append("}")
     return lines
@@ -532,15 +659,14 @@ def format_metadata(metadata: dict[str, Any]) -> list[str]:
 
 
 def render_module(
-    proc_min_versions: dict[str, str],
-    proc_arg_min_versions: dict[str, dict[str, str]],
+    processor_versions: dict[str, dict[str, str]],
     metadata: dict[str, Any],
 ) -> str:
     lines = [
         "# This file is generated by scripts/generate_autopkg_processor_versions.py.",
         "# Do not edit it by hand.",
         "",
-        *format_processor_versions(proc_min_versions, proc_arg_min_versions),
+        *format_processor_versions(processor_versions),
         "",
         *format_metadata(metadata),
         "",
@@ -553,6 +679,8 @@ def generation_mode(args: argparse.Namespace, metadata: dict[str, Any]) -> str:
         return "full"
     if args.incremental:
         return "incremental"
+    if metadata.get("generator_version") != GENERATOR_VERSION:
+        return "full"
     if metadata.get("last_walked_version"):
         return "incremental"
     return "full"
@@ -561,9 +689,7 @@ def generation_mode(args: argparse.Namespace, metadata: dict[str, Any]) -> str:
 def generate(args: argparse.Namespace) -> tuple[str, list[str]]:
     autopkg_repo = Path(args.autopkg_repo).expanduser().resolve()
     output_path = Path(args.output).expanduser().resolve()
-    existing_proc_versions, existing_arg_versions, existing_metadata = (
-        load_existing_data(output_path)
-    )
+    existing_proc_versions, existing_metadata = load_existing_data(output_path)
     mode = generation_mode(args, existing_metadata)
 
     releases = public_releases(
@@ -584,18 +710,16 @@ def generate(args: argparse.Namespace) -> tuple[str, list[str]]:
             if Version(release.version) > Version(str(last_walked))
         ]
         proc_versions = existing_proc_versions
-        arg_versions = existing_arg_versions
     else:
         releases_to_scan = releases
         proc_versions = {}
-        arg_versions = {}
 
-    proc_versions, arg_versions, warnings = scan_releases(
+    proc_versions, warnings = scan_releases(
         autopkg_repo,
         releases_to_scan,
         proc_versions,
-        arg_versions,
     )
+    apply_manual_overrides(proc_versions, warnings)
 
     if releases_to_scan:
         last_release = releases_to_scan[-1]
@@ -611,7 +735,7 @@ def generate(args: argparse.Namespace) -> tuple[str, list[str]]:
         "last_walked_version": last_walked_version,
         "source": SOURCE_URL,
     }
-    return render_module(proc_versions, arg_versions, metadata), warnings
+    return render_module(proc_versions, metadata), warnings
 
 
 def build_argument_parser() -> argparse.ArgumentParser:

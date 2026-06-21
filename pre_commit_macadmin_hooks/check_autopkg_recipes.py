@@ -228,26 +228,25 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
 def validate_no_deprecated_procs(process, filename):
     """Error on removed processors; warn on deprecated ones."""
 
-    # Processors removed from AutoPkg core (recipes using them will break).
-    removed_procs = {
-        "BrewCaskInfoProvider": "2.9.0",
-        "CURLDownloader": "3.0.0",
-        "CURLTextSearcher": "3.0.0",
-    }
-
-    # Processors deprecated but not yet removed.
-    deprecated_procs: tuple[str, ...] = ()
-
     passed = True
     for proc in process:
         name = proc.get("Processor")
-        if name in removed_procs:
+        proc_versions = PROC_VERSIONS.get(name)
+        if proc_versions is None:
+            continue
+
+        removed_version = proc_versions.get("_removed_")
+        deprecated_version = proc_versions.get("_deprecated_")
+        if removed_version:
             print(
-                f"{filename}: Processor {name} was removed in AutoPkg {removed_procs[name]}."
+                f"{filename}: Processor {name} was removed in AutoPkg {removed_version}."
             )
             passed = False
-        elif name in deprecated_procs:
-            print(f"{filename}: WARNING: Deprecated processor {name} is used.")
+        elif deprecated_version:
+            print(
+                f"{filename}: WARNING: Processor {name} was deprecated in AutoPkg "
+                f"{deprecated_version}."
+            )
 
     return passed
 

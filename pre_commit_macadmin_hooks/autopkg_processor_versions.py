@@ -6,7 +6,7 @@ PROC_VERSIONS = {
         "_introduced_": "0.1.0",
     },
     "AppPkgCreator": {
-        "_introduced_": "1.0.0",
+        "_introduced_": "1.0",
         "bundleid": "1.1",
         "force_pkg_build": "1.1",
         "pkg_path": "1.1",
@@ -15,12 +15,17 @@ PROC_VERSIONS = {
     },
     "BrewCaskInfoProvider": {
         "_introduced_": "0.2.5",
+        "_removed_": "2.9.0",
     },
     "CURLDownloader": {
         "_introduced_": "0.5.1",
+        "_deprecated_": "0.6.0",
+        "_removed_": "3.0.0",
     },
     "CURLTextSearcher": {
         "_introduced_": "0.5.1",
+        "_deprecated_": "0.6.0",
+        "_removed_": "3.0.0",
     },
     "ChocolateyPackager": {
         "_introduced_": "2.3",
@@ -91,6 +96,7 @@ PROC_VERSIONS = {
     },
     "MunkiCatalogBuilder": {
         "_introduced_": "0.1.0",
+        "_deprecated_": "2.7.5",
     },
     "MunkiImporter": {
         "_introduced_": "0.1.0",
@@ -119,7 +125,7 @@ PROC_VERSIONS = {
         "version_comparison_key": "0.3.0",
     },
     "MunkiOptionalReceiptEditor": {
-        "_introduced_": "2.6",
+        "_introduced_": "2.7",
     },
     "MunkiPkginfoMerger": {
         "_introduced_": "0.1.0",
@@ -217,7 +223,7 @@ PROC_VERSIONS = {
 }
 
 GENERATION_METADATA = {
-    "generator_version": 1,
+    "generator_version": 2,
     "last_walked_ref": "v2.9.0",
     "last_walked_version": "2.9.0",
     "source": "https://github.com/autopkg/autopkg",

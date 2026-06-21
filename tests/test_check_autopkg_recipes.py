@@ -135,7 +135,7 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             )
         self.assertFalse(result)
         mock_print.assert_called_with(
-            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0.0"
+            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0"
         )
 
     def test_validate_minimumversion_passes(self):
@@ -172,7 +172,7 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             )
         self.assertFalse(result)
         mock_print.assert_called_with(
-            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0.0"
+            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0"
         )
 
     def test_validate_minimumversion_unknown_processor_is_skipped(self):
@@ -198,12 +198,58 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
         self.assertTrue(result)
 
     def test_validate_no_deprecated_procs_fails_removed_processor(self):
-        process = [{"Processor": "CURLDownloader"}]
-        with mock.patch("builtins.print") as mock_print:
-            result = target.validate_no_deprecated_procs(process, "file.recipe")
+        process = [{"Processor": "RemovedProcessor"}]
+        proc_versions = {
+            "RemovedProcessor": {
+                "_introduced_": "1.0.0",
+                "_removed_": "3.0.0",
+            }
+        }
+        with mock.patch.object(target, "PROC_VERSIONS", proc_versions):
+            with mock.patch("builtins.print") as mock_print:
+                result = target.validate_no_deprecated_procs(process, "file.recipe")
         self.assertFalse(result)
         mock_print.assert_called_with(
-            "file.recipe: Processor CURLDownloader was removed in AutoPkg 3.0.0."
+            "file.recipe: Processor RemovedProcessor was removed in AutoPkg 3.0.0."
+        )
+
+    def test_validate_no_deprecated_procs_skips_unknown_processor(self):
+        process = [{"Processor": "com.github.example.processors/CustomProcessor"}]
+        with mock.patch.object(target, "PROC_VERSIONS", {}):
+            result = target.validate_no_deprecated_procs(process, "file.recipe")
+        self.assertTrue(result)
+
+    def test_validate_no_deprecated_procs_warns_deprecated_processor(self):
+        process = [{"Processor": "DeprecatedProcessor"}]
+        proc_versions = {
+            "DeprecatedProcessor": {
+                "_introduced_": "1.0.0",
+                "_deprecated_": "2.0.0",
+            }
+        }
+        with mock.patch.object(target, "PROC_VERSIONS", proc_versions):
+            with mock.patch("builtins.print") as mock_print:
+                result = target.validate_no_deprecated_procs(process, "file.recipe")
+        self.assertTrue(result)
+        mock_print.assert_called_with(
+            "file.recipe: WARNING: Processor DeprecatedProcessor was deprecated in AutoPkg 2.0.0."
+        )
+
+    def test_validate_no_deprecated_procs_removed_wins_over_deprecated(self):
+        process = [{"Processor": "RemovedProcessor"}]
+        proc_versions = {
+            "RemovedProcessor": {
+                "_introduced_": "1.0.0",
+                "_deprecated_": "2.0.0",
+                "_removed_": "3.0.0",
+            }
+        }
+        with mock.patch.object(target, "PROC_VERSIONS", proc_versions):
+            with mock.patch("builtins.print") as mock_print:
+                result = target.validate_no_deprecated_procs(process, "file.recipe")
+        self.assertFalse(result)
+        mock_print.assert_called_once_with(
+            "file.recipe: Processor RemovedProcessor was removed in AutoPkg 3.0.0."
         )
 
     def test_validate_no_superclass_procs_warns(self):
