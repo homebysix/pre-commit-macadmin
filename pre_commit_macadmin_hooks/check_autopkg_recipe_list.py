@@ -10,9 +10,7 @@ import json
 import plistlib
 from xml.parsers.expat import ExpatError
 
-import ruamel.yaml
-
-yaml = ruamel.yaml.YAML(typ="safe")
+from pre_commit_macadmin_hooks.util import yaml
 
 
 def build_argument_parser() -> argparse.ArgumentParser:

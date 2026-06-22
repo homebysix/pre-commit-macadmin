@@ -14,6 +14,9 @@ from xml.parsers.expat import ExpatError
 
 from pre_commit_macadmin_hooks.util import PLIST_TYPES
 
+_VALID_PLATFORMS = frozenset(("macOS", "iOS", "tvOS"))
+_PLATFORM_KEYS = ("pfm_platforms", "pfm_n_platforms")
+
 # List keys and their expected item types
 PFM_LIST_TYPES = {
     "pfm_allowed_file_types": str,
@@ -39,7 +42,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def validate_required_keys(
+def _validate_pfm_required_keys(
     input_dict: dict[str, Any],
     required_keys: tuple[str, ...],
     dict_name: str,
@@ -175,7 +178,7 @@ def validate_required_subkeys(subkey, req_keys, filename):
             display_name = subkey["pfm_name"] + " subkey"
         else:
             display_name = "<unnamed key> subkey"
-        if not validate_required_keys(subsubkey, req_keys, display_name, filename):
+        if not _validate_pfm_required_keys(subsubkey, req_keys, display_name, filename):
             passed = False
 
     return passed
@@ -264,7 +267,7 @@ def validate_pfm_targets(subkey, filename):
 
     target_options = ("user", "user-managed", "system", "system-managed")
     if "pfm_targets" in subkey:
-        if any([x not in target_options for x in subkey["pfm_targets"]]):
+        if any(x not in target_options for x in subkey["pfm_targets"]):
             print(
                 f'{filename}: "pfm_targets" values should be one of: {target_options}'
             )
@@ -277,25 +280,16 @@ def validate_pfm_default(subkey, filename):
     """Ensure that default values have the expected type."""
     passed = True
 
-    if "pfm_type" in subkey:
+    if "pfm_type" in subkey and "pfm_default" in subkey:
         # TODO: Should we validate pfm_value_placeholder here too?
-        for test_key in ("pfm_default",):
-            if test_key in subkey:
-                # TODO: Should the default for list types be the type of the first list item, or <list> itself?
-                # if PLIST_TYPES[subkey["pfm_type"]] == list:
-                #     try:
-                #         desired_type = type(subkey["pfm_subkeys"][0])
-                #     except IndexError:
-                #         # Unknown desired type
-                #         continue
-                # else:
-                desired_type = PLIST_TYPES[subkey["pfm_type"]]
-                if not isinstance(subkey[test_key], desired_type):
-                    print(
-                        f"{filename}: {test_key} value for {subkey.get('pfm_name')} should be type "
-                        f"{PLIST_TYPES[subkey['pfm_type']]}, not type {type(subkey[test_key])}"
-                    )
-                    passed = False
+        # TODO: Should the default for list types be the type of the first list item, or <list> itself?
+        desired_type = PLIST_TYPES[subkey["pfm_type"]]
+        if not isinstance(subkey["pfm_default"], desired_type):
+            print(
+                f"{filename}: pfm_default value for {subkey.get('pfm_name')} should be type "
+                f"{PLIST_TYPES[subkey['pfm_type']]}, not type {type(subkey['pfm_default'])}"
+            )
+            passed = False
 
     return passed
 
@@ -323,13 +317,10 @@ def validate_platforms(subkey, filename):
     """Ensure that `pfm_platforms` and `pfm_n_platforms` values are valid."""
     passed = True
 
-    valid_platforms = ["macOS", "iOS", "tvOS"]
-
-    platform_keys = ["pfm_platforms", "pfm_n_platforms"]
-    for platform_key in platform_keys:
+    for platform_key in _PLATFORM_KEYS:
         if platform_key in subkey:
             for platform in subkey[platform_key]:
-                if platform not in valid_platforms:
+                if platform not in _VALID_PLATFORMS:
                     print(
                         f"{filename}: {platform_key} value doesn't look like a valid platform string: {platform}"
                     )
@@ -346,9 +337,9 @@ def validate_subkeys(subkeys, filename):
     for subkey in subkeys:
 
         # Check for presence of required subkeys
-        # (Not calling validate_required_keys() directly because the output would not be
+        # (Not calling _validate_pfm_required_keys() directly because the output would not be
         # specific enough to indicate *where* in the manifest the problem exists.)
-        # Example of validate_required_keys() output:
+        # Example of _validate_pfm_required_keys() output:
         #   menu.nomad.NoMADPro.plist: <unnamed key> missing required key pfm_type
         # Example of validate_required_subkeys() output:
         #   menu.nomad.NoMADPro.plist: ChangePasswordItem subkey missing required key pfm_type
@@ -429,7 +420,9 @@ def main(argv: list[str] | None = None) -> int:
 
         # Check for presence of required keys.
         required_keys = ("pfm_title", "pfm_domain", "pfm_description")
-        if not validate_required_keys(manifest, required_keys, "<root dict>", filename):
+        if not _validate_pfm_required_keys(
+            manifest, required_keys, "<root dict>", filename
+        ):
             retval = 1
             continue  # No need to continue checking this file
 

@@ -143,13 +143,113 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
         result = target.validate_minimumversion(process, "1.0", "1.0", "file.recipe")
         self.assertTrue(result)
 
-    def test_validate_no_deprecated_procs_warns(self):
-        process = [{"Processor": "CURLDownloader"}]
+    def test_validate_minimumversion_checks_processor_arguments(self):
+        process = [
+            {
+                "Processor": "SparkleUpdateInfoProvider",
+                "Arguments": {"urlencode_path_component": True},
+            }
+        ]
         with mock.patch("builtins.print") as mock_print:
+            result = target.validate_minimumversion(
+                process, "1.0", "1.0", "file.recipe"
+            )
+        self.assertFalse(result)
+        mock_print.assert_called_with(
+            "file.recipe: SparkleUpdateInfoProvider processor requires minimum AutoPkg version 1.1"
+        )
+
+    def test_validate_minimumversion_unknown_argument_falls_back_to_processor(self):
+        process = [
+            {
+                "Processor": "AppPkgCreator",
+                "Arguments": {"unknown_future_argument": True},
+            }
+        ]
+        with mock.patch("builtins.print") as mock_print:
+            result = target.validate_minimumversion(
+                process, "0.9", "1.0", "file.recipe"
+            )
+        self.assertFalse(result)
+        mock_print.assert_called_with(
+            "file.recipe: AppPkgCreator processor requires minimum AutoPkg version 1.0"
+        )
+
+    def test_validate_minimumversion_unknown_processor_is_skipped(self):
+        process = [
+            {
+                "Processor": "com.github.example.processors/CustomProcessor",
+                "Arguments": {"urlencode_path_component": True},
+            }
+        ]
+        result = target.validate_minimumversion(
+            process, "0.1.0", "0.1.0", "file.recipe"
+        )
+        self.assertTrue(result)
+
+    def test_validate_minimumversion_ignore_floor_suppresses_argument_requirement(self):
+        process = [
+            {
+                "Processor": "SparkleUpdateInfoProvider",
+                "Arguments": {"urlencode_path_component": True},
+            }
+        ]
+        result = target.validate_minimumversion(process, "1.0", "2.0", "file.recipe")
+        self.assertTrue(result)
+
+    def test_validate_no_deprecated_procs_fails_removed_processor(self):
+        process = [{"Processor": "RemovedProcessor"}]
+        proc_versions = {
+            "RemovedProcessor": {
+                "_introduced_": "1.0.0",
+                "_removed_": "3.0.0",
+            }
+        }
+        with mock.patch.object(target, "PROC_VERSIONS", proc_versions):
+            with mock.patch("builtins.print") as mock_print:
+                result = target.validate_no_deprecated_procs(process, "file.recipe")
+        self.assertFalse(result)
+        mock_print.assert_called_with(
+            "file.recipe: Processor RemovedProcessor was removed in AutoPkg 3.0.0."
+        )
+
+    def test_validate_no_deprecated_procs_skips_unknown_processor(self):
+        process = [{"Processor": "com.github.example.processors/CustomProcessor"}]
+        with mock.patch.object(target, "PROC_VERSIONS", {}):
             result = target.validate_no_deprecated_procs(process, "file.recipe")
         self.assertTrue(result)
+
+    def test_validate_no_deprecated_procs_warns_deprecated_processor(self):
+        process = [{"Processor": "DeprecatedProcessor"}]
+        proc_versions = {
+            "DeprecatedProcessor": {
+                "_introduced_": "1.0.0",
+                "_deprecated_": "2.0.0",
+            }
+        }
+        with mock.patch.object(target, "PROC_VERSIONS", proc_versions):
+            with mock.patch("builtins.print") as mock_print:
+                result = target.validate_no_deprecated_procs(process, "file.recipe")
+        self.assertTrue(result)
         mock_print.assert_called_with(
-            "file.recipe: WARNING: Deprecated processor CURLDownloader is used."
+            "file.recipe: WARNING: Processor DeprecatedProcessor was deprecated in AutoPkg 2.0.0."
+        )
+
+    def test_validate_no_deprecated_procs_removed_wins_over_deprecated(self):
+        process = [{"Processor": "RemovedProcessor"}]
+        proc_versions = {
+            "RemovedProcessor": {
+                "_introduced_": "1.0.0",
+                "_deprecated_": "2.0.0",
+                "_removed_": "3.0.0",
+            }
+        }
+        with mock.patch.object(target, "PROC_VERSIONS", proc_versions):
+            with mock.patch("builtins.print") as mock_print:
+                result = target.validate_no_deprecated_procs(process, "file.recipe")
+        self.assertFalse(result)
+        mock_print.assert_called_once_with(
+            "file.recipe: Processor RemovedProcessor was removed in AutoPkg 3.0.0."
         )
 
     def test_validate_no_superclass_procs_warns(self):
@@ -282,18 +382,9 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
         self.assertTrue(result)
 
     def test_validate_proc_args_valid_arguments_passes(self):
-        # Valid arguments for a core processor should pass
-        # Skip if autopkglib is not available
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        # Mock the AutoPkg library functions
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {"url": {}, "filename": {}}
-
         with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(target, "get_processor", return_value=mock_proc):
+            target, "_CORE_PROCS", {"URLDownloader": {"url": {}, "filename": {}}}
+        ):
             process = [
                 {
                     "Processor": "URLDownloader",
@@ -304,20 +395,9 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             self.assertTrue(result)
 
     def test_validate_proc_args_invalid_argument_fails(self):
-        # Invalid argument for a core processor should fail
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {"url": {}, "filename": {}}
-
         with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(
-            target, "get_processor", return_value=mock_proc
-        ), mock.patch(
-            "builtins.print"
-        ) as mock_print:
+            target, "_CORE_PROCS", {"URLDownloader": {"url": {}, "filename": {}}}
+        ), mock.patch("builtins.print") as mock_print:
             process = [
                 {
                     "Processor": "URLDownloader",
@@ -326,22 +406,14 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             ]
             result = target.validate_proc_args(process, "App.download.recipe")
             self.assertFalse(result)
-            # Check that the error message contains the key info
             calls = mock_print.call_args_list
             self.assertEqual(len(calls), 2)  # Error message + suggestion
             self.assertIn("Unknown argument invalid_arg", str(calls[0]))
 
     def test_validate_proc_args_ignored_arguments_passes(self):
-        # Ignored arguments like "note" should pass
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {"url": {}, "filename": {}}
-
         with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(target, "get_processor", return_value=mock_proc):
+            target, "_CORE_PROCS", {"URLDownloader": {"url": {}, "filename": {}}}
+        ):
             process = [
                 {
                     "Processor": "URLDownloader",
@@ -355,13 +427,7 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             self.assertTrue(result)
 
     def test_validate_proc_args_non_core_processor_passes(self):
-        # Non-core processors should be skipped
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        with mock.patch.object(
-            target, "processor_names", return_value=["URLDownloader"]
-        ), mock.patch.object(target, "get_processor", return_value=mock.Mock()):
+        with mock.patch.object(target, "_CORE_PROCS", {"URLDownloader": {}}):
             process = [
                 {
                     "Processor": "com.github.custom.CustomProcessor",
@@ -372,20 +438,9 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             self.assertTrue(result)
 
     def test_validate_proc_args_processor_with_no_args_fails(self):
-        # Processor that doesn't accept arguments but receives one should fail
-        if not target.HAS_AUTOPKGLIB:
-            self.skipTest("AutoPkg library not available")
-
-        mock_proc = mock.Mock()
-        mock_proc.input_variables = {}  # No input variables
-
         with mock.patch.object(
-            target, "processor_names", return_value=["StopProcessingIf"]
-        ), mock.patch.object(
-            target, "get_processor", return_value=mock_proc
-        ), mock.patch(
-            "builtins.print"
-        ) as mock_print:
+            target, "_CORE_PROCS", {"StopProcessingIf": {}}
+        ), mock.patch("builtins.print") as mock_print:
             process = [
                 {
                     "Processor": "StopProcessingIf",

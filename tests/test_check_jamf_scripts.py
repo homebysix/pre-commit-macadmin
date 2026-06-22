@@ -71,9 +71,6 @@ class TestCheckJamfScripts(unittest.TestCase):
             os.remove(path1)
             os.remove(path2)
 
-    def test_valid_shebangs_argument(self):
-        pass
-
 
 if __name__ == "__main__":
     unittest.main()

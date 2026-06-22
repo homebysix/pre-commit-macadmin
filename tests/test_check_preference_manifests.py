@@ -25,13 +25,15 @@ class TestCheckPreferenceManifests(unittest.TestCase):
 
     def test_validate_required_keys_all_present(self):
         d = {"a": 1, "b": 2}
-        self.assertTrue(target.validate_required_keys(d, ["a", "b"], "dict", "file"))
+        self.assertTrue(
+            target._validate_pfm_required_keys(d, ["a", "b"], "dict", "file")
+        )
 
     def test_validate_required_keys_missing(self):
         d = {"a": 1}
         with mock.patch("builtins.print") as mprint:
             self.assertFalse(
-                target.validate_required_keys(d, ["a", "b"], "dict", "file")
+                target._validate_pfm_required_keys(d, ["a", "b"], "dict", "file")
             )
             mprint.assert_called_with("file: dict missing required key b")
 

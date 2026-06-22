@@ -11,10 +11,6 @@ import pre_commit_macadmin_hooks.check_munkipkg_buildinfo as target
 
 
 class TestCheckMunkiPkgBuildinfo(unittest.TestCase):
-    def test_import(self):
-        # Test that the target module imports without error
-        self.assertIsNotNone(target)
-
     def test_build_argument_parser(self):
         parser = target.build_argument_parser()
         args = parser.parse_args(["foo.plist"])

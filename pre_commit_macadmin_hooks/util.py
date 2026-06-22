@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import itertools
 import json
 import plistlib
 from datetime import datetime
@@ -218,12 +219,16 @@ def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
         "apple_item": bool,
         "autoremove": bool,
         "blocking_applications": list,
+        "blocking_applications_manual_quit_only": bool,
+        "blocking_applications_quit_script": str,
         "catalogs": list,
         "category": str,
         "copy_local": bool,
         "description": str,
+        "description_staged": str,
         "developer": str,
         "display_name": str,
+        "display_name_staged": str,
         "force_install_after_date": datetime,
         "forced_install": bool,
         "forced_uninstall": bool,
@@ -291,10 +296,8 @@ def validate_shebangs(
     script_content: str, filename: str, addl_shebangs: list[str] | None = None
 ) -> bool:
     """Verifies that scripts begin with a valid shebang."""
-    if addl_shebangs is None:
-        addl_shebangs = []
     passed = True
-    shebangs = BUILTIN_SHEBANGS + addl_shebangs
+    shebangs = itertools.chain(BUILTIN_SHEBANGS, addl_shebangs or [])
     if not any(script_content.startswith(x + "\n") for x in shebangs):
         print(f"{filename}: does not start with a valid shebang")
         passed = False

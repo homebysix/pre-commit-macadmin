@@ -7,6 +7,8 @@ import plistlib
 from pathlib import Path
 from xml.parsers.expat import ExpatError
 
+_BLOCKING_ACTIONS = ("RequireRestart", "RequireShutdown", "RequireLogout")
+
 from pre_commit_macadmin_hooks.util import (
     detect_deprecated_keys,
     detect_typoed_keys,
@@ -56,12 +58,6 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default=False,
     )
     parser.add_argument(
-        "--warn-on-duplicate-imports",
-        help="If added, this will only warn if pkginfo/pkg files end with a __1 suffix.",
-        action="store_true",
-        default=False,
-    )
-    parser.add_argument(
         "--valid-shebangs",
         nargs="+",
         default=[],
@@ -83,20 +79,13 @@ def _check_case_sensitive_path(path: str) -> bool:
         if p == p.parent:
             return True
         # If string representation of path is not in parent directory, return False
-        if str(p) not in list(map(str, p.parent.iterdir())):
+        if str(p) not in map(str, p.parent.iterdir()):
             return False
         p = p.parent
 
 
 def main(argv: list[str] | None = None) -> int:
     """Main process."""
-
-    # Typical extensions for installer packages.
-    pkg_exts = ("pkg", "dmg")
-    dupe_suffixes = [f"__{i}.{ext}" for ext in pkg_exts for i in range(1, 9)]
-
-    # RestartAction values that obviate the need to check blocking applications.
-    blocking_actions = ("RequireRestart", "RequireShutdown", "RequireLogout")
 
     # Parse command line arguments.
     argparser = build_argument_parser()
@@ -113,10 +102,9 @@ def main(argv: list[str] | None = None) -> int:
             retval = 1
 
         # Check for presence of required pkginfo keys.
-        if args.required_keys:
-            if not validate_required_keys(pkginfo, filename, args.required_keys):
-                retval = 1
-                break  # No need to continue checking this file
+        if not validate_required_keys(pkginfo, filename, args.required_keys):
+            retval = 1
+            break  # No need to continue checking this file
 
         # Ensure pkginfo keys have expected types.
         if not validate_pkginfo_key_types(pkginfo, filename):
@@ -142,8 +130,17 @@ def main(argv: list[str] | None = None) -> int:
         if not detect_typoed_keys(pkginfo, filename):
             retval = 1
 
-        # Check for deprecated installer_type values.
-        depr_installer_types = (
+        # Warn on pkginfo keys removed in Munki 7.
+        removed_munki7_keys = (
+            "additional_startosinstall_options",
+            "copy_local",
+        )
+        for removed_key in removed_munki7_keys:
+            if removed_key in pkginfo:
+                print(f"{filename}: WARNING: {removed_key} key is removed in Munki 7")
+
+        # Warn on installer_type values removed in Munki 7.
+        removed_munki7_installer_types = (
             "AdobeAcrobatUpdater",
             "AdobeCCPInstaller",
             "AdobeCS5AAMEEPackage",
@@ -155,21 +152,21 @@ def main(argv: list[str] | None = None) -> int:
             "profile",
             "startosinstall",
         )
-        if pkginfo.get("installer_type") in depr_installer_types:
+        if pkginfo.get("installer_type") in removed_munki7_installer_types:
             print(
-                f"{filename}: WARNING: installer_type '{pkginfo.get('installer_type')}' is deprecated"
+                f"{filename}: WARNING: installer_type '{pkginfo.get('installer_type')}' is removed in Munki 7"
             )
 
-        # Check for deprecated uninstall_method values.
-        depr_uninstall_methods = (
+        # Warn on uninstall_method values removed in Munki 7.
+        removed_munki7_uninstall_methods = (
             "AdobeCCPUninstaller",
             "AdobeCS5AAMEEPackage",
             "AdobeSetup",
             "AdobeUberUninstaller",
         )
-        if pkginfo.get("uninstall_method") in depr_uninstall_methods:
+        if pkginfo.get("uninstall_method") in removed_munki7_uninstall_methods:
             print(
-                f"{filename}: WARNING: uninstall_method '{pkginfo.get('uninstall_method')}' is deprecated"
+                f"{filename}: WARNING: uninstall_method '{pkginfo.get('uninstall_method')}' is removed in Munki 7"
             )
 
         # Check for rogue categories.
@@ -188,13 +185,12 @@ def main(argv: list[str] | None = None) -> int:
 
         # Checking for the absence of blocking_applications for pkg installers.
         # If a pkg doesn't require blocking_applications, use empty "<array/>" in pkginfo.
-        if args.require_pkg_blocking_apps and all(
-            (
-                "blocking_applications" not in pkginfo,
-                pkginfo.get("installer_item_location", "").endswith(".pkg"),
-                pkginfo.get("RestartAction") not in blocking_actions,
-                not pkginfo["name"].startswith("munkitools"),
-            )
+        if (
+            args.require_pkg_blocking_apps
+            and "blocking_applications" not in pkginfo
+            and pkginfo.get("installer_item_location", "").endswith(".pkg")
+            and pkginfo.get("RestartAction") not in _BLOCKING_ACTIONS
+            and not pkginfo["name"].startswith("munkitools")
         ):
             print(
                 f"{filename}: contains a pkg installer but missing a blocking applications array"
@@ -221,18 +217,6 @@ def main(argv: list[str] | None = None) -> int:
                     print(f"{filename}: {msg}")
                     retval = 1
 
-            # Check for pkg filenames showing signs of duplicate imports.
-            if pkginfo.get(f"{i_type}_item_location", "").endswith(
-                tuple(dupe_suffixes)
-            ):
-                item_loc = pkginfo[f"{i_type}_item_location"]
-                msg = f"{i_type} item '{item_loc}' may be a duplicate import"
-                if args.warn_on_duplicate_imports:
-                    print(f"{filename}: WARNING: {msg}")
-                else:
-                    print(f"{filename}: {msg}")
-                    retval = 1
-
         # Ensure an icon exists for the item.
         if not any(
             (
@@ -253,6 +237,7 @@ def main(argv: list[str] | None = None) -> int:
         # Ensure all pkginfo scripts have a proper shebang.
         script_types = (
             "installcheck_script",
+            "blocking_applications_quit_script",
             "uninstallcheck_script",
             "postinstall_script",
             "postuninstall_script",

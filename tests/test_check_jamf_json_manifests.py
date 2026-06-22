@@ -1,7 +1,1 @@
-import unittest
-
-# import pre_commit_macadmin_hooks.check_jamf_json_manifests as target
-
-
-class TestCheckJamfJsonManifests(unittest.TestCase):
-    pass  # Hook implementation still in progress, no tests yet
+import pre_commit_macadmin_hooks.check_jamf_json_manifests as target  # noqa: F401
