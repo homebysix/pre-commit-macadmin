@@ -12,17 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-### Added
+Nothing yet.
 
-- `check-autopkg-recipes` now validates `MinimumVersion` requirements for core AutoPkg processor arguments using a generated table from AutoPkg release history.
-- `check-autopkg-recipes` now also validates deprecated and removed core processors dynamically from the generated table.
-- `check-autopkg-recipes` now recognizes `intune`, `fleet`, `ws1`, and `jamfclirunner` as known recipe types in processor convention checks (strict mode), and groups `jss-upload` with `jss`.
-
-### Changed
-
-- Simplified and minimized Python code in many hooks and tests.
-
-## [1.25.0] - 2026-06-08
+## [1.25.0] - 2026-06-21
 
 ### Added
 
@@ -32,11 +24,19 @@ All notable changes to this project will be documented in this file. This projec
 - `check-munki-pkgsinfo` now validates the shebang of `blocking_applications_quit_script`, consistent with other pkginfo script fields.
 - `check-munki-pkgsinfo` now warns when pkginfo keys removed in Munki 7 are present (`additional_startosinstall_options`, `copy_local`).
 - `check-autopkg-recipes` includes URLDownloaderPython among the list of downloader processors.
+- `check-autopkg-recipes` now validates `MinimumVersion` requirements for core AutoPkg processor arguments using a generated table from AutoPkg release history.
+- `check-autopkg-recipes` now also validates deprecated and removed core processors dynamically from the generated table.
+- `check-autopkg-recipes` now recognizes `intune`, `fleet`, `ws1`, and `jamfclirunner` as known recipe types in processor convention checks (strict mode), and groups `jss-upload` with `jss`.
 
 ### Changed
 
 - `check-autopkg-recipes` now errors when encountering removed AutoPkg processors, and warns on deprecated processors. As of AutoPkg 3.0.0, CURLDownloader and CURLTextSearcher are removed.
 - `check-munki-pkgsinfo` warning messages for removed `installer_type` and `uninstall_method` values now say "removed in Munki 7" instead of "deprecated".
+- Simplified and minimized Python code in many hooks and tests.
+
+### Fixed
+
+- Fixed an operator precedence bug in `check-jamf-json-manifests` that caused spurious type-mismatch errors for `default` values in props without an explicit type.
 
 ### Removed
 
