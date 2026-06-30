@@ -213,7 +213,7 @@ def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
     # Source: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
-    # Last updated 2019-03-13.
+    # Last verified complete against the wiki 2026-06-30.
     pkginfo_types = {
         "additional_startosinstall_options": list,
         "apple_item": bool,
