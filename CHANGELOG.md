@@ -16,6 +16,10 @@ Nothing yet.
 
 ## [1.25.1] - 2026-07-15
 
+### Added
+
+- `check-munki-pkgsinfo` and `check-autopkg-recipes` now validate the type of `allow_untrusted`, `icon_hash`, `installed_size_staged`, `uninstaller_item_hash`, and `uninstaller_item_size` pkginfo keys. These are set by current Munki 7 code but aren't yet documented on the Munki wiki.
+
 ### Changed
 
 - Clarified RELEASING.md on which version to use when preparing a release, since the release workflow auto-bumps `setup.py` on `dev` to the next patch version after each release.

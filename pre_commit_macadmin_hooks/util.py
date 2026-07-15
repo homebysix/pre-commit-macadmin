@@ -218,10 +218,14 @@ def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
     """
 
     # Pkginfo keys and their known types. Omitted keys are left unvalidated.
-    # Source: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys
-    # Last verified complete against the wiki 2026-06-30.
+    # Source: https://github.com/munki/munki/wiki/Supported-Pkginfo-Keys, plus
+    # keys confirmed against the Munki 7 Swift source that aren't yet
+    # documented on the wiki (allow_untrusted, icon_hash, installed_size_staged,
+    # uninstaller_item_hash, uninstaller_item_size).
+    # Last verified complete against the wiki 2026-06-30 and Munki source 2026-07-15.
     pkginfo_types = {
         "additional_startosinstall_options": list,
+        "allow_untrusted": bool,
         "apple_item": bool,
         "autoremove": bool,
         "blocking_applications": list,
@@ -238,10 +242,12 @@ def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
         "force_install_after_date": datetime,
         "forced_install": bool,
         "forced_uninstall": bool,
+        "icon_hash": str,
         "icon_name": str,
         "installable_condition": str,
         "installcheck_script": str,
         "installed_size": int,
+        "installed_size_staged": int,
         "installer_choices_xml": list,
         "installer_environment": dict,
         "installer_item_hash": str,
@@ -279,7 +285,9 @@ def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
         "uninstall_script": str,
         "uninstallable": bool,
         "uninstallcheck_script": str,
+        "uninstaller_item_hash": str,
         "uninstaller_item_location": str,
+        "uninstaller_item_size": int,
         "update_for": list,
         "version": str,
         "version_script": str,

@@ -159,6 +159,11 @@ class TestUtil(unittest.TestCase):
             "display_name_staged": "Example Installer",
             "minimum_os_version": "10.15.0",
             "OnDemand": True,
+            "allow_untrusted": True,
+            "icon_hash": "abc123",
+            "installed_size_staged": 1024,
+            "uninstaller_item_hash": "def456",
+            "uninstaller_item_size": 2048,
         }
         self.assertTrue(validate_pkginfo_key_types(d, "file"))
         d = {"description_staged": ["Ready to install"]}
@@ -171,6 +176,10 @@ class TestUtil(unittest.TestCase):
             "minimum_os_version": "10.15.0",
             "OnDemand": True,
         }
+        self.assertFalse(validate_pkginfo_key_types(d, "file"))
+        d = {"allow_untrusted": "true"}  # should be bool
+        self.assertFalse(validate_pkginfo_key_types(d, "file"))
+        d = {"uninstaller_item_size": "2048"}  # should be int
         self.assertFalse(validate_pkginfo_key_types(d, "file"))
 
     def test_validate_shebangs(self):
