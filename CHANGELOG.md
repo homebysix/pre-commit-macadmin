@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file. This projec
 
 - The release workflow now runs the test suite and requires it to pass before publishing a release.
 - `check-autopkg-recipes` now reports an invalid `MinimumVersion` string as a lint error instead of crashing with an uncaught exception.
+- `validate_supported_architectures` no longer crashes with a `TypeError` when `supported_architectures` is present but not a list; the type mismatch is still reported by `validate_pkginfo_key_types`.
 
 ## [1.25.1] - 2026-07-15
 

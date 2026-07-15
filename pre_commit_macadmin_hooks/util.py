@@ -192,9 +192,15 @@ def validate_supported_architectures(
     """
     passed = True
     allowed_values = ("arm64", "x86_64")
-    if "supported_architectures" in pkginfo:
-        for arch in pkginfo["supported_architectures"]:
-            if recipe_mode and arch.startswith("%") and arch.endswith("%"):
+    architectures = pkginfo.get("supported_architectures")
+    if isinstance(architectures, list):
+        for arch in architectures:
+            if (
+                recipe_mode
+                and isinstance(arch, str)
+                and arch.startswith("%")
+                and arch.endswith("%")
+            ):
                 # Skip values that are substituted during AutoPkg recipe runs
                 continue
             if arch not in allowed_values:

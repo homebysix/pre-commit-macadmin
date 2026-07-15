@@ -137,6 +137,18 @@ class TestUtil(unittest.TestCase):
         d = {}
         self.assertTrue(validate_supported_architectures(d, "file"))
 
+    def test_validate_supported_architectures_wrong_type_does_not_crash(self):
+        # A wrongly typed value is reported separately by
+        # validate_pkginfo_key_types; this should fail open rather than crash.
+        d = {"supported_architectures": "arm64"}
+        self.assertTrue(validate_supported_architectures(d, "file"))
+        d = {"supported_architectures": None}
+        self.assertTrue(validate_supported_architectures(d, "file"))
+        d = {"supported_architectures": 1}
+        self.assertTrue(validate_supported_architectures(d, "file"))
+        d = {"supported_architectures": ["arm64", 1]}
+        self.assertFalse(validate_supported_architectures(d, "file", recipe_mode=True))
+
     def test_validate_pkginfo_key_types(self):
         d = {
             "catalogs": ["foo"],
