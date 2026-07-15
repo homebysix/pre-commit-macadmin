@@ -12,21 +12,20 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.25.1] - 2026-07-15
+
 ### Changed
 
 - Clarified RELEASING.md on which version to use when preparing a release, since the release workflow auto-bumps `setup.py` on `dev` to the next patch version after each release.
 
 ### Fixed
 
+- Fixed a bug in `generate_autopkg_processor_versions.py` that caused argument-introduction versions to be miscalculated for any AutoPkg release with Python 2-only syntax. The regex/tokenizer fallback parser used for those releases only recognized the first key of each `input_variables` dict, so most arguments were misattributed to whichever later release first became parseable by Python 3's `ast` module (typically reported as AutoPkg 1.1), causing `check-autopkg-recipes` to falsely flag long-standing recipes.
 - The release workflow now runs the test suite and requires it to pass before publishing a release.
 - `check-autopkg-recipes` now reports an invalid `MinimumVersion` string as a lint error instead of crashing with an uncaught exception.
 - `validate_supported_architectures` no longer crashes with a `TypeError` when `supported_architectures` is present but not a list; the type mismatch is still reported by `validate_pkginfo_key_types`.
-
-## [1.25.1] - 2026-07-15
-
-### Fixed
-
-- Fixed a bug in `generate_autopkg_processor_versions.py` that caused argument-introduction versions to be miscalculated for any AutoPkg release with Python 2-only syntax. The regex/tokenizer fallback parser used for those releases only recognized the first key of each `input_variables` dict, so most arguments were misattributed to whichever later release first became parseable by Python 3's `ast` module (typically reported as AutoPkg 1.1), causing `check-autopkg-recipes` to falsely flag long-standing recipes.
 
 ## [1.25.0] - 2026-06-21
 
