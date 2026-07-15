@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file. This projec
 ### Fixed
 
 - The release workflow now runs the test suite and requires it to pass before publishing a release.
+- `check-autopkg-recipes` now reports an invalid `MinimumVersion` string as a lint error instead of crashing with an uncaught exception.
 
 ## [1.25.1] - 2026-07-15
 
