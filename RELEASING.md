@@ -4,6 +4,8 @@ Releases are largely automated via GitHub Actions. The workflow triggers when `s
 
 ## Release Process
 
+1. Determine the version to release. After each release, the workflow auto-bumps `setup.py` on `dev` to the next **patch** version — so for a normal patch release, `setup.py` on `dev` already holds the correct next version; use that value as-is in the steps below. Only edit `setup.py` yourself first if you're bumping the **minor** or **major** version instead (see [Version Numbering](#version-numbering)).
+
 1. On the `dev` branch, check unit tests:
 
         .venv/bin/python -m coverage run -m unittest discover -vs tests
@@ -15,7 +17,7 @@ Releases are largely automated via GitHub Actions. The workflow triggers when `s
 
    Use `--full` when the generator logic changes, historical AutoPkg tags are added or corrected, or you need to rebuild from AutoPkg `0.1.0`. The default mode appends stable releases newer than the checked-in `last_walked_version`.
 
-1. Prepare CHANGELOG.md for release by moving `[Unreleased]` changes to a new version section:
+1. Prepare CHANGELOG.md for release by moving `[Unreleased]` changes to a new version section, using the version determined in step 1 above for `X.Y.Z`:
 
         ## [Unreleased]
 
@@ -32,7 +34,7 @@ Releases are largely automated via GitHub Actions. The workflow triggers when `s
 
         [X.Y.Z]: https://github.com/homebysix/pre-commit-macadmin/compare/vPREVIOUS...vX.Y.Z
 
-1. Update the version in `setup.py` to match the CHANGELOG version (e.g., `2.3.6`).
+1. Confirm the version in `setup.py` matches the CHANGELOG version (e.g., `2.3.6`). For a normal patch release this should already be true from the auto-bump; only change it here if you're doing a minor/major release.
 
 1. Update the version in `README.md` examples to match (e.g., `rev: v2.3.6`).
 

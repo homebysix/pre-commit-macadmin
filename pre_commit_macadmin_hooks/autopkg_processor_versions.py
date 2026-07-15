@@ -7,10 +7,6 @@ PROC_VERSIONS = {
     },
     "AppPkgCreator": {
         "_introduced_": "1.0",
-        "bundleid": "1.1",
-        "force_pkg_build": "1.1",
-        "pkg_path": "1.1",
-        "version": "1.1",
         "version_key": "2.4.1",
     },
     "BrewCaskInfoProvider": {
@@ -40,8 +36,6 @@ PROC_VERSIONS = {
     },
     "Copier": {
         "_introduced_": "0.1.0",
-        "destination_path": "1.1",
-        "overwrite": "1.1",
     },
     "DeprecationWarning": {
         "_introduced_": "1.1",
@@ -61,7 +55,7 @@ PROC_VERSIONS = {
     },
     "FileCreator": {
         "_introduced_": "0.1.0",
-        "file_mode": "1.1",
+        "file_mode": "0.5.0",
     },
     "FileFinder": {
         "_introduced_": "0.2.3",
@@ -74,7 +68,6 @@ PROC_VERSIONS = {
     },
     "FlatPkgPacker": {
         "_introduced_": "0.2.4",
-        "destination_pkg": "1.1",
     },
     "FlatPkgUnpacker": {
         "_introduced_": "0.1.0",
@@ -101,20 +94,14 @@ PROC_VERSIONS = {
     "MunkiImporter": {
         "_introduced_": "0.1.0",
         "MUNKILIB_DIR": "2.2",
-        "MUNKI_PKGINFO_FILE_EXTENSION": "1.1",
+        "MUNKI_PKGINFO_FILE_EXTENSION": "0.3.0",
         "MUNKI_REPO": "0.2.5",
         "MUNKI_REPO_PLUGIN": "2.2",
-        "additional_makepkginfo_options": "1.1",
         "extract_icon": "2.2",
         "force_munki_repo_lib": "2.2",
-        "force_munkiimport": "1.1",
         "metadata_additions": "1.1",
-        "munkiimport_appname": "1.1",
-        "munkiimport_pkgname": "1.1",
-        "pkginfo": "1.1",
-        "repo_subdirectory": "1.1",
-        "uninstaller_pkg_path": "1.1",
-        "version_comparison_key": "1.1",
+        "uninstaller_pkg_path": "1.0.0",
+        "version_comparison_key": "0.3.0",
     },
     "MunkiInfoCreator": {
         "_introduced_": "0.1.0",
@@ -148,7 +135,6 @@ PROC_VERSIONS = {
     },
     "PkgExtractor": {
         "_introduced_": "0.1.0",
-        "extract_root": "1.1",
     },
     "PkgInfoCreator": {
         "_introduced_": "0.1.0",
@@ -161,12 +147,9 @@ PROC_VERSIONS = {
     },
     "PlistEditor": {
         "_introduced_": "0.1.0",
-        "output_plist_path": "1.1",
-        "plist_data": "1.1",
     },
     "PlistReader": {
         "_introduced_": "0.2.5",
-        "plist_keys": "0.4.0",
     },
     "SignToolVerifier": {
         "_introduced_": "2.3",
@@ -187,14 +170,10 @@ PROC_VERSIONS = {
     },
     "URLDownloader": {
         "_introduced_": "0.1.0",
-        "CHECK_FILESIZE_ONLY": "1.1",
-        "CURL_PATH": "1.1",
-        "PKG": "1.1",
-        "curl_opts": "1.1",
-        "download_dir": "1.1",
-        "filename": "1.1",
+        "CHECK_FILESIZE_ONLY": "0.6.0",
+        "CURL_PATH": "0.6.0",
+        "curl_opts": "1.0.4",
         "prefetch_filename": "1.4",
-        "request_headers": "1.1",
     },
     "URLDownloaderPython": {
         "_introduced_": "2.4.1",
@@ -217,7 +196,6 @@ PROC_VERSIONS = {
     },
     "Versioner": {
         "_introduced_": "0.1.0",
-        "plist_version_key": "1.1",
         "skip_single_root_dir": "2.3",
     },
 }

@@ -127,6 +127,17 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
         self.assertFalse(result)
         mock_print.assert_called_with("file.recipe: MinimumVersion should be a string.")
 
+    def test_validate_minimumversion_invalid_string(self):
+        process = [{"Processor": "AppPkgCreator"}]
+        with mock.patch("builtins.print") as mock_print:
+            result = target.validate_minimumversion(
+                process, "not-a-version", "1.0", "file.recipe"
+            )
+        self.assertFalse(result)
+        mock_print.assert_called_with(
+            "file.recipe: MinimumVersion 'not-a-version' is not a valid version string."
+        )
+
     def test_validate_minimumversion_too_low(self):
         process = [{"Processor": "AppPkgCreator"}]
         with mock.patch("builtins.print") as mock_print:

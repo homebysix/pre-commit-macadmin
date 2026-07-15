@@ -1,4 +1,5 @@
 import argparse
+import ast
 import subprocess
 import tempfile
 import unittest
@@ -86,6 +87,38 @@ class TestGenerateAutoPkgProcessorVersions(unittest.TestCase):
 
     def test_normalize_tag_version_accepts_bare_tags(self):
         self.assertEqual(generator.normalize_tag_version("v1.1")[0], "1.1")
+
+    def test_fallback_parses_all_keys_from_python2_only_source(self):
+        source = "\n".join(
+            [
+                "from autopkglib import Processor",
+                "",
+                "class ExampleProcessor(Processor):",
+                "    input_variables = {",
+                '        "url": {"required": True},',
+                '        "download_dir": {"required": False},',
+                '        "filename": {"required": False},',
+                '        "PKG": {"required": False},',
+                "    }",
+                "",
+                "    def main(self):",
+                '        print "downloading"',
+                "",
+            ]
+        )
+
+        # Confirm this source needs the regex/tokenizer fallback, i.e. it
+        # reproduces the conditions of the regression (Python-2-only syntax
+        # that ast.parse cannot handle).
+        with self.assertRaises(SyntaxError):
+            ast.parse(source)
+
+        info = generator.parse_processor_source(source)
+
+        self.assertEqual(
+            info["ExampleProcessor"].args,
+            {"url", "download_dir", "filename", "PKG"},
+        )
 
     def test_full_generation_detects_argument_added_after_file_move(self):
         with tempfile.TemporaryDirectory() as tmp:

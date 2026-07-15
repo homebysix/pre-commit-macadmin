@@ -6,10 +6,11 @@ setup(
     name="pre-commit-macadmin",
     description="Pre-commit hooks for Mac admins, client engineers, and IT consultants.",
     url="https://github.com/homebysix/pre-commit-macadmin",
-    version="1.25.0",
+    version="1.25.1",
     author="Elliot Jordan",
     author_email="elliot@elliotjordan.com",
     packages=["pre_commit_macadmin_hooks"],
+    python_requires=">=3.10",
     install_requires=["ruamel.yaml>=0.15", "packaging>=23.2"],
     entry_points={
         "console_scripts": [

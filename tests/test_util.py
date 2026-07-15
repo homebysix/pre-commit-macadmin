@@ -137,6 +137,18 @@ class TestUtil(unittest.TestCase):
         d = {}
         self.assertTrue(validate_supported_architectures(d, "file"))
 
+    def test_validate_supported_architectures_wrong_type_does_not_crash(self):
+        # A wrongly typed value is reported separately by
+        # validate_pkginfo_key_types; this should fail open rather than crash.
+        d = {"supported_architectures": "arm64"}
+        self.assertTrue(validate_supported_architectures(d, "file"))
+        d = {"supported_architectures": None}
+        self.assertTrue(validate_supported_architectures(d, "file"))
+        d = {"supported_architectures": 1}
+        self.assertTrue(validate_supported_architectures(d, "file"))
+        d = {"supported_architectures": ["arm64", 1]}
+        self.assertFalse(validate_supported_architectures(d, "file", recipe_mode=True))
+
     def test_validate_pkginfo_key_types(self):
         d = {
             "catalogs": ["foo"],
@@ -147,6 +159,11 @@ class TestUtil(unittest.TestCase):
             "display_name_staged": "Example Installer",
             "minimum_os_version": "10.15.0",
             "OnDemand": True,
+            "allow_untrusted": True,
+            "icon_hash": "abc123",
+            "installed_size_staged": 1024,
+            "uninstaller_item_hash": "def456",
+            "uninstaller_item_size": 2048,
         }
         self.assertTrue(validate_pkginfo_key_types(d, "file"))
         d = {"description_staged": ["Ready to install"]}
@@ -159,6 +176,10 @@ class TestUtil(unittest.TestCase):
             "minimum_os_version": "10.15.0",
             "OnDemand": True,
         }
+        self.assertFalse(validate_pkginfo_key_types(d, "file"))
+        d = {"allow_untrusted": "true"}  # should be bool
+        self.assertFalse(validate_pkginfo_key_types(d, "file"))
+        d = {"uninstaller_item_size": "2048"}  # should be int
         self.assertFalse(validate_pkginfo_key_types(d, "file"))
 
     def test_validate_shebangs(self):

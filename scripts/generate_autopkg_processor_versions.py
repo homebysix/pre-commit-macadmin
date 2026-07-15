@@ -286,8 +286,7 @@ def string_keys_at_top_dict_level(dict_source: str) -> set[str]:
                     level += 1
                 elif token.string in "}])":
                     level -= 1
-                if token.string not in ",\n":
-                    previous_significant = token.string
+                previous_significant = token.string
                 continue
             if token.type == tokenize.STRING and level == 1:
                 try:

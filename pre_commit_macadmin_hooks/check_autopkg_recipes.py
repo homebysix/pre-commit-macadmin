@@ -8,7 +8,7 @@ import os
 import sys
 from typing import Any
 
-from packaging.version import Version
+from packaging.version import InvalidVersion, Version
 
 from pre_commit_macadmin_hooks.autopkg_processor_versions import PROC_VERSIONS
 from pre_commit_macadmin_hooks.util import (
@@ -190,7 +190,14 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
     # Validate that the MinimumVersion value is a string
     if not isinstance(min_vers, str):
         print(f"{filename}: MinimumVersion should be a string.")
-        passed = False
+        return False
+
+    # Validate that the MinimumVersion value is a parseable version string.
+    try:
+        min_vers_version = Version(min_vers)
+    except InvalidVersion:
+        print(f"{filename}: MinimumVersion {min_vers!r} is not a valid version string.")
+        return False
 
     # Validate that the MinimumVersion value fits the processors and processor
     # arguments used. Unknown processors and unknown arguments fail open.
@@ -213,7 +220,7 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
         if Version(required_version) < Version(ignore_min_vers_before):
             continue
 
-        if Version(str(min_vers)) < Version(required_version):
+        if min_vers_version < Version(required_version):
             print(
                 f"{filename}: {proc_name} processor requires minimum AutoPkg "
                 f"version {required_version}"
