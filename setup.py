@@ -10,6 +10,7 @@ setup(
     author="Elliot Jordan",
     author_email="elliot@elliotjordan.com",
     packages=["pre_commit_macadmin_hooks"],
+    python_requires=">=3.10",
     install_requires=["ruamel.yaml>=0.15", "packaging>=23.2"],
     entry_points={
         "console_scripts": [
