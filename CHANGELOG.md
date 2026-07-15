@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+
+- The release workflow now runs the test suite and requires it to pass before publishing a release.
 
 ## [1.25.1] - 2026-07-15
 
