@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- `check-autopkg-recipes` now names the specific processor argument (rather than just the processor) when it is the argument, not the processor itself, that raises the minimum required AutoPkg version.
 
 ## [1.25.1] - 2026-07-15
 

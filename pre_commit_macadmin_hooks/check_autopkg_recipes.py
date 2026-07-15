@@ -212,18 +212,24 @@ def validate_minimumversion(process, min_vers, ignore_min_vers_before, filename)
             continue
 
         required_version = proc_min_version
+        required_arg = None
         for arg in proc.get("Arguments", {}):
             arg_min_version = proc_versions.get(arg)
             if arg_min_version and Version(arg_min_version) > Version(required_version):
                 required_version = arg_min_version
+                required_arg = arg
 
         if Version(required_version) < Version(ignore_min_vers_before):
             continue
 
         if min_vers_version < Version(required_version):
+            what = (
+                f"{proc_name} {required_arg} argument"
+                if required_arg
+                else f"{proc_name} processor"
+            )
             print(
-                f"{filename}: {proc_name} processor requires minimum AutoPkg "
-                f"version {required_version}"
+                f"{filename}: {what} requires minimum AutoPkg version {required_version}"
             )
             passed = False
 

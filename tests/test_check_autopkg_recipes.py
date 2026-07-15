@@ -167,7 +167,8 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             )
         self.assertFalse(result)
         mock_print.assert_called_with(
-            "file.recipe: SparkleUpdateInfoProvider processor requires minimum AutoPkg version 1.1"
+            "file.recipe: SparkleUpdateInfoProvider urlencode_path_component argument "
+            "requires minimum AutoPkg version 1.1"
         )
 
     def test_validate_minimumversion_unknown_argument_falls_back_to_processor(self):
@@ -417,9 +418,26 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             ]
             result = target.validate_proc_args(process, "App.download.recipe")
             self.assertFalse(result)
-            calls = mock_print.call_args_list
-            self.assertEqual(len(calls), 2)  # Error message + suggestion
-            self.assertIn("Unknown argument invalid_arg", str(calls[0]))
+            mock_print.assert_any_call(
+                "App.download.recipe: Unknown argument invalid_arg for "
+                "processor URLDownloader. Allowed arguments are: url, filename"
+            )
+
+    def test_validate_proc_args_invalid_argument_prints_suggestion(self):
+        with mock.patch.object(
+            target, "_CORE_PROCS", {"URLDownloader": {"url": {}, "filename": {}}}
+        ), mock.patch("builtins.print") as mock_print:
+            process = [
+                {
+                    "Processor": "URLDownloader",
+                    "Arguments": {"invalid_arg": "value"},
+                }
+            ]
+            target.validate_proc_args(process, "App.download.recipe")
+            mock_print.assert_any_call(
+                "Consider using the VariableSetter processor (AutoPkg 2.9.0+) "
+                "to set custom environment variables."
+            )
 
     def test_validate_proc_args_ignored_arguments_passes(self):
         with mock.patch.object(
@@ -460,8 +478,26 @@ class TestCheckAutopkgRecipes(unittest.TestCase):
             ]
             result = target.validate_proc_args(process, "App.download.recipe")
             self.assertFalse(result)
-            calls = mock_print.call_args_list
-            self.assertGreater(len(calls), 0)
+            mock_print.assert_any_call(
+                "App.download.recipe: Unknown argument invalid_arg for processor "
+                "StopProcessingIf, which does not accept any arguments."
+            )
+
+    def test_validate_proc_args_processor_with_no_args_prints_suggestion(self):
+        with mock.patch.object(
+            target, "_CORE_PROCS", {"StopProcessingIf": {}}
+        ), mock.patch("builtins.print") as mock_print:
+            process = [
+                {
+                    "Processor": "StopProcessingIf",
+                    "Arguments": {"invalid_arg": "value"},
+                }
+            ]
+            target.validate_proc_args(process, "App.download.recipe")
+            mock_print.assert_any_call(
+                "Consider using the VariableSetter processor (AutoPkg 2.9.0+) "
+                "to set custom environment variables."
+            )
 
 
 if __name__ == "__main__":
