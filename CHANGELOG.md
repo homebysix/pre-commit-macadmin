@@ -12,7 +12,9 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
-Nothing yet.
+### Fixed
+
+- Fixed a bug in `generate_autopkg_processor_versions.py` that caused argument-introduction versions to be miscalculated for any AutoPkg release with Python 2-only syntax. The regex/tokenizer fallback parser used for those releases only recognized the first key of each `input_variables` dict, so most arguments were misattributed to whichever later release first became parseable by Python 3's `ast` module (typically reported as AutoPkg 1.1), causing `check-autopkg-recipes` to falsely flag long-standing recipes.
 
 ## [1.25.0] - 2026-06-21
 
