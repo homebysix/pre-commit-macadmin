@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+### Changed
+
+- Clarified RELEASING.md on which version to use when preparing a release, since the release workflow auto-bumps `setup.py` on `dev` to the next patch version after each release.
+
 ### Fixed
 
 - The release workflow now runs the test suite and requires it to pass before publishing a release.
