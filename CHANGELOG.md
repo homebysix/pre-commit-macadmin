@@ -12,6 +12,10 @@ All notable changes to this project will be documented in this file. This projec
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [1.25.1] - 2026-07-15
+
 ### Fixed
 
 - Fixed a bug in `generate_autopkg_processor_versions.py` that caused argument-introduction versions to be miscalculated for any AutoPkg release with Python 2-only syntax. The regex/tokenizer fallback parser used for those releases only recognized the first key of each `input_variables` dict, so most arguments were misattributed to whichever later release first became parseable by Python 3's `ast` module (typically reported as AutoPkg 1.1), causing `check-autopkg-recipes` to falsely flag long-standing recipes.
@@ -506,7 +510,8 @@ All notable changes to this project will be documented in this file. This projec
 
 - Initial release
 
-[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.25.0...HEAD
+[Unreleased]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.25.1...HEAD
+[1.25.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.25.0...v1.25.1
 [1.25.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.24.1...v1.25.0
 [1.24.1]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.24.0...v1.24.1
 [1.24.0]: https://github.com/homebysix/pre-commit-macadmin/compare/v1.23.0...v1.24.0
