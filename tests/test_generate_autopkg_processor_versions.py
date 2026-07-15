@@ -102,10 +102,7 @@ class TestGenerateAutoPkgProcessorVersions(unittest.TestCase):
                 "    }",
                 "",
                 "    def main(self):",
-                "        try:",
-                "            pass",
-                "        except Exception, e:",
-                "            pass",
+                '        print "downloading"',
                 "",
             ]
         )
