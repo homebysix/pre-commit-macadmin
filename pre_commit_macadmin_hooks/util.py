@@ -309,10 +309,18 @@ def validate_pkginfo_key_types(pkginfo: dict[str, Any], filename: str) -> bool:
 def validate_shebangs(
     script_content: str, filename: str, addl_shebangs: list[str] | None = None
 ) -> bool:
-    """Verifies that scripts begin with a valid shebang."""
-    passed = True
-    shebangs = itertools.chain(BUILTIN_SHEBANGS, addl_shebangs or [])
-    if not any(script_content.startswith(x + "\n") for x in shebangs):
-        print(f"{filename}: does not start with a valid shebang")
-        passed = False
-    return passed
+    """Verifies that scripts use an allowed interpreter, with optional flags."""
+    first_line, newline, _ = script_content.partition("\n")
+    shebangs = tuple(itertools.chain(BUILTIN_SHEBANGS, addl_shebangs or []))
+    parts = first_line.split()
+    if newline and (
+        first_line in shebangs
+        or (
+            len(parts) > 1
+            and parts[0] in shebangs
+            and all(part.startswith("-") for part in parts[1:])
+        )
+    ):
+        return True
+    print(f"{filename}: does not start with a valid shebang")
+    return False

@@ -183,10 +183,13 @@ class TestUtil(unittest.TestCase):
         self.assertFalse(validate_pkginfo_key_types(d, "file"))
 
     def test_validate_shebangs(self):
-        valid_script = "#!/bin/bash\nsomething"
-        invalid_script = "#!/usr/bin/env python\nsomething"
-        self.assertTrue(validate_shebangs(valid_script, "file"))
-        self.assertFalse(validate_shebangs(invalid_script, "file"))
+        self.assertTrue(validate_shebangs("#!/bin/bash\nsomething", "file"))
+        self.assertTrue(validate_shebangs("#!/bin/zsh --no-rcs\nsomething", "file"))
+        self.assertTrue(validate_shebangs("#!/bin/zsh -x\nsomething", "file"))
+        self.assertTrue(validate_shebangs("#!/bin/zsh -e\nsomething", "file"))
+        self.assertTrue(validate_shebangs("#!/bin/zsh -x -e\nsomething", "file"))
+        self.assertFalse(validate_shebangs("#!/bin/zsh command\n", "file"))
+        self.assertFalse(validate_shebangs("#!/usr/bin/env python\nsomething", "file"))
         # Test with additional shebangs
         self.assertTrue(
             validate_shebangs(
