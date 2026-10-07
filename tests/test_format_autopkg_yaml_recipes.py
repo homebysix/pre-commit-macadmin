@@ -139,6 +139,70 @@ class TestFormatAutopkgYamlRecipes(unittest.TestCase):
         self.assertEqual(format_autopkg_yaml_recipes.main([path]), 0)
         self.assertIn("# the recipe id", self._read(path))
 
+    def test_comments_realigned_to_reindented_process(self):
+        # Process list indented 4 spaces; the formatter re-emits the dash at
+        # column 0, and the comment-only lines must follow the new indentation
+        # rather than keep their original absolute columns.
+        path = self._write(
+            "Identifier: com.example.test\n"
+            "Process:\n"
+            "    # comment before first processor\n"
+            "    - Processor: URLDownloader\n"
+            "      Arguments:\n"
+            "        # comment about url\n"
+            "        url: https://example.com/file.dmg\n"
+            "    # comment before second processor\n"
+            "    - Processor: EndOfCheckPhase\n"
+        )
+        self.assertEqual(format_autopkg_yaml_recipes.main([path]), 0)
+        lines = self._read(path).split("\n")
+        # Comments before a processor align with the dash (column 0).
+        self.assertIn("# comment before first processor", lines)
+        self.assertIn("# comment before second processor", lines)
+        # The comment inside Arguments aligns with its sibling key (column 4).
+        self.assertIn("    # comment about url", lines)
+        self.assertIn("    url: https://example.com/file.dmg", lines)
+
+    def test_no_blank_line_before_processor_keeps_comment_tight(self):
+        # With the flag, no blank line is inserted before "- Processor:", so a
+        # comment stays directly above the processor it documents.
+        path = self._write(
+            "Identifier: com.example.test\n"
+            "Process:\n"
+            "    # download the app\n"
+            "    - Processor: URLDownloader\n"
+            "      Arguments:\n"
+            "        url: https://example.com/file.dmg\n"
+            "    # end the check phase\n"
+            "    - Processor: EndOfCheckPhase\n"
+        )
+        self.assertEqual(
+            format_autopkg_yaml_recipes.main(
+                ["--no-blank-line-before-processor", path]
+            ),
+            0,
+        )
+        lines = self._read(path).split("\n")
+        # No blank line between the comment and its processor.
+        first = lines.index("# download the app")
+        self.assertEqual(lines[first + 1], "- Processor: URLDownloader")
+        second = lines.index("# end the check phase")
+        self.assertEqual(lines[second + 1], "- Processor: EndOfCheckPhase")
+
+    def test_blank_line_before_processor_is_default(self):
+        # Without the flag, the default behavior still inserts a blank line
+        # before non-first "- Processor:" entries.
+        path = self._write(
+            "Identifier: com.example.test\n"
+            "Process:\n"
+            "  - Processor: URLDownloader\n"
+            "  - Processor: EndOfCheckPhase\n"
+        )
+        self.assertEqual(format_autopkg_yaml_recipes.main([path]), 0)
+        lines = self._read(path).split("\n")
+        second = lines.index("- Processor: EndOfCheckPhase")
+        self.assertEqual(lines[second - 1], "")
+
     def test_invalid_yaml_returns_one(self):
         path = self._write("Identifier: com.example.test\n  : : bad\n")
         self.assertEqual(format_autopkg_yaml_recipes.main([path]), 1)

@@ -85,7 +85,9 @@ After adding a hook to your pre-commit config, it's not a bad idea to run `pre-c
 
 - __format-autopkg-yaml-recipes__
 
-    This hook auto-formats AutoPkg YAML recipes (`*.recipe.yaml`): reorders top-level keys, moves `NAME` to the top of `Input`, places `Arguments` last in each processor, and inserts a blank line before each top-level section. Comments and quoted strings (including YAML 1.1 boolean literals like `'YES'` and `'NO'`) are preserved.
+    This hook auto-formats AutoPkg YAML recipes (`*.recipe.yaml`): reorders top-level keys, moves `NAME` to the top of `Input`, places `Arguments` last in each processor, and inserts a blank line before each top-level section. Comments and quoted strings (including YAML 1.1 boolean literals like `'YES'` and `'NO'`) are preserved, and comment-only lines are reindented to match the content they precede.
+
+    Pass `--no-blank-line-before-processor` (via the hook's `args`) to skip inserting a blank line before each `- Processor:` entry — useful when another hook manages spacing between processors, and it keeps a comment tight against the processor it documents.
 
 ### [Jamf](https://www.jamf.com/)
 

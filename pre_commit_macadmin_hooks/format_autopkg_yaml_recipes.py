@@ -71,11 +71,23 @@ def _reorder_recipe(recipe) -> None:
             recipe.move_to_end(key)
 
 
-def _insert_section_blank_lines(output: str) -> str:
-    """Ensure a single blank line precedes each top-level recipe section."""
+def _insert_section_blank_lines(
+    output: str, blank_line_before_processor: bool = True
+) -> str:
+    """Ensure a single blank line precedes each top-level recipe section.
+
+    When blank_line_before_processor is False, "- Processor:" lines are left
+    untouched (no blank line inserted before them), which keeps a comment tight
+    against the processor it documents. Use this when a separate hook manages
+    blank lines between processors.
+    """
+    triggers = _TOP_LEVEL_TRIGGERS
+    if not blank_line_before_processor:
+        triggers = tuple(t for t in triggers if t != "- Processor:")
+
     result: list[str] = []
     for line in output.split("\n"):
-        if not line.startswith(_TOP_LEVEL_TRIGGERS):
+        if not line.startswith(triggers):
             result.append(line)
             continue
 
@@ -94,7 +106,55 @@ def _insert_section_blank_lines(output: str) -> str:
     return "\n".join(result)
 
 
-def tidy_recipe(path: str, yaml: ruamel.yaml.YAML) -> None:
+def _realign_comments(output: str) -> str:
+    """Reindent comment-only lines to match the surrounding content.
+
+    ruamel.yaml round-trips comments at their original absolute column, so a
+    comment does not move when the structural indentation around it changes
+    (most visibly on Process list items, which are re-emitted with the dash at
+    column 0). Reindent each comment-only line to the indentation of the next
+    content line, falling back to the previous content line for trailing
+    comments at the end of a block. Inline (trailing) comments are untouched
+    because they are not comment-only lines.
+    """
+
+    def _indent_of(text: str) -> int:
+        return len(text) - len(text.lstrip(" "))
+
+    def _is_comment(text: str) -> bool:
+        return text.lstrip(" ").startswith("#")
+
+    lines = output.split("\n")
+    result = list(lines)
+    for idx, line in enumerate(lines):
+        if not _is_comment(line):
+            continue
+        target = next(
+            (
+                _indent_of(nxt)
+                for nxt in lines[idx + 1 :]
+                if nxt.strip() and not _is_comment(nxt)
+            ),
+            None,
+        )
+        if target is None:
+            target = next(
+                (
+                    _indent_of(prev)
+                    for prev in reversed(result[:idx])
+                    if prev.strip() and not _is_comment(prev)
+                ),
+                None,
+            )
+        if target is not None:
+            result[idx] = " " * target + line.lstrip(" ")
+
+    return "\n".join(result)
+
+
+def tidy_recipe(
+    path: str, yaml: ruamel.yaml.YAML, blank_line_before_processor: bool = True
+) -> None:
     """Tidy a single AutoPkg YAML recipe in place."""
     with open(path) as in_file:
         original = in_file.read()
@@ -107,7 +167,10 @@ def tidy_recipe(path: str, yaml: ruamel.yaml.YAML) -> None:
 
     buf = io.StringIO()
     yaml.dump(recipe, buf)
-    formatted = _insert_section_blank_lines(buf.getvalue())
+    formatted = _insert_section_blank_lines(
+        buf.getvalue(), blank_line_before_processor=blank_line_before_processor
+    )
+    formatted = _realign_comments(formatted)
 
     # Skip the write so pre-commit doesn't flag the file as modified on a no-op.
     if formatted == original:
@@ -123,6 +186,15 @@ def build_argument_parser() -> argparse.ArgumentParser:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("filenames", nargs="*", help="Filenames to format.")
+    parser.add_argument(
+        "--no-blank-line-before-processor",
+        action="store_true",
+        help=(
+            "Do not insert a blank line before each '- Processor:' entry. "
+            "Useful when a separate hook manages spacing between processors; "
+            "also keeps comments tight against the processor they document."
+        ),
+    )
     return parser
 
 
@@ -135,7 +207,11 @@ def main(argv: list[str] | None = None) -> int:
     retval = 0
     for filename in args.filenames:
         try:
-            tidy_recipe(filename, yaml)
+            tidy_recipe(
+                filename,
+                yaml,
+                blank_line_before_processor=not args.no_blank_line_before_processor,
+            )
         except DuplicateKeyError as err:
             print(f"{filename}: yaml duplicate key: {err}")
             retval = 1
